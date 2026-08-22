@@ -1,0 +1,1 @@
+import{j as e}from"./index-CSG7o7gt.js";import{C as t,a as o,b as a}from"./CompetitiveModePage-CRt9zvYC.js";function m(){return e.jsx(t,{mode:o.TEAM_BATTLE,children:e.jsx(a,{mode:o.TEAM_BATTLE})})}export{m as default};
