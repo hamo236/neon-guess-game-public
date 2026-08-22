@@ -1,0 +1,1 @@
+import{j as e}from"./index-BWCATBCr.js";import{C as t,a as o,b as a}from"./CompetitiveModePage-B5Yrq6aM.js";function m(){return e.jsx(t,{mode:o.TEAM_BATTLE,children:e.jsx(a,{mode:o.TEAM_BATTLE})})}export{m as default};
