@@ -1,0 +1,16 @@
+NEON GUESS image path evidence
+Generated from project root and live GitHub Pages.
+/images/football/antoine-griezmann.jpg                                      404
+/neon-guess-game-public/images/football/antoine-griezmann.jpg               200
+/images/cartoons/elsa.jpg                                                   404
+/neon-guess-game-public/images/cartoons/elsa.jpg                            200
+--- source-counts ---
+absolute_image_paths=72
+public_image_files=69
+
+--- OFFICIAL VITE EVIDENCE ---
+Source: https://vite.dev/guide/build
+Vite documents that nested deployments require the `base` option and that dynamically concatenated URLs should use the exact `import.meta.env.BASE_URL` value, which is statically replaced during build.
+
+Source: https://vite.dev/guide/assets
+Vite documents that files in `public` are copied to the root of `dist` as-is; dynamic URLs therefore need the configured nested base path when deployed under GitHub Pages.

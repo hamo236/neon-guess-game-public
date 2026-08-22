@@ -10,7 +10,22 @@ export const CATEGORIES = {
   SPORTS: 'sports',
 };
 
-export const CATEGORY_META = {
+// Public assets must include Vite's configured base path on GitHub Pages.
+const resolveImagePath = (path) => {
+  if (!path || !path.startsWith('/')) return path;
+  const base = (import.meta.env && import.meta.env.BASE_URL) || '/';
+  return `${base.replace(/\/$/, '')}${path}`;
+};
+
+const resolveItemImages = (items) =>
+  Object.fromEntries(
+    Object.entries(items).map(([key, item]) => [key, { ...item, image: resolveImagePath(item.image) }]),
+  );
+
+const resolveImages = (items) =>
+  items.map((item) => ({ ...item, image: resolveImagePath(item.image) }));
+
+export const CATEGORY_META = resolveItemImages({
   [CATEGORIES.CARTOONS]: {
     id: CATEGORIES.CARTOONS,
     label: 'Cartoon Characters',
@@ -29,10 +44,10 @@ export const CATEGORY_META = {
     icon: 'sports',
     image: '/images/sports/handball.jpg',
   },
-};
+});
 
 /** All 69 verified game items — local JPG assets in /public/images/. */
-export const ALL_ITEMS = [
+export const ALL_ITEMS = resolveImages([
   // ── CARTOON CHARACTERS (15) ─────────────────────────────────────────────────
   { id: 'c01', name: 'Elsa', category: CATEGORIES.CARTOONS, image: '/images/cartoons/elsa.jpg' },
   { id: 'c02', name: 'Anna', category: CATEGORIES.CARTOONS, image: '/images/cartoons/anna.jpg' },
@@ -107,7 +122,7 @@ export const ALL_ITEMS = [
   { id: 's17', name: 'Hockey', category: CATEGORIES.SPORTS, image: '/images/sports/hockey.jpg' },
   { id: 's18', name: 'Water Polo', category: CATEGORIES.SPORTS, image: '/images/sports/water-polo.jpg' },
   { id: 's19', name: 'Karate', category: CATEGORIES.SPORTS, image: '/images/sports/karate.jpg' },
-];
+]);
 
 /** Get all items for a given category */
 export const getItemsByCategory = (category) =>
