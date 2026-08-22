@@ -1,0 +1,5607 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --ng-color-bg: #070b12;
+  --ng-color-surface: rgba(255, 255, 255, 0.05);
+  --ng-color-surface-elevated: rgba(255, 255, 255, 0.09);
+  --ng-color-surface-strong: rgba(255, 255, 255, 0.13);
+  --ng-color-surface-soft: rgba(255, 255, 255, 0.035);
+  --ng-color-border: rgba(255, 255, 255, 0.14);
+  --ng-color-border-strong: rgba(125, 244, 255, 0.48);
+  --ng-color-primary: #7df4ff;
+  --ng-color-secondary: #e9b3ff;
+  --ng-color-text-muted: #c2d2d3;
+  --ng-color-success: #75f2b2;
+  --ng-color-warning: #ffd166;
+  --ng-color-danger: #ff7d9b;
+  --ng-radius-control: 12px;
+  --ng-radius-card: 18px;
+  --ng-motion-fast: 140ms;
+  --ng-motion-standard: 180ms;
+  --ng-focus-ring: 0 0 0 3px rgba(125, 244, 255, 0.22), 0 0 0 1px var(--ng-color-primary);
+  --ng-shadow-surface: 0 10px 30px rgba(0, 0, 0, 0.16);
+  --ng-shadow-elevated: 0 16px 40px rgba(0, 0, 0, 0.22), 0 0 24px rgba(125, 244, 255, 0.08);
+  --ng-space-page-stack: 24px;
+  --ng-space-page-stack-mobile: 20px;
+  --ng-page-content-max: 72rem;
+  --ng-page-content-gutter: clamp(1rem, 3vw, 2rem);
+}
+
+@layer utilities {
+  /* Shared page-shell rhythm: presentation-only, responsive, and reversible. */
+  .ng-page-shell {
+    width: min(100%, var(--ng-page-content-max, 72rem));
+    max-width: var(--ng-page-content-max, 72rem);
+    margin-inline: auto;
+    padding-inline: var(--ng-page-content-gutter, clamp(1rem, 3vw, 2rem));
+    row-gap: var(--ng-space-page-stack, 24px);
+  }
+
+  /* Narrow single-column shells opt out without changing their route logic. */
+  .ng-page-shell.ng-page-shell--narrow {
+    --ng-page-content-max: 48rem;
+  }
+
+  /* Preserve full-bleed layout where a page explicitly opts in. */
+  .ng-page-shell.ng-page-shell--full {
+    width: 100%;
+    max-width: none;
+  }
+
+  @media (max-width: 640px) {
+    .ng-page-shell {
+      padding-inline: var(--ng-page-content-gutter, 1rem);
+      row-gap: var(--ng-space-page-stack-mobile, 20px);
+    }
+  }
+
+  .glass-panel {
+    background: var(--ng-color-surface);
+    box-shadow: var(--ng-shadow-surface);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
+    border-left: 1px solid rgba(255, 255, 255, 0.1);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    border-right: 1px solid rgba(255, 255, 255, 0.05);
+  }
+
+  .glass-panel-1 {
+    background: var(--ng-color-surface-soft);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+  }
+
+  .glass-panel-2 {
+    background: var(--ng-color-surface-elevated);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    border-left: 1px solid rgba(255, 255, 255, 0.1);
+    border-right: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  
+  .glass-panel-heavy {
+    background: var(--ng-color-surface-strong);
+    box-shadow: var(--ng-shadow-elevated);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-top: 1px solid rgba(255, 255, 255, 0.3);
+  }
+
+  .glass-card {
+    background: linear-gradient(145deg, var(--ng-color-surface) 0%, var(--ng-color-surface-soft) 100%);
+    box-shadow: var(--ng-shadow-surface);
+  }
+
+  .neon-border {
+    box-shadow: inset 0 0 0 1px rgba(125, 244, 255, 0.5), var(--ng-shadow-surface), 0 0 10px rgba(125, 244, 255, 0.2);
+  }
+
+  .neon-border-glow {
+    box-shadow: inset 0 0 0 2px #7df4ff, 0 0 15px rgba(125, 244, 255, 0.4);
+    border-color: transparent !important;
+  }
+
+  .neon-glow {
+    box-shadow: 0 0 15px rgba(125, 244, 255, 0.3), inset 0 0 10px rgba(125, 244, 255, 0.2);
+  }
+
+  .neon-text-glow {
+    text-shadow: 0 0 8px rgba(125, 244, 255, 0.6);
+  }
+  
+  .purple-neon-glow {
+    box-shadow: 0 0 15px rgba(233, 179, 255, 0.3), inset 0 0 10px rgba(233, 179, 255, 0.2);
+  }
+
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .pb-safe {
+    padding-bottom: env(safe-area-inset-bottom, 20px);
+  }
+  .mt-safe {
+    margin-top: env(safe-area-inset-top, 0px);
+  }
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.02);
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(125, 244, 255, 0.2);
+  border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(125, 244, 255, 0.4);
+}
+
+@keyframes pulse-neon {
+  0%, 100% { opacity: 1; text-shadow: 0 0 8px rgba(125, 244, 255, 0.8); }
+  50% { opacity: 0.7; text-shadow: 0 0 4px rgba(125, 244, 255, 0.4); }
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-pulse-neon {
+  animation: pulse-neon 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.5s ease-out forwards;
+}
+
+
+/* Premium Lobby command-center layer: presentation-only and mobile-first. */
+@layer utilities {
+  .premium-command-card {
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+    border-radius: var(--ng-radius-card);
+    transition: transform var(--ng-motion-standard) ease, border-color var(--ng-motion-standard) ease, box-shadow var(--ng-motion-standard) ease, background-color var(--ng-motion-standard) ease;
+  }
+
+  .premium-command-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background: radial-gradient(circle at 88% 12%, rgba(125, 244, 255, 0.16), transparent 36%), radial-gradient(circle at 8% 100%, rgba(233, 179, 255, 0.12), transparent 40%);
+  }
+
+  .premium-command-card:hover {
+    transform: translateY(-2px);
+    border-color: rgba(125, 244, 255, 0.48);
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.24), 0 0 24px rgba(125, 244, 255, 0.08);
+  }
+
+  .premium-kicker {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    width: fit-content;
+    color: #7df4ff;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+
+  .premium-kicker::before {
+    content: '';
+    width: 7px;
+    height: 7px;
+    border-radius: 9999px;
+    background: #7df4ff;
+    box-shadow: 0 0 12px rgba(125, 244, 255, 0.85);
+  }
+
+  .premium-pill {
+    display: inline-flex;
+    align-items: center;
+    min-height: 32px;
+    padding: 6px 10px;
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    border-radius: 9999px;
+    background: rgba(255, 255, 255, 0.05);
+    color: #b9cacb;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.75rem;
+    line-height: 1;
+  }
+
+  .premium-cta {
+    min-height: 48px;
+    padding-inline: 20px;
+    border-radius: var(--ng-radius-control);
+    box-shadow: 0 0 20px rgba(233, 179, 255, 0.16);
+    transition: transform var(--ng-motion-fast) ease, box-shadow var(--ng-motion-fast) ease, background-color var(--ng-motion-fast) ease, border-color var(--ng-motion-fast) ease;
+  }
+
+  .premium-cta:hover:not(:disabled),
+  .touch-feedback:hover:not(:disabled) {
+    box-shadow: 0 10px 26px rgba(0, 0, 0, 0.22), 0 0 22px rgba(125, 244, 255, 0.12);
+  }
+
+  .premium-cta:disabled,
+  .touch-feedback:disabled {
+    cursor: not-allowed;
+    opacity: 0.58;
+    filter: saturate(0.72);
+  }
+
+  .premium-cta:active,
+  .touch-feedback:active {
+    transform: scale(0.98);
+  }
+
+  .premium-command-card :is(button, a):focus-visible,
+  .premium-cta:focus-visible {
+    outline: none;
+    box-shadow: var(--ng-focus-ring), 0 0 20px rgba(125, 244, 255, 0.16);
+  }
+
+  .touch-feedback:focus-visible {
+    outline: 2px solid var(--ng-color-primary);
+    outline-offset: 2px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .premium-command-card,
+    .premium-cta,
+    .touch-feedback {
+      transition: none;
+    }
+
+    .premium-cta:hover:not(:disabled),
+    .touch-feedback:hover:not(:disabled) {
+      box-shadow: none;
+    }
+
+    .premium-command-card:hover {
+      transform: none;
+    }
+  }
+}
+
+
+/* Addition 11: click feedback for existing interactive controls only. Presentation-only. */
+@layer utilities {
+  .touch-feedback,
+  .premium-cta {
+    position: relative;
+    isolation: isolate;
+    will-change: transform, box-shadow;
+    transition-property: transform, box-shadow, background-color, border-color, color, filter;
+    transition-duration: var(--ng-motion-fast);
+    transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .touch-feedback::after,
+  .premium-cta::after {
+    content: '';
+    position: absolute;
+    inset: 2px;
+    z-index: -1;
+    border-radius: inherit;
+    pointer-events: none;
+    opacity: 0;
+    transform: scale(0.82);
+    background: radial-gradient(circle, rgba(125, 244, 255, 0.26), transparent 68%);
+    transition: opacity var(--ng-motion-fast) ease, transform var(--ng-motion-fast) ease;
+  }
+
+  .touch-feedback:hover:not(:disabled),
+  .premium-cta:hover:not(:disabled) {
+    transform: translateY(-1px);
+  }
+
+  .touch-feedback:active:not(:disabled),
+  .premium-cta:active:not(:disabled) {
+    transform: translateY(1px) scale(0.96);
+    box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.24), 0 0 22px rgba(125, 244, 255, 0.24);
+    filter: brightness(1.08) saturate(1.08);
+  }
+
+  .touch-feedback:active:not(:disabled)::after,
+  .premium-cta:active:not(:disabled)::after {
+    opacity: 1;
+    transform: scale(1.08);
+  }
+
+  .touch-feedback:focus-visible,
+  .premium-cta:focus-visible {
+    will-change: auto;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .touch-feedback,
+    .premium-cta {
+      will-change: auto;
+      transition-duration: 1ms;
+    }
+
+    .touch-feedback:hover:not(:disabled),
+    .premium-cta:hover:not(:disabled),
+    .touch-feedback:active:not(:disabled),
+    .premium-cta:active:not(:disabled) {
+      transform: none;
+      filter: none;
+      box-shadow: inherit;
+    }
+
+    .touch-feedback::after,
+    .premium-cta::after {
+      display: none;
+    }
+  }
+}
+
+
+/* Addition 12: focused click treatment for four high-value room/result actions. */
+@layer utilities {
+  .button-click-motion {
+    transform-origin: center;
+    transition: transform var(--ng-motion-fast), box-shadow var(--ng-motion-fast), filter var(--ng-motion-fast);
+  }
+
+  .button-click-motion:active:not(:disabled) {
+    transform: translateY(1px) scale(0.94) rotate(-0.6deg);
+    filter: brightness(1.12) saturate(1.12);
+    box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.26), 0 0 28px rgba(125, 244, 255, 0.34);
+  }
+
+  .button-click-motion:active:not(:disabled)::after {
+    opacity: 1;
+    transform: scale(1.16);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .button-click-motion,
+    .button-click-motion:active:not(:disabled) {
+      transform: none;
+      filter: none;
+      box-shadow: inherit;
+      transition-duration: 1ms;
+    }
+  }
+}
+
+
+/* Visual Evolution Additions 17-19: presentation-only Lobby refinement layer. */
+@layer utilities {
+  /* Addition 17: calm primary-action surface for clearer visual hierarchy. */
+  .ng-action-surface {
+    position: relative;
+    isolation: isolate;
+    padding: clamp(0.75rem, 2vw, 1rem);
+    border: 1px solid rgba(125, 244, 255, 0.14);
+    border-radius: calc(var(--ng-radius-card) - 2px);
+    background: linear-gradient(180deg, rgba(125, 244, 255, 0.055), rgba(255, 255, 255, 0.018));
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06), 0 10px 28px rgba(0, 0, 0, 0.12);
+  }
+
+  .ng-action-surface::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    border-radius: inherit;
+    background: radial-gradient(circle at 50% 0%, rgba(125, 244, 255, 0.12), transparent 58%);
+    opacity: 0.72;
+  }
+
+  .ng-action-surface > button:not(:disabled) {
+    min-height: 3.25rem;
+  }
+
+  /* Addition 18: roster rows get quiet hierarchy without changing status logic. */
+  .ng-player-row {
+    transition: background-color var(--ng-motion-standard) ease, border-color var(--ng-motion-standard) ease, box-shadow var(--ng-motion-standard) ease;
+  }
+
+  .ng-player-row:hover:not(:has(button:hover)) {
+    background-color: rgba(125, 244, 255, 0.045);
+  }
+
+  .ng-player-row:focus-within {
+    border-color: rgba(125, 244, 255, 0.34);
+    box-shadow: 0 0 0 1px rgba(125, 244, 255, 0.08), 0 10px 24px rgba(0, 0, 0, 0.12);
+  }
+
+  /* Addition 19: responsive segmented controls preserve a comfortable touch rhythm. */
+  .ng-segment-control {
+    min-height: 3.25rem;
+    touch-action: manipulation;
+  }
+
+  .ng-segment-control > button {
+    min-height: 2.75rem;
+    border-radius: calc(var(--ng-radius-control) - 2px);
+  }
+
+  @media (max-width: 640px) {
+    .ng-action-surface {
+      margin-inline: -0.25rem;
+      padding: 0.75rem;
+    }
+
+    .ng-segment-control {
+      min-height: 3.5rem;
+    }
+
+    .ng-segment-control > button {
+      min-height: 3rem;
+      padding-inline: 0.75rem;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .ng-player-row {
+      transition: none;
+    }
+  }
+}
+
+
+/* Visual Evolution Additions 20-22: cross-screen interaction comfort layer. Presentation-only. */
+@layer utilities {
+  /* Addition 20: unified state ladder for existing interactive controls. */
+  .ng-interactive {
+    position: relative;
+    min-height: 2.75rem;
+    touch-action: manipulation;
+    transition: transform var(--ng-motion-fast) cubic-bezier(0.22, 1, 0.36, 1),
+      box-shadow var(--ng-motion-fast) ease,
+      border-color var(--ng-motion-fast) ease,
+      background-color var(--ng-motion-fast) ease,
+      color var(--ng-motion-fast) ease,
+      filter var(--ng-motion-fast) ease;
+  }
+
+  .ng-interactive:hover:not(:disabled) {
+    transform: translateY(-1px);
+    filter: brightness(1.04);
+  }
+
+  .ng-interactive:active:not(:disabled) {
+    transform: translateY(1px) scale(0.975);
+    filter: brightness(1.08) saturate(1.06);
+  }
+
+  .ng-interactive:focus-visible {
+    outline: 2px solid rgba(125, 244, 255, 0.9);
+    outline-offset: 3px;
+    box-shadow: 0 0 0 4px rgba(125, 244, 255, 0.14), 0 0 22px rgba(125, 244, 255, 0.18);
+  }
+
+  .ng-interactive:disabled {
+    cursor: not-allowed;
+  }
+
+  /* Addition 21: calm priority rail for existing action groups. */
+  .ng-action-rail {
+    display: flex;
+    align-items: stretch;
+    gap: 0.75rem;
+    padding: 0.75rem;
+    border: 1px solid rgba(125, 244, 255, 0.12);
+    border-radius: var(--ng-radius-card);
+    background: linear-gradient(180deg, rgba(125, 244, 255, 0.045), rgba(255, 255, 255, 0.015));
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  }
+
+  /* Addition 22: consistent touch rhythm for answer, category, and reaction choices. */
+  .ng-choice-grid {
+    gap: clamp(0.65rem, 2vw, 0.9rem);
+  }
+
+  .ng-choice-grid > button {
+    min-height: 3rem;
+  }
+
+  @media (max-width: 640px) {
+    .ng-action-rail {
+      flex-direction: column;
+      gap: 0.6rem;
+      padding: 0.65rem;
+    }
+
+    .ng-action-rail > button {
+      width: 100%;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .ng-interactive {
+      transition: none;
+    }
+
+    .ng-interactive:hover:not(:disabled),
+    .ng-interactive:active:not(:disabled) {
+      transform: none;
+      filter: none;
+    }
+  }
+}
+
+
+/* Visual Evolution Additions 23-25: competitive clarity and action comfort. Presentation-only. */
+@layer utilities {
+  /* Addition 23: quiet focus frame for high-information competitive surfaces. */
+  .ng-competitive-surface {
+    position: relative;
+    isolation: isolate;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.055), 0 18px 60px rgba(0, 0, 0, 0.16);
+  }
+
+  .ng-competitive-surface::before {
+    content: '';
+    position: absolute;
+    inset-inline: 1.25rem;
+    top: 0;
+    height: 1px;
+    pointer-events: none;
+    background: linear-gradient(90deg, transparent, rgba(125, 244, 255, 0.5), transparent);
+    opacity: 0.75;
+  }
+
+  /* Addition 24: predictable action grouping with touch-safe spacing. */
+  .ng-button-cluster {
+    display: flex;
+    align-items: stretch;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+  }
+
+  .ng-button-cluster > button {
+    min-height: 3rem;
+    touch-action: manipulation;
+  }
+
+  /* Addition 25: extend the existing state ladder to competitive guess tiles. */
+  .ng-choice-grid > .ng-interactive {
+    min-height: 3rem;
+  }
+
+  @media (max-width: 640px) {
+    .ng-button-cluster {
+      flex-direction: column;
+    }
+
+    .ng-button-cluster > button {
+      width: 100%;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .ng-competitive-surface::before {
+      opacity: 0.55;
+    }
+  }
+}
+
+
+/* Visual Evolution Addition 26: Match Momentum Wayfinding. Presentation-only. */
+@layer utilities {
+  /* Mobile lobby scale: presentation-only, shared by 1v1/Four/2v2. */
+  .ng-1v1-reference-lobby .ng-room-launch-header {
+    margin-bottom: 0.35rem;
+    padding: 0.7rem 0.8rem;
+  }
+
+  .ng-1v1-reference-lobby .ng-room-launch-header h2 {
+    margin-top: 0.15rem;
+    font-size: 1.05rem;
+    line-height: 1.15;
+  }
+
+  .ng-1v1-reference-lobby .ng-host-identity-field {
+    gap: 0.5rem;
+    padding: 0.65rem 0.75rem;
+  }
+
+  .ng-1v1-reference-lobby .ng-host-identity-field input {
+    min-height: 2.7rem;
+  }
+
+  .ng-1v1-reference-lobby .ng-create-room-action,
+  .ng-1v1-reference-lobby .ng-join-room-action {
+    min-height: 2.8rem;
+    padding-block: 0.65rem;
+  }
+
+  .ng-1v1-reference-lobby .ng-lobby-setup-switch {
+    margin-bottom: 0;
+  }
+
+  .ng-1v1-waiting-state {
+    padding: 0.6rem 0.75rem;
+    font-size: 0.78rem;
+  }
+
+  @media (max-width: 390px) {
+    .ng-1v1-reference-lobby .ng-room-launch-header > span {
+      font-size: 0.58rem;
+    }
+
+    .ng-1v1-reference-lobby .ng-room-entry-actions__caption {
+      font-size: 0.56rem;
+    }
+  }
+
+  .ng-momentum-head {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06), 0 16px 42px rgba(0, 0, 0, 0.18);
+  }
+
+  .ng-momentum-head::after {
+    content: '';
+    position: absolute;
+    inset-inline: 1.25rem;
+    bottom: 0;
+    height: 2px;
+    border-radius: 999px;
+    pointer-events: none;
+    background: linear-gradient(90deg, rgba(125, 244, 255, 0.12), rgba(125, 244, 255, 0.82), rgba(255, 107, 214, 0.45), rgba(125, 244, 255, 0.12));
+    opacity: 0.78;
+  }
+
+  .ng-momentum-kicker {
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+    letter-spacing: 0.14em;
+  }
+
+  .ng-momentum-kicker::before {
+    content: '';
+    width: 0.45rem;
+    height: 0.45rem;
+    flex: 0 0 auto;
+    border-radius: 999px;
+    background: var(--ng-primary-fixed, #7df4ff);
+    box-shadow: 0 0 0 4px rgba(125, 244, 255, 0.12), 0 0 16px rgba(125, 244, 255, 0.38);
+  }
+
+  .ng-momentum-title {
+    max-width: 28ch;
+    text-wrap: balance;
+  }
+
+  .ng-phase-card {
+    position: relative;
+    overflow: hidden;
+    transition: transform var(--ng-motion-fast) ease, border-color var(--ng-motion-fast) ease, box-shadow var(--ng-motion-fast) ease;
+  }
+
+  .ng-phase-card::before {
+    content: '';
+    position: absolute;
+    inset-inline-start: 0;
+    top: 0.75rem;
+    bottom: 0.75rem;
+    width: 2px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.14);
+    pointer-events: none;
+  }
+
+  .ng-phase-card.neon-border {
+    transform: translateY(-1px);
+    border-color: rgba(125, 244, 255, 0.68);
+    box-shadow: 0 0 0 1px rgba(125, 244, 255, 0.16), 0 14px 36px rgba(0, 0, 0, 0.2), 0 0 26px rgba(125, 244, 255, 0.1);
+  }
+
+  .ng-phase-card.neon-border::before {
+    background: linear-gradient(180deg, rgba(125, 244, 255, 0.95), rgba(255, 107, 214, 0.7));
+  }
+
+  .ng-phase-status {
+    max-width: 12ch;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    letter-spacing: 0.12em;
+  }
+
+  @media (max-width: 640px) {
+    .ng-momentum-head {
+      padding: 1rem;
+    }
+
+    .ng-momentum-title {
+      max-width: 20ch;
+      font-size: clamp(1.65rem, 8vw, 2.45rem);
+      line-height: 1.05;
+    }
+
+    .ng-phase-card {
+      padding: 0.9rem;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .ng-phase-card {
+      transition: none;
+    }
+
+    .ng-phase-card.neon-border {
+      transform: none;
+    }
+  }
+}
+
+
+/* Visual Evolution Addition 27: Decision Lane. Presentation-only; preserves existing confirmation state and callback. */
+@layer utilities {
+  .ng-decision-lane {
+    border-color: rgba(255, 255, 255, 0.14);
+    background: linear-gradient(100deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.025));
+    color: var(--ng-color-text-muted);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.055), 0 10px 28px rgba(0, 0, 0, 0.12);
+  }
+
+  .ng-decision-lane--ready {
+    border-color: rgba(125, 244, 255, 0.42);
+    background: linear-gradient(100deg, rgba(125, 244, 255, 0.12), rgba(125, 244, 255, 0.035));
+    color: var(--ng-color-primary);
+  }
+
+  .ng-decision-lane--confirmed {
+    border-color: rgba(255, 209, 102, 0.42);
+    background: linear-gradient(100deg, rgba(255, 209, 102, 0.12), rgba(255, 209, 102, 0.035));
+    color: var(--ng-color-warning);
+  }
+
+  @media (max-width: 640px) {
+    .ng-decision-lane {
+      padding: 0.8rem 0.9rem;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .ng-decision-lane {
+      transition: none;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.055);
+    }
+  }
+}
+
+
+/* Visual Evolution Addition 28: Squad Readiness Rail. Presentation-only. */
+@layer utilities {
+  .ng-readiness-rail {
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05), 0 10px 24px rgba(0, 0, 0, 0.1);
+  }
+
+  .ng-readiness-rail__fill {
+    transition: width var(--ng-motion-fast) ease;
+  }
+
+  /* Visual Evolution Addition 29: Target Context Badge. Presentation-only. */
+  .ng-target-context__badge {
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    border-radius: 999px;
+    padding: 0.32rem 0.5rem;
+    white-space: nowrap;
+    background: rgba(0, 0, 0, 0.16);
+  }
+
+  /* Visual Evolution Addition 30: Round Transition Beacon. Presentation-only. */
+  .ng-transition-beacon {
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05), 0 14px 34px rgba(0, 0, 0, 0.14);
+  }
+
+  .ng-transition-beacon__dot {
+    width: 0.4rem;
+    height: 0.4rem;
+    flex: 0 0 auto;
+    border-radius: 999px;
+    background: var(--ng-primary-fixed, #7df4ff);
+    box-shadow: 0 0 0 4px rgba(125, 244, 255, 0.1), 0 0 14px rgba(125, 244, 255, 0.3);
+  }
+
+  @media (max-width: 640px) {
+    .ng-target-context__badge {
+      font-size: 0.58rem;
+      letter-spacing: 0.08em;
+    }
+
+    .ng-transition-beacon {
+      padding-inline: 0.85rem;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .ng-readiness-rail__fill {
+      transition: none;
+    }
+
+    .ng-transition-beacon__dot {
+      box-shadow: 0 0 0 3px rgba(125, 244, 255, 0.1);
+    }
+  }
+}
+
+
+/* Visual Evolution Addition 31: Recovery Signal Rail. Presentation-only. */
+@layer utilities {
+  .ng-recovery-banner {
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05), 0 16px 50px rgba(0, 0, 0, 0.28);
+  }
+
+  .ng-recovery-banner__rail {
+    height: 2px;
+  }
+
+  /* Visual Evolution Addition 32: Recovery Action Hierarchy. Presentation-only. */
+  .ng-recovery-card {
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05), 0 18px 60px rgba(0, 0, 0, 0.24);
+  }
+
+  .ng-recovery-stage {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+
+  .ng-recovery-stage::before {
+    content: '';
+    width: 0.38rem;
+    height: 0.38rem;
+    flex: 0 0 auto;
+    border-radius: 999px;
+    background: currentColor;
+    box-shadow: 0 0 0 3px color-mix(in srgb, currentColor 16%, transparent);
+  }
+
+  /* Visual Evolution Addition 33: Lobby Connection Capsule. Presentation-only. */
+  .ng-connection-capsule {
+    min-height: 2.75rem;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04), 0 8px 22px rgba(0, 0, 0, 0.1);
+  }
+
+  .ng-connection-capsule__dot {
+    flex: 0 0 auto;
+  }
+
+  @media (max-width: 640px) {
+    .ng-recovery-banner {
+      top: 4.25rem;
+      width: min(94vw, 34rem);
+    }
+
+    .ng-recovery-actions {
+      width: 100%;
+    }
+
+    .ng-recovery-actions .ng-button-cluster {
+      width: 100%;
+    }
+
+    .ng-recovery-actions .ng-button-cluster > button {
+      flex: 1 1 10rem;
+    }
+
+    .ng-connection-capsule {
+      align-items: flex-start;
+      line-height: 1.35;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .ng-recovery-banner,
+    .ng-recovery-card,
+    .ng-connection-capsule {
+      transition: none;
+    }
+
+    .ng-recovery-stage::before {
+      box-shadow: none;
+    }
+  }
+}
+
+
+/* Visual Evolution Additions 34–36: Lobby state clarity. Presentation-only. */
+@layer utilities {
+  /* Addition 34 — Open Seat Beacon. */
+  .ng-lobby-empty-slot {
+    position: relative;
+    isolation: isolate;
+    min-height: 4.5rem;
+    overflow: hidden;
+  }
+
+  .ng-lobby-empty-slot::after {
+    content: '';
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: 0.18rem;
+    background: currentColor;
+    opacity: 0.5;
+    pointer-events: none;
+  }
+
+  .ng-lobby-empty-slot > * {
+    position: relative;
+    z-index: 1;
+  }
+
+  /* Addition 35 — Lobby Error Frame. */
+  .ng-lobby-error-frame {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+  }
+
+  .ng-lobby-error-frame::before {
+    content: '';
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: 0.2rem;
+    background: currentColor;
+    opacity: 0.72;
+    pointer-events: none;
+  }
+
+  .ng-lobby-error-frame > * {
+    position: relative;
+    z-index: 1;
+  }
+
+  /* Addition 36 — Action Readiness Dock. */
+  .ng-lobby-action-dock {
+    border-top: 1px solid rgba(255, 255, 255, 0.07);
+    padding-top: 0.85rem;
+  }
+
+  .ng-lobby-action-dock button:focus-visible {
+    outline-offset: 3px;
+  }
+
+  @media (max-width: 640px) {
+    .ng-lobby-empty-slot {
+      min-height: 4.25rem;
+    }
+
+    .ng-lobby-action-dock {
+      padding-top: 0.75rem;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .ng-lobby-empty-slot,
+    .ng-lobby-error-frame,
+    .ng-lobby-action-dock {
+      transition: none;
+    }
+  }
+}
+
+
+/* Visual Evolution Additions 37–39: Lobby create/join guidance. Presentation-only. */
+@layer utilities {
+  /* Addition 37 — Input Guidance Strip. */
+  .ng-lobby-input-guidance {
+    position: relative;
+    isolation: isolate;
+  }
+
+  .ng-lobby-input-guidance::before {
+    content: '';
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: 0.16rem;
+    border-radius: 9999px;
+    background: linear-gradient(180deg, rgba(125, 244, 255, 0.85), rgba(233, 179, 255, 0.55));
+    opacity: 0.72;
+    pointer-events: none;
+  }
+
+  .ng-lobby-input-guidance > * {
+    position: relative;
+    z-index: 1;
+  }
+
+  .ng-lobby-input-guidance input {
+    min-height: 3rem;
+  }
+
+  /* Addition 38 — Disabled Action Explanation. */
+  .ng-lobby-action-explanation {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.45rem;
+    margin-top: 0.2rem;
+    padding: 0.45rem 0.6rem;
+    border-left: 2px solid rgba(125, 244, 255, 0.42);
+    border-radius: 0 0.45rem 0.45rem 0;
+    background: rgba(125, 244, 255, 0.045);
+    line-height: 1.45;
+  }
+
+  /* Addition 39 — Mobile Action Group. */
+  .ng-lobby-mobile-actions {
+    min-width: 0;
+  }
+
+  .ng-lobby-mobile-actions > button,
+  .ng-lobby-mobile-actions > .premium-cta {
+    flex-shrink: 0;
+  }
+
+  @media (max-width: 640px) {
+    .ng-lobby-mobile-actions {
+      gap: 0.85rem;
+    }
+
+    .ng-lobby-mobile-actions > button,
+    .ng-lobby-mobile-actions > .premium-cta {
+      width: 100%;
+    }
+
+    .ng-lobby-input-guidance {
+      width: 100%;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .ng-lobby-input-guidance,
+    .ng-lobby-action-explanation,
+    .ng-lobby-mobile-actions {
+      transition: none;
+    }
+  }
+}
+
+
+/* Visual Evolution Additions 40–42: Lobby command-center hierarchy. Presentation-only. */
+@layer utilities {
+  /* Addition 40 — Room Code Spotlight. */
+  .ng-room-code-spotlight {
+    min-width: 7.25rem;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06), 0 8px 24px rgba(0, 0, 0, 0.16);
+  }
+
+  .ng-room-code-spotlight .font-stats-num {
+    line-height: 1;
+  }
+
+  /* Addition 41 — Presence Ledger. */
+  .ng-presence-ledger {
+    min-width: 0;
+    scrollbar-gutter: stable;
+  }
+
+  .ng-presence-ledger .ng-player-row {
+    min-height: 4.5rem;
+  }
+
+  /* Addition 42 — Start Gate Clarity. */
+  .ng-start-gate-clarity {
+    border-radius: 0.9rem;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.025), rgba(0, 0, 0, 0.08));
+  }
+
+  .ng-start-gate-clarity button:focus-visible {
+    outline-offset: 3px;
+  }
+
+  @media (max-width: 640px) {
+    .ng-room-code-spotlight {
+      min-width: 6.4rem;
+      max-width: 44%;
+      padding-inline: 0.65rem;
+    }
+
+    .ng-room-code-spotlight .font-stats-num {
+      font-size: clamp(1rem, 5vw, 1.35rem);
+      letter-spacing: 0.16em;
+    }
+
+    .ng-presence-ledger .ng-player-row {
+      min-height: 4.25rem;
+      padding-block: 0.7rem;
+    }
+
+    .ng-start-gate-clarity {
+      padding-top: 0.75rem;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .ng-room-code-spotlight,
+    .ng-presence-ledger,
+    .ng-start-gate-clarity {
+      transition: none;
+      animation: none;
+    }
+  }
+}
+
+
+/* Visual Evolution Additions 43–45: Lobby signal polish. Presentation-only; existing handlers and state projections preserved. */
+@layer utilities {
+  /* Addition 43 — Connection Signal Layer: clearer semantic hierarchy for existing Firebase status states. */
+  .ng-connection-capsule {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    background: linear-gradient(90deg, rgba(255, 255, 255, 0.055), rgba(255, 255, 255, 0.018));
+  }
+
+  .ng-connection-capsule::before {
+    content: '';
+    position: absolute;
+    inset-block: 0;
+    inset-inline-start: 0;
+    width: 0.18rem;
+    background: currentColor;
+    opacity: 0.72;
+    pointer-events: none;
+  }
+
+  .ng-connection-capsule > * {
+    position: relative;
+    z-index: 1;
+  }
+
+  /* Addition 44 — Input Focus Lane: group existing create/join fields into a calm scan path. */
+  .ng-lobby-input-guidance {
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.045), 0 8px 24px rgba(0, 0, 0, 0.1);
+    transition: border-color var(--ng-motion-standard) ease, background-color var(--ng-motion-standard) ease, box-shadow var(--ng-motion-standard) ease;
+  }
+
+  .ng-lobby-input-guidance:focus-within {
+    border-color: rgba(125, 244, 255, 0.38);
+    background-color: rgba(125, 244, 255, 0.055);
+    box-shadow: 0 0 0 1px rgba(125, 244, 255, 0.1), 0 12px 28px rgba(0, 0, 0, 0.16);
+  }
+
+  .ng-lobby-input-guidance input::placeholder {
+    transition: color var(--ng-motion-fast) ease;
+  }
+
+  .ng-lobby-input-guidance:focus-within input::placeholder {
+    color: rgba(194, 210, 211, 0.68);
+  }
+
+  /* Addition 45 — Room Share Podium: clarify the existing post-create handoff. */
+  .ng-room-created-card {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.07), 0 14px 34px rgba(0, 0, 0, 0.18), 0 0 24px rgba(125, 244, 255, 0.08);
+  }
+
+  .ng-room-created-card::before {
+    content: '';
+    position: absolute;
+    inset-inline: 12%;
+    top: 0;
+    height: 2px;
+    border-radius: 999px;
+    background: linear-gradient(90deg, transparent, rgba(125, 244, 255, 0.85), rgba(233, 179, 255, 0.62), transparent);
+    pointer-events: none;
+  }
+
+  .ng-room-created-card > * {
+    position: relative;
+    z-index: 1;
+  }
+
+  @media (max-width: 640px) {
+    .ng-connection-capsule {
+      padding-inline: 0.85rem;
+    }
+
+    .ng-room-created-card {
+      width: 100%;
+      padding-inline: 1rem;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .ng-connection-capsule,
+    .ng-lobby-input-guidance,
+    .ng-room-created-card {
+      transition: none;
+    }
+
+    .ng-lobby-input-guidance input::placeholder {
+      transition: none;
+    }
+  }
+}
+
+
+/* Visual Evolution Additions 46–48: Lobby readiness and entry polish. Presentation-only; existing handlers and state projections preserved. */
+@layer utilities {
+  /* Addition 46 — Presence Signal Halo: make the existing connection dot legible at a glance. */
+  .ng-player-connection-dot {
+    box-shadow: 0 0 0 2px rgba(10, 16, 24, 0.78), 0 0 10px currentColor;
+    transition: box-shadow var(--ng-motion-fast) ease, transform var(--ng-motion-fast) ease;
+  }
+
+  .ng-player-row:hover .ng-player-connection-dot,
+  .ng-player-row:focus-within .ng-player-connection-dot {
+    transform: scale(1.12);
+  }
+
+  /* Addition 47 — Readiness Rail: visually anchors the existing start gate and its current disabled/enabled projection. */
+  .ng-start-readiness-rail {
+    position: relative;
+    isolation: isolate;
+    padding-top: 0.9rem;
+  }
+
+  .ng-start-readiness-rail::before {
+    content: '';
+    position: absolute;
+    inset-inline: 10%;
+    top: 0;
+    height: 2px;
+    border-radius: 999px;
+    background: linear-gradient(90deg, transparent, rgba(125, 244, 255, 0.64), rgba(233, 179, 255, 0.48), transparent);
+    opacity: 0.72;
+    pointer-events: none;
+  }
+
+  /* Addition 48 — Room Entry Beacon: improve the empty-lobby handoff without adding state or interaction. */
+  .ng-room-entry-beacon {
+    min-height: 3.25rem;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.035), rgba(125, 244, 255, 0.045));
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  }
+
+  .ng-room-entry-beacon .material-symbols-outlined {
+    color: rgba(125, 244, 255, 0.72);
+  }
+
+  @media (max-width: 640px) {
+    .ng-start-readiness-rail {
+      padding-top: 0.75rem;
+    }
+
+    .ng-room-entry-beacon {
+      padding-inline: 0.8rem;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .ng-player-connection-dot {
+      transition: none;
+    }
+
+    .ng-player-row:hover .ng-player-connection-dot,
+    .ng-player-row:focus-within .ng-player-connection-dot {
+      transform: none;
+    }
+  }
+}
+
+
+/* Visual Evolution Additions 49–51: Lobby setup communication layer */
+.ng-lobby-setup-switch {
+  isolation: isolate;
+  box-shadow: 0 0 0 1px rgba(125, 244, 255, 0.04), 0 12px 28px rgba(4, 8, 20, 0.18);
+}
+
+.ng-lobby-setup-switch:focus-within {
+  border-color: rgba(125, 244, 255, 0.42);
+  box-shadow: 0 0 0 3px rgba(125, 244, 255, 0.1), 0 12px 28px rgba(4, 8, 20, 0.2);
+}
+
+.ng-invite-status-beacon {
+  max-width: min(100%, 22rem);
+  padding: 0.45rem 0.7rem;
+  border: 1px solid rgba(125, 244, 255, 0.22);
+  border-radius: 999px;
+  background: rgba(125, 244, 255, 0.07);
+  text-align: center;
+  line-height: 1.35;
+  box-shadow: 0 0 18px rgba(125, 244, 255, 0.08);
+}
+
+.ng-join-requirement-note {
+  width: 100%;
+  padding: 0.55rem 0.7rem;
+  border-left: 2px solid rgba(233, 179, 255, 0.46);
+  border-radius: 0 0.5rem 0.5rem 0;
+  background: rgba(233, 179, 255, 0.05);
+  line-height: 1.45;
+}
+
+@media (max-width: 390px) {
+  .ng-lobby-setup-switch {
+    min-height: 3rem;
+  }
+
+  .ng-invite-status-beacon {
+    width: 100%;
+    border-radius: 0.75rem;
+  }
+
+  .ng-join-requirement-note {
+    font-size: 0.7rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ng-lobby-setup-switch,
+  .ng-invite-status-beacon,
+  .ng-join-requirement-note {
+    transition: none;
+    animation: none;
+  }
+}
+
+/* End Visual Evolution Additions 49–51 */
+
+
+/* Visual Evolution Additions 52–54: Lobby guidance and recovery layer */
+.glass-panel-2:has(> .ng-segment-control) {
+  border-color: rgba(125, 244, 255, 0.2);
+  box-shadow: 0 18px 44px rgba(4, 8, 20, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+.ng-lobby-input-guidance:focus-within {
+  border-color: rgba(125, 244, 255, 0.3);
+  background: rgba(125, 244, 255, 0.045);
+  box-shadow: 0 0 0 3px rgba(125, 244, 255, 0.07);
+}
+
+.ng-lobby-error-frame {
+  position: relative;
+  overflow: hidden;
+}
+
+.ng-lobby-error-frame::before {
+  content: '';
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 3px;
+  background: currentColor;
+  opacity: 0.72;
+}
+
+.ng-lobby-mobile-actions {
+  min-width: 0;
+}
+
+@media (max-width: 390px) {
+  .ng-lobby-mobile-actions {
+    gap: 1rem;
+  }
+
+  .ng-lobby-mobile-actions > * {
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  .ng-lobby-error-frame {
+    padding-inline: 0.85rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ng-lobby-input-guidance,
+  .ng-lobby-error-frame,
+  .ng-lobby-mobile-actions {
+    transition: none;
+    animation: none;
+  }
+}
+
+/* End Visual Evolution Additions 52–54 */
+
+
+/* Visual Evolution Additions 55–57: Lobby clarity and state hierarchy layer */
+.ng-category-spotlight {
+  border-color: rgba(125, 244, 255, 0.2);
+  box-shadow: 0 18px 44px rgba(4, 8, 20, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.045);
+}
+
+.ng-category-spotlight:focus-within {
+  border-color: rgba(125, 244, 255, 0.4);
+  box-shadow: 0 0 0 3px rgba(125, 244, 255, 0.08), 0 18px 44px rgba(4, 8, 20, 0.22);
+}
+
+/* Addition 56 — make the existing connection capsule read as a compact status lane. */
+.ng-connection-capsule {
+  min-height: 2.5rem;
+  line-height: 1.35;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.045), 0 8px 22px rgba(4, 8, 20, 0.14);
+}
+
+.ng-connection-capsule__dot,
+.ng-connection-capsule__icon {
+  flex: 0 0 auto;
+}
+
+/* Addition 57 — give the existing created-room/share surface a clearer focal hierarchy. */
+.ng-room-created-card {
+  position: relative;
+  overflow: hidden;
+}
+
+.ng-room-created-card::before {
+  content: '';
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 3px;
+  background: rgba(125, 244, 255, 0.7);
+  opacity: 0.75;
+  pointer-events: none;
+}
+
+@media (max-width: 390px) {
+  .ng-category-spotlight {
+    padding-inline: 0.85rem;
+  }
+
+  .ng-connection-capsule {
+    align-items: flex-start;
+    padding-block: 0.65rem;
+  }
+
+  .ng-room-created-card {
+    width: 100%;
+    padding-inline: 0.9rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ng-category-spotlight,
+  .ng-connection-capsule,
+  .ng-room-created-card {
+    transition: none;
+    animation: none;
+  }
+}
+
+/* End Visual Evolution Additions 55–57 */
+
+
+/* Visual Evolution Additions 58–60: active-match recovery clarity layer */
+.ng-recovery-card {
+  isolation: isolate;
+  box-shadow: 0 18px 60px rgba(0, 0, 0, 0.24), inset 0 1px 0 rgba(255, 255, 255, 0.045);
+}
+
+/* Addition 58 — turn the existing recovery stage into a legible status rail. */
+.ng-recovery-stage {
+  display: inline-flex;
+  align-items: center;
+  min-height: 1.6rem;
+  padding: 0.28rem 0.58rem;
+  border: 1px solid currentColor;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.14);
+  letter-spacing: 0.16em;
+  opacity: 0.92;
+}
+
+/* Addition 59 — keep recovery actions grouped without changing their handlers. */
+.ng-recovery-actions {
+  min-width: min(100%, 15rem);
+}
+
+.ng-recovery-actions .ng-button-cluster > button {
+  min-width: 9rem;
+}
+
+/* Addition 60 — reinforce the recovery card's state edge while preserving its tone classes. */
+.ng-recovery-card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border: 1px solid currentColor;
+  border-radius: inherit;
+  opacity: 0.12;
+  pointer-events: none;
+}
+
+@media (max-width: 390px) {
+  .ng-recovery-card {
+    padding-inline: 0.9rem;
+  }
+
+  .ng-recovery-actions,
+  .ng-recovery-actions .ng-button-cluster,
+  .ng-recovery-actions .ng-button-cluster > button {
+    width: 100%;
+  }
+
+  .ng-recovery-actions .ng-button-cluster > button {
+    min-width: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ng-recovery-card,
+  .ng-recovery-stage,
+  .ng-recovery-actions,
+  .ng-recovery-actions .ng-button-cluster > button {
+    transition: none;
+    animation: none;
+  }
+}
+
+/* End Visual Evolution Additions 58–60 */
+
+
+/* Visual Evolution Additions 61–63: recovery comprehension layer. Presentation-only. */
+@layer utilities {
+  /* Addition 61: readable recovery copy keeps the current message legible on narrow screens. */
+  .ng-recovery-copy {
+    overflow-wrap: anywhere;
+    text-wrap: pretty;
+  }
+
+  .ng-recovery-copy h2 {
+    text-wrap: balance;
+  }
+
+  .ng-recovery-copy p {
+    max-width: 58ch;
+  }
+
+  /* Addition 62: the recovery stage becomes a calm, scannable status capsule. */
+  .ng-recovery-stage {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 1.75rem;
+    padding: 0.35rem 0.6rem;
+    border: 1px solid currentColor;
+    border-radius: 9999px;
+    background: rgba(0, 0, 0, 0.14);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+    white-space: nowrap;
+  }
+
+  /* Addition 63: the existing recovery icon receives a quiet orientation cue without inventing state. */
+  .ng-recovery-icon {
+    transition: transform var(--ng-motion-standard) ease, box-shadow var(--ng-motion-standard) ease;
+  }
+
+  .ng-recovery-card[role='status'] .ng-recovery-icon {
+    animation: ng-recovery-breathe 1.8s ease-in-out infinite;
+  }
+
+  .ng-recovery-card:focus-within .ng-recovery-icon {
+    box-shadow: inset 0 0 0 1px rgba(125, 244, 255, 0.24), 0 0 0 3px rgba(125, 244, 255, 0.08);
+  }
+
+  @keyframes ng-recovery-breathe {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.045); }
+  }
+
+  @media (max-width: 640px) {
+    .ng-recovery-card {
+      padding: 0.9rem;
+    }
+
+    .ng-recovery-copy p {
+      line-height: 1.55;
+    }
+
+    .ng-recovery-stage {
+      align-self: flex-start;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .ng-recovery-icon,
+    .ng-recovery-card[role='status'] .ng-recovery-icon {
+      animation: none;
+      transition: none;
+    }
+  }
+}
+
+/* End Visual Evolution Additions 61–63. */
+
+
+
+/* Visual Evolution Additions 64–66: compact 2v2 invite card. Presentation-only. */
+@layer utilities {
+  /* Addition 64: reduce the invite shell density while keeping the room invitation prominent. */
+  .ng-room-invite-card {
+    max-width: 42rem;
+  }
+
+  .ng-room-invite-copy {
+    min-width: 0;
+  }
+
+  .ng-room-invite-copy p {
+    max-width: 46ch;
+    overflow-wrap: anywhere;
+    text-wrap: pretty;
+  }
+
+  .ng-room-invite-icon {
+    flex: 0 0 auto;
+    opacity: 0.82;
+  }
+
+  /* Addition 65: keep the room code and actions compact without reducing touch-safe controls. */
+  .ng-room-invite-code-row {
+    align-items: stretch;
+  }
+
+  .ng-room-invite-code {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow-wrap: anywhere;
+    line-height: 1.1;
+  }
+
+  .ng-room-invite-actions {
+    flex: 0 0 auto;
+    align-items: stretch;
+  }
+
+  .ng-room-invite-actions > button {
+    min-height: 2.75rem;
+    padding-block: 0.65rem;
+  }
+
+  /* Addition 66: simplify the seat/status footer and preserve readable feedback wrapping. */
+  .ng-room-invite-footer {
+    min-height: 1.25rem;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    overflow-wrap: anywhere;
+  }
+
+  @media (max-width: 640px) {
+    .ng-room-invite-card {
+      border-radius: 1rem;
+    }
+
+    .ng-room-invite-header {
+      align-items: center;
+    }
+
+    .ng-room-invite-copy h3 {
+      margin-top: 0.15rem;
+    }
+
+    .ng-room-invite-copy p {
+      margin-top: 0.35rem;
+      font-size: 0.75rem;
+      line-height: 1.45;
+    }
+
+    .ng-room-invite-code {
+      min-height: 3.25rem;
+      letter-spacing: 0.18em;
+    }
+
+    .ng-room-invite-actions {
+      width: 100%;
+    }
+
+    .ng-room-invite-actions > button {
+      flex: 1 1 0%;
+      min-width: 0;
+    }
+  }
+}
+
+/* End Visual Evolution Additions 64–66. */
+
+
+
+/* Visual Evolution Additions 67–69: compact 2v2 team assignment preview. Presentation-only. */
+@layer utilities {
+  /* Addition 67: make the current lobby decision legible before decorative detail. */
+  .ng-team-preview-header {
+    min-width: 0;
+  }
+
+  .ng-team-preview-header > div {
+    min-width: 0;
+  }
+
+  .ng-team-preview-header p {
+    max-width: 54ch;
+    overflow-wrap: anywhere;
+    text-wrap: pretty;
+  }
+
+  /* Addition 68: give each team a compact identity band without changing team state. */
+  .ng-team-card {
+    min-width: 0;
+    transition: border-color 180ms ease, background-color 180ms ease, transform 180ms ease;
+  }
+
+  .ng-team-card:hover {
+    transform: translateY(-1px);
+  }
+
+  /* Addition 69: keep player slots scannable while protecting the existing A/B controls. */
+  .ng-team-slot {
+    min-width: 0;
+    transition: background-color 180ms ease, border-color 180ms ease;
+  }
+
+  .ng-team-slot-status {
+    white-space: nowrap;
+  }
+
+  .ng-team-switchers {
+    flex: 0 0 auto;
+  }
+
+  @media (max-width: 640px) {
+    .ng-team-preview {
+      border-radius: 1.25rem;
+    }
+
+    .ng-team-preview-header {
+      align-items: flex-start;
+    }
+
+    .ng-team-preview-header > .material-symbols-outlined {
+      font-size: 1.35rem;
+    }
+
+    .ng-team-card {
+      padding: 0.85rem;
+    }
+
+    .ng-team-slot {
+      padding-inline: 0.7rem;
+      gap: 0.45rem;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .ng-team-card,
+    .ng-team-slot {
+      transition: none;
+    }
+
+    .ng-team-card:hover {
+      transform: none;
+    }
+  }
+}
+
+/* End Visual Evolution Additions 67–69. */
+
+
+/* Visual Evolution Additions 70–72: 2v2 roster identity clarity. Presentation-only. */
+@layer utilities {
+  /* Addition 70: establish a calm identity frame for the current roster surface. */
+  .ng-roster-identity {
+    min-width: 0;
+    isolation: isolate;
+  }
+
+  .ng-roster-identity::after {
+    content: '';
+    position: absolute;
+    inset: auto -3rem -4rem auto;
+    width: 10rem;
+    height: 10rem;
+    border-radius: 999px;
+    background: radial-gradient(circle, rgb(255 255 255 / 0.08), transparent 68%);
+    pointer-events: none;
+    z-index: -1;
+  }
+
+  .ng-roster-identity__header {
+    min-width: 0;
+  }
+
+  .ng-roster-identity__header > span {
+    overflow-wrap: anywhere;
+  }
+
+  /* Addition 71: keep the two-team comparison balanced and easy to scan. */
+  .ng-roster-identity__grid {
+    align-items: stretch;
+  }
+
+  .ng-roster-team {
+    min-width: 0;
+    transition: border-color 180ms ease, background-color 180ms ease, transform 180ms ease;
+  }
+
+  .ng-roster-team:hover {
+    transform: translateY(-1px);
+  }
+
+  .ng-roster-team > div:first-child {
+    min-width: 0;
+  }
+
+  /* Addition 72: make player identity readable without exposing or inventing state. */
+  .ng-roster-player {
+    min-width: 0;
+    overflow-wrap: anywhere;
+    line-height: 1.35;
+    transition: border-color 180ms ease, background-color 180ms ease;
+  }
+
+  .ng-roster-player:first-child {
+    margin-top: 0;
+  }
+
+  @media (max-width: 640px) {
+    .ng-roster-identity {
+      border-radius: 1.25rem;
+      padding: 0.85rem;
+    }
+
+    .ng-roster-identity__header {
+      align-items: flex-start;
+      flex-wrap: wrap;
+    }
+
+    .ng-roster-identity__header > span:last-child {
+      font-size: 0.65rem;
+    }
+
+    .ng-roster-identity__grid {
+      gap: 0.65rem;
+    }
+
+    .ng-roster-team {
+      padding: 0.75rem;
+    }
+
+    .ng-roster-player {
+      padding-inline: 0.7rem;
+      padding-block: 0.6rem;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .ng-roster-team,
+    .ng-roster-player {
+      transition: none;
+    }
+
+    .ng-roster-team:hover {
+      transform: none;
+    }
+  }
+}
+
+/* End Visual Evolution Additions 70–72. */
+
+
+/* Visual Evolution Additions 73–75: 2v2 decision-lane clarity. Presentation-only. */
+@layer utilities {
+  /* Addition 73: create a stable visual shell for the existing state projection. */
+  .ng-decision-lane {
+    min-width: 0;
+    background: linear-gradient(110deg, rgb(255 255 255 / 0.07), rgb(255 255 255 / 0.025));
+    transition: border-color 180ms ease, background-color 180ms ease, box-shadow 180ms ease;
+  }
+
+  .ng-decision-lane__inner {
+    min-width: 0;
+  }
+
+  /* Addition 74: make the current status and supporting copy scan in one pass. */
+  .ng-decision-lane__icon {
+    flex: 0 0 auto;
+    opacity: 0.9;
+  }
+
+  .ng-decision-lane__copy {
+    min-width: 0;
+  }
+
+  .ng-decision-lane__title,
+  .ng-decision-lane__detail {
+    overflow-wrap: anywhere;
+    text-wrap: pretty;
+  }
+
+  .ng-decision-lane__detail {
+    max-width: 58ch;
+  }
+
+  /* Addition 75: give existing confirmed/ready states a quiet semantic contrast without inventing state. */
+  .ng-decision-lane--confirmed {
+    border-color: rgb(255 197 92 / 0.42);
+    background: linear-gradient(110deg, rgb(255 197 92 / 0.12), rgb(255 255 255 / 0.035));
+    box-shadow: 0 10px 34px rgb(255 197 92 / 0.08);
+  }
+
+  .ng-decision-lane--ready {
+    border-color: rgb(223 255 0 / 0.36);
+    background: linear-gradient(110deg, rgb(223 255 0 / 0.10), rgb(255 255 255 / 0.035));
+    box-shadow: 0 10px 34px rgb(223 255 0 / 0.07);
+  }
+
+  @media (max-width: 640px) {
+    .ng-decision-lane {
+      border-radius: 1rem;
+      padding-block: 0.7rem;
+    }
+
+    .ng-decision-lane__inner {
+      gap: 0.65rem;
+    }
+
+    .ng-decision-lane__icon {
+      font-size: 1.1rem;
+    }
+
+    .ng-decision-lane__title {
+      font-size: 0.65rem;
+      line-height: 1.35;
+    }
+
+    .ng-decision-lane__detail {
+      font-size: 0.7rem;
+      line-height: 1.45;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .ng-decision-lane {
+      transition: none;
+    }
+  }
+}
+
+/* End Visual Evolution Additions 73–75. */
+
+
+/* Visual Evolution additions 76–78: compact 2v2 Room Command Deck */
+.ng-room-command-deck {
+  position: relative;
+  overflow: hidden;
+  border-color: color-mix(in srgb, var(--ng-color-primary) 22%, transparent);
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.075), rgba(255, 255, 255, 0.035));
+}
+
+.ng-room-command-deck__header {
+  max-width: 46rem;
+}
+
+.ng-room-command-deck__header > p:last-child {
+  max-width: 38rem;
+  line-height: 1.55;
+}
+
+.ng-player-setup-strip {
+  padding: 0.65rem;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 0.9rem;
+  background: rgba(0, 0, 0, 0.12);
+}
+
+.ng-player-setup-strip > input,
+.ng-player-setup-strip > select {
+  min-width: 0;
+  background: rgba(255, 255, 255, 0.04);
+  border-color: rgba(255, 255, 255, 0.12);
+}
+
+.ng-player-setup-strip .ng-room-join-input {
+  border-color: rgba(125, 244, 255, 0.38);
+  background: rgba(125, 244, 255, 0.07);
+}
+
+.ng-room-entry-actions {
+  align-items: stretch;
+}
+
+.ng-room-entry-actions > button {
+  min-width: 0;
+  letter-spacing: 0.01em;
+}
+
+@media (max-width: 640px) {
+  .ng-room-command-deck {
+    padding: 1rem;
+    border-radius: 1rem;
+  }
+
+  .ng-player-setup-strip {
+    gap: 0.55rem;
+    padding: 0.55rem;
+  }
+
+  .ng-room-entry-actions > button {
+    width: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ng-room-command-deck,
+  .ng-room-command-deck * {
+    scroll-behavior: auto;
+  }
+}
+/* End additions 76–78 */
+
+
+/* Visual Evolution additions 79–81: creative Room Join ID command field */
+.ng-room-join-field {
+  min-width: 0;
+  transition: border-color 160ms ease-out, background-color 160ms ease-out, box-shadow 160ms ease-out;
+}
+
+.ng-room-join-field__label,
+.ng-room-join-field__control {
+  pointer-events: none;
+}
+
+.ng-room-join-field__control {
+  min-width: 0;
+}
+
+.ng-room-join-field__control input {
+  pointer-events: auto;
+  width: 100%;
+  letter-spacing: 0.12em;
+}
+
+.ng-room-join-field__control input::placeholder {
+  letter-spacing: normal;
+}
+
+.ng-join-room-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  white-space: nowrap;
+}
+
+@media (max-width: 640px) {
+  .ng-room-join-field {
+    min-height: 3.25rem;
+  }
+
+  .ng-room-join-field__control input {
+    font-size: 0.95rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ng-room-join-field {
+    transition: none;
+  }
+}
+/* End additions 79–81 */
+/* Visual Evolution additions 82–84: room join signal, helper hierarchy, and action emphasis */
+.ng-room-join-field__signal {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  min-width: 0;
+}
+.ng-room-join-field__label,
+.ng-room-join-field__hint {
+  line-height: 1.2;
+}
+.ng-room-join-field__hint {
+  white-space: nowrap;
+  opacity: 0.72;
+}
+.ng-join-room-action--primary {
+  box-shadow: inset 0 0 0 1px rgb(125 244 255 / 0.06), 0 8px 22px rgb(125 244 255 / 0.06);
+  transition: transform 160ms ease-out, border-color 160ms ease-out, background-color 160ms ease-out, box-shadow 160ms ease-out;
+}
+.ng-join-room-action--primary:hover:not(:disabled) {
+  border-color: rgb(125 244 255 / 0.85);
+  background-color: rgb(125 244 255 / 0.08);
+  box-shadow: inset 0 0 0 1px rgb(125 244 255 / 0.08), 0 12px 28px rgb(125 244 255 / 0.1);
+  transform: translateY(-1px);
+}
+.ng-join-room-action--primary:active:not(:disabled) {
+  transform: translateY(0);
+}
+@media (max-width: 640px) {
+  .ng-room-join-field__signal {
+    gap: 0.5rem;
+  }
+  .ng-room-join-field__hint {
+    font-size: 0.58rem;
+    letter-spacing: 0.06em;
+  }
+  .ng-join-room-action--primary {
+    min-height: 2.9rem;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ng-join-room-action--primary {
+    transition: none;
+  }
+  .ng-join-room-action--primary:hover:not(:disabled),
+  .ng-join-room-action--primary:active:not(:disabled) {
+    transform: none;
+  }
+}
+/* End additions 82–84 */
+
+
+/* Visual Evolution additions 85–87: balanced action rail, create hierarchy, and mobile safety */
+.ng-room-entry-actions--balanced {
+  align-items: stretch;
+  padding: 0.35rem;
+  border: 1px solid rgb(255 255 255 / 0.08);
+  border-radius: 0.9rem;
+  background: linear-gradient(135deg, rgb(255 255 255 / 0.035), rgb(125 244 255 / 0.035));
+}
+.ng-room-entry-actions--balanced > button {
+  min-width: 0;
+}
+.ng-create-room-action {
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.08), 0 8px 22px rgb(125 244 255 / 0.08);
+  transition: transform 160ms ease-out, background-color 160ms ease-out, box-shadow 160ms ease-out;
+}
+.ng-create-room-action:hover:not(:disabled) {
+  background-color: rgb(165 255 236 / 0.92);
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.16), 0 12px 28px rgb(125 244 255 / 0.14);
+  transform: translateY(-1px);
+}
+.ng-create-room-action:active:not(:disabled) {
+  transform: translateY(0);
+}
+.ng-room-entry-actions--balanced > button:focus-visible {
+  position: relative;
+  z-index: 1;
+}
+.ng-room-entry-actions--balanced > button:disabled {
+  cursor: not-allowed;
+  filter: saturate(0.72);
+}
+@media (max-width: 640px) {
+  .ng-room-entry-actions--balanced {
+    gap: 0.5rem;
+    padding: 0.3rem;
+  }
+  .ng-room-entry-actions--balanced > button {
+    width: 100%;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ng-create-room-action {
+    transition: none;
+  }
+  .ng-create-room-action:hover:not(:disabled),
+  .ng-create-room-action:active:not(:disabled) {
+    transform: none;
+  }
+}
+/* End additions 85–87 */
+
+/* Visual Evolution additions 88–90: semantic action group, icon rhythm, and mobile focus clarity */
+.ng-room-entry-actions--balanced[role="group"] {
+  isolation: isolate;
+}
+.ng-room-entry-actions--balanced > button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  text-align: center;
+}
+.ng-room-entry-actions--balanced > button .material-symbols-outlined {
+  flex: 0 0 auto;
+}
+.ng-room-entry-actions--balanced > button:focus-visible {
+  outline: 2px solid rgb(165 255 236 / 0.95);
+  outline-offset: 2px;
+}
+@media (max-width: 640px) {
+  .ng-room-entry-actions--balanced > button {
+    min-height: 3rem;
+  }
+  .ng-room-entry-actions--balanced > button .material-symbols-outlined {
+    font-size: 1.05rem;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ng-room-entry-actions--balanced > button {
+    transition: none;
+  }
+}
+/* End additions 88–90 */
+
+/* Visual Evolution additions 91–93: route caption hierarchy and resilient action labels */
+.ng-room-entry-actions__caption {
+  flex: 0 0 100%;
+  display: block;
+  color: rgb(194 245 255 / 0.62);
+  font-family: var(--font-label, inherit);
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  line-height: 1.2;
+  text-align: left;
+  text-transform: uppercase;
+}
+.ng-room-entry-action__text {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+@media (max-width: 640px) {
+  .ng-room-entry-actions__caption {
+    padding-inline: 0.15rem;
+  }
+  .ng-room-entry-action__text {
+    white-space: normal;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ng-room-entry-actions__caption,
+  .ng-room-entry-action__text {
+    transition: none;
+  }
+}
+/* End additions 91–93 */
+
+/* Visual Evolution additions 94–96: command rail indexing and stable action emphasis */
+.ng-room-entry-action__index {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.65rem;
+  height: 1.35rem;
+  padding-inline: 0.3rem;
+  border: 1px solid currentColor;
+  border-radius: 0.35rem;
+  font-size: 0.58rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  line-height: 1;
+  opacity: 0.62;
+  flex: 0 0 auto;
+}
+.ng-room-entry-actions .ng-create-room-action,
+.ng-room-entry-actions .ng-join-room-action {
+  align-items: center;
+  justify-content: center;
+  gap: 0.55rem;
+  overflow-wrap: anywhere;
+}
+.ng-room-entry-actions .ng-create-room-action:active:not(:disabled),
+.ng-room-entry-actions .ng-join-room-action:active:not(:disabled) {
+  border-color: rgb(255 255 255 / 0.72);
+}
+.ng-room-entry-actions .ng-create-room-action:focus-visible,
+.ng-room-entry-actions .ng-join-room-action:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 3px;
+}
+@media (max-width: 640px) {
+  .ng-room-entry-action__index {
+    min-width: 1.5rem;
+  }
+  .ng-room-entry-actions .ng-create-room-action,
+  .ng-room-entry-actions .ng-join-room-action {
+    justify-content: flex-start;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ng-room-entry-actions .ng-create-room-action,
+  .ng-room-entry-actions .ng-join-room-action {
+    transition: none;
+  }
+}
+/* End additions 94–96 */
+
+/* Visual Evolution additions 97–99: action metadata hierarchy */
+.ng-room-entry-action__meta {
+  display: inline-flex;
+  align-items: center;
+  min-width: 0;
+  color: currentColor;
+  font-size: 0.55rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  line-height: 1;
+  opacity: 0.62;
+  white-space: nowrap;
+}
+.ng-room-entry-actions .ng-create-room-action,
+.ng-room-entry-actions .ng-join-room-action {
+  min-width: 0;
+  flex-wrap: wrap;
+  text-align: left;
+}
+.ng-room-entry-actions .ng-room-entry-action__text {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.ng-room-entry-actions:focus-within {
+  border-color: rgb(255 255 255 / 0.16);
+}
+@media (max-width: 640px) {
+  .ng-room-entry-action__meta {
+    flex-basis: auto;
+    font-size: 0.5rem;
+  }
+  .ng-room-entry-actions .ng-create-room-action,
+  .ng-room-entry-actions .ng-join-room-action {
+    align-content: center;
+    row-gap: 0.4rem;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ng-room-entry-actions:focus-within,
+  .ng-room-entry-actions .ng-create-room-action,
+  .ng-room-entry-actions .ng-join-room-action {
+    transition: none;
+  }
+}
+/* End additions 97–99 */
+
+
+/* Full-site Visual Evolution 100–102: Home mode gateway foundation. */
+.ng-home-gateway {
+  --ng-home-gateway-gap: clamp(1rem, 2.4vw, 1.5rem);
+}
+
+.ng-home-gateway__intro {
+  display: grid;
+  gap: 0.45rem;
+  max-width: 46rem;
+  padding-inline: clamp(0.1rem, 1vw, 0.5rem);
+}
+
+.ng-home-gateway__eyebrow {
+  color: var(--ng-color-primary, #7df4ff);
+  letter-spacing: 0.22em;
+}
+
+.ng-home-gateway__title {
+  color: var(--ng-color-on-surface, #f4f7ff);
+  text-wrap: balance;
+}
+
+.ng-home-gateway__subcopy {
+  max-width: 40rem;
+  color: var(--ng-color-on-surface-variant, #aeb9ce);
+  text-wrap: pretty;
+}
+
+.ng-home-route-card {
+  position: relative;
+  isolation: isolate;
+  transition: border-color var(--ng-motion-standard, 180ms) ease, box-shadow var(--ng-motion-standard, 180ms) ease;
+}
+
+.ng-home-route-card:focus-within {
+  border-color: color-mix(in srgb, var(--ng-color-primary, #7df4ff) 42%, transparent);
+  box-shadow: var(--ng-shadow-surface, 0 10px 30px rgba(0, 0, 0, 0.16)), 0 0 24px rgba(125, 244, 255, 0.08);
+}
+
+.ng-home-route-card button,
+.ng-home-route-card a {
+  min-height: 3rem;
+}
+
+.ng-home-route-card button:focus-visible,
+.ng-home-route-card a:focus-visible {
+  outline: 2px solid var(--ng-color-primary, #7df4ff);
+  outline-offset: 3px;
+}
+
+@media (max-width: 640px) {
+  .ng-home-gateway__intro {
+    gap: 0.35rem;
+  }
+
+  .ng-home-gateway__title {
+    font-size: clamp(1.35rem, 5.5vw, 1.75rem);
+    line-height: 1.12;
+  }
+
+  .ng-home-route-card {
+    min-width: 0;
+  }
+
+  .ng-home-route-card button,
+  .ng-home-route-card a {
+    min-height: 3rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ng-home-route-card,
+  .ng-home-route-card button,
+  .ng-home-route-card a {
+    transition: none !important;
+  }
+}
+
+/* Full-site Visual Evolution additions 103–105: shared mode identity rail */
+.ng-mode-selector {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+}
+
+.ng-mode-selector__guidance {
+  padding: 0.15rem 0.35rem 0;
+  letter-spacing: 0.01em;
+}
+
+.ng-mode-selector__rail {
+  position: relative;
+  display: flex;
+  width: 100%;
+  min-width: 0;
+  gap: 0.25rem;
+}
+
+.ng-mode-selector__option {
+  min-width: 0;
+  min-height: 3rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.18rem;
+  border-radius: 0.55rem;
+  overflow-wrap: anywhere;
+}
+
+.ng-mode-selector__option-title {
+  display: inline-flex;
+  align-items: baseline;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 0.32rem;
+  line-height: 1.15;
+}
+
+.ng-mode-selector__option-tag {
+  color: color-mix(in srgb, currentColor 72%, transparent);
+  font-size: 0.62em;
+  letter-spacing: 0.1em;
+  font-weight: 700;
+}
+
+.ng-mode-selector__option-meta {
+  max-width: 100%;
+  color: color-mix(in srgb, currentColor 68%, transparent);
+  font-size: 0.68rem;
+  line-height: 1.25;
+  font-weight: 500;
+  overflow-wrap: anywhere;
+}
+
+.ng-mode-selector__option:focus-visible {
+  z-index: 2;
+}
+
+@media (max-width: 390px) {
+  .ng-mode-selector__rail {
+    flex-direction: column;
+  }
+
+  .ng-mode-selector__option {
+    min-height: 3.25rem;
+    width: 100%;
+  }
+
+  .ng-mode-selector__option-meta {
+    font-size: 0.65rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ng-mode-selector,
+  .ng-mode-selector__rail,
+  .ng-mode-selector__option {
+    transition: none !important;
+  }
+}
+
+@media (forced-colors: active) {
+  .ng-mode-selector__option:focus-visible {
+    outline: 2px solid CanvasText;
+    outline-offset: 2px;
+  }
+}
+/* Full-site Visual Evolution additions 106–108: 1v1 room-flow context */
+.ng-1v1-flow-note,
+.ng-1v1-join-context {
+  color: color-mix(in srgb, var(--ng-color-primary, #7df4ff) 76%, var(--ng-color-on-surface-variant, #aeb9ce));
+  overflow-wrap: anywhere;
+}
+
+.ng-1v1-flow-note .material-symbols-outlined,
+.ng-1v1-waiting-state .material-symbols-outlined {
+  color: var(--ng-color-primary, #7df4ff);
+  flex: 0 0 auto;
+}
+
+.ng-1v1-join-context {
+  max-width: 28rem;
+  margin-top: 0.25rem;
+}
+
+.ng-1v1-waiting-state {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.55rem;
+  min-width: 0;
+  padding: 0.75rem 0.85rem;
+  border: 1px solid color-mix(in srgb, var(--ng-color-primary, #7df4ff) 24%, transparent);
+  border-radius: 0.75rem;
+  background: color-mix(in srgb, var(--ng-color-primary, #7df4ff) 5%, transparent);
+  color: var(--ng-color-on-surface-variant, #aeb9ce);
+  font-size: 0.78rem;
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+}
+
+.ng-1v1-waiting-state strong {
+  color: var(--ng-color-on-surface, #f4f7ff);
+  font-weight: 700;
+}
+
+@media (max-width: 640px) {
+  .ng-1v1-flow-note,
+  .ng-1v1-join-context,
+  .ng-1v1-waiting-state {
+    max-width: 100%;
+    font-size: 0.72rem;
+  }
+
+  .ng-1v1-waiting-state {
+    padding: 0.7rem 0.75rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ng-1v1-flow-note,
+  .ng-1v1-join-context,
+  .ng-1v1-waiting-state {
+    transition: none !important;
+  }
+}
+/* End additions 106–108 */
+
+
+
+/* Visual Evolution Additions 109-111: Impostor lobby briefing and roster ledger. Presentation-only; no new motion. */
+@layer utilities {
+  .ng-social-lobby-kicker {
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+
+  .ng-social-lobby-count-row {
+    min-height: 1.75rem;
+  }
+
+  .ng-social-capacity-pill {
+    display: inline-flex;
+    align-items: center;
+    min-height: 1.75rem;
+    padding: 0.35rem 0.55rem;
+    border: 1px solid rgba(233, 179, 255, 0.28);
+    border-radius: 9999px;
+    background: rgba(233, 179, 255, 0.08);
+    color: #e9b3ff;
+    white-space: nowrap;
+  }
+
+  .ng-social-timer-capsule {
+    min-height: 2.5rem;
+    max-width: 100%;
+  }
+
+  .ng-social-roster-guide {
+    border-left-color: rgba(125, 244, 255, 0.34);
+  }
+
+  .ng-roster-seat-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.25rem;
+    min-width: 2.25rem;
+    height: 2.25rem;
+    border: 1px solid rgba(125, 244, 255, 0.28);
+    border-radius: 0.7rem;
+    background: rgba(125, 244, 255, 0.07);
+    color: #7df4ff;
+    letter-spacing: 0.08em;
+  }
+
+  @media (max-width: 640px) {
+    .ng-social-timer-capsule {
+      flex: 1 1 100%;
+      justify-content: center;
+    }
+
+    .ng-roster-seat-badge {
+      width: 2rem;
+      min-width: 2rem;
+      height: 2rem;
+    }
+  }
+}
+
+
+/* Visual Evolution Additions 112-114: social waiting and readiness clarity. Presentation-only; no new motion. */
+@layer utilities {
+  .ng-social-waiting-explainer {
+    border-color: rgba(233, 179, 255, 0.24);
+    background: rgba(233, 179, 255, 0.055);
+  }
+
+  .ng-social-readiness-lane {
+    border-color: rgba(125, 244, 255, 0.2);
+    background: rgba(125, 244, 255, 0.035);
+  }
+
+  .ng-social-readiness-track {
+    height: 0.35rem;
+    overflow: hidden;
+    border-radius: 9999px;
+    background: rgba(255, 255, 255, 0.1);
+  }
+
+  .ng-social-readiness-fill {
+    display: block;
+    height: 100%;
+    border-radius: inherit;
+    background: var(--ng-primary-fixed, #7df4ff);
+  }
+
+  .ng-social-action-note {
+    line-height: 1.45;
+  }
+
+  @media (max-width: 640px) {
+    .ng-social-waiting-explainer,
+    .ng-social-readiness-lane {
+      padding-inline: 0.75rem;
+    }
+
+    .ng-social-action-note {
+      max-width: 24rem;
+      margin-inline: auto;
+    }
+  }
+}
+
+
+/* Visual Evolution Additions 115-117: compact invite beacon and share context. Presentation-only; no new motion. */
+@layer utilities {
+  .ng-room-code-label {
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+
+  .ng-room-code-primary {
+    max-width: 100%;
+    overflow-wrap: anywhere;
+  }
+
+  .ng-room-share-instruction {
+    max-width: 18rem;
+    text-align: center;
+    line-height: 1.45;
+  }
+
+  .ng-room-share-action {
+    min-width: 11rem;
+  }
+
+  .ng-room-share-status {
+    width: 100%;
+    max-width: 18rem;
+    overflow-wrap: anywhere;
+    text-align: center;
+    line-height: 1.45;
+  }
+
+  @media (max-width: 390px) {
+    .ng-room-created-card {
+      padding-inline: 0.875rem;
+    }
+
+    .ng-room-share-action {
+      min-width: 0;
+    }
+  }
+}
+
+
+/* Visual Evolution Additions 118-120: Join Room lane. Presentation-only; no new motion. */
+@layer utilities {
+  .ng-join-room-context {
+    max-width: 32rem;
+  }
+
+  .ng-join-code-label {
+    letter-spacing: 0.08em;
+  }
+
+  .ng-join-code-help {
+    line-height: 1.4;
+  }
+
+  .ng-join-code-input {
+    min-height: 3rem;
+  }
+
+  .ng-join-room-action {
+    min-height: 3rem;
+  }
+
+  @media (max-width: 390px) {
+    .ng-lobby-mobile-actions {
+      gap: 0.75rem;
+    }
+
+    .ng-join-room-action {
+      width: 100%;
+    }
+  }
+}
+
+/* Visual Evolution repair: make the 1v1 entry card visibly match the 2v2 reference hierarchy. Presentation-only. */
+@layer utilities {
+  .ng-1v1-category-field {
+    box-shadow: inset 0 1px 0 rgba(125, 244, 255, 0.04);
+  }
+
+  .ng-1v1-reference-lobby.premium-command-card {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.065), rgba(125, 244, 255, 0.025));
+  }
+
+  @media (max-width: 390px) {
+    .ng-1v1-reference-lobby .ng-home-gateway__title {
+      max-width: 12rem;
+      line-height: 0.94;
+    }
+
+    .ng-1v1-category-field {
+      padding: 0.7rem;
+    }
+  }
+}
+/* End 1v1 reference-layout repair */
+
+
+/* Visual Evolution 1v1 refinement: compact mobile parity with Four/2v2. Presentation-only; no gameplay changes. */
+@layer utilities {
+  .ng-1v1-reference-lobby .ng-room-launch-header > span,
+  .ng-1v1-reference-lobby .ng-join-room-context > p,
+  .ng-1v1-reference-lobby .ng-join-code-help {
+    display: none;
+  }
+
+  .ng-1v1-reference-lobby .ng-room-launch-header {
+    margin-bottom: 0.65rem;
+  }
+
+  .ng-1v1-reference-lobby .ng-host-identity-field {
+    gap: 0.65rem;
+    padding: 0.75rem;
+    background: rgba(125, 244, 255, 0.035);
+  }
+
+  .ng-1v1-reference-lobby .ng-host-identity-field input,
+  .ng-1v1-reference-lobby .ng-join-code-input,
+  .ng-1v1-reference-lobby #join-name {
+    min-height: 2.75rem;
+    padding-block: 0.65rem;
+  }
+
+  .ng-1v1-reference-lobby .premium-cta,
+  .ng-1v1-reference-lobby .ng-join-room-action {
+    min-height: 2.75rem;
+    padding-block: 0.65rem;
+    box-shadow: 0 0 12px rgba(125, 244, 255, 0.16);
+  }
+
+  .ng-1v1-reference-lobby .ng-home-gateway__title {
+    letter-spacing: -0.025em;
+  }
+
+  .ng-1v1-waiting-column .ng-social-lobby-kicker,
+  .ng-1v1-waiting-column .ng-social-timer-capsule,
+  .ng-1v1-waiting-column .ng-social-waiting-explainer,
+  .ng-1v1-waiting-column .ng-social-readiness-lane {
+    display: none;
+  }
+
+  .ng-1v1-waiting-column .ng-social-lobby-count-row {
+    margin-top: 0;
+  }
+
+  @media (max-width: 640px) {
+    .ng-1v1-reference-lobby {
+      border-radius: 0.9rem;
+    }
+
+    .ng-1v1-reference-lobby .ng-lobby-mobile-actions {
+      gap: 0.75rem;
+    }
+
+    .ng-1v1-waiting-column section {
+      padding: 0.9rem;
+    }
+
+    .ng-1v1-waiting-column .ng-presence-ledger {
+      gap: 0.6rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .ng-1v1-waiting-column .ng-player-row,
+    .ng-1v1-waiting-column .ng-lobby-empty-slot {
+      padding: 0.65rem;
+      border-radius: 0.75rem;
+    }
+  }
+}
+/* End 1v1 refinement */
+
+
+/* Visual Evolution Additions 33–35: winner-first result and calm synchronized transition. Presentation-only. */
+@layer utilities {
+  .ng-result-shell {
+    position: relative;
+    isolation: isolate;
+  }
+
+  .ng-result-heading {
+    text-wrap: balance;
+  }
+
+  .ng-winner-card {
+    border-color: rgba(125, 244, 255, 0.28);
+    background: linear-gradient(135deg, rgba(125, 244, 255, 0.1), rgba(255, 255, 255, 0.025));
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06), 0 16px 38px rgba(0, 0, 0, 0.18);
+  }
+
+  .ng-winner-score {
+    min-width: 4.5rem;
+    padding: 0.55rem 0.7rem;
+    border-left: 1px solid rgba(255, 255, 255, 0.12);
+  }
+
+  .ng-result-transition {
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05), 0 12px 28px rgba(0, 0, 0, 0.12);
+  }
+
+  .ng-reveal-details {
+    opacity: 0.92;
+  }
+
+  .ng-reveal-card {
+    background: rgba(255, 255, 255, 0.025);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  }
+
+  @media (max-width: 640px) {
+    .ng-winner-score {
+      width: 100%;
+      min-width: 0;
+      border-left: 0;
+      border-top: 1px solid rgba(255, 255, 255, 0.12);
+      padding-top: 0.55rem;
+    }
+
+    .ng-result-shell {
+      border-radius: 1rem;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .ng-result-shell,
+    .ng-winner-card,
+    .ng-result-transition,
+    .ng-reveal-card {
+      animation: none;
+      transition: none;
+    }
+  }
+}
+
+
+/* Addition 36 — Winner identity rail: presentation-only, no state or callback changes. */
+@layer utilities {
+  .ng-winner-card {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .ng-winner-card::before {
+    content: '';
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: 3px;
+    background: linear-gradient(180deg, theme('colors.primary-fixed'), theme('colors.secondary-fixed'));
+    opacity: 0.9;
+  }
+
+  .ng-winner-card > * {
+    position: relative;
+    z-index: 1;
+  }
+}
+
+
+/* Addition 37 — Calm transition rail: keeps countdown dominant without decorative looping motion. */
+@layer utilities {
+  .ng-result-transition {
+    position: relative;
+    overflow: hidden;
+    background-image: linear-gradient(90deg, rgba(125, 244, 255, 0.09), rgba(125, 244, 255, 0.02) 55%, rgba(233, 179, 255, 0.06));
+  }
+
+  .ng-result-transition::after {
+    content: '';
+    position: absolute;
+    inset: auto 0 0;
+    height: 2px;
+    background: linear-gradient(90deg, theme('colors.primary-fixed'), theme('colors.secondary-fixed'));
+    opacity: 0.65;
+  }
+
+  .ng-result-transition > * {
+    position: relative;
+    z-index: 1;
+  }
+}
+
+
+/* Addition 38 — Secondary reveal rhythm: reduces scan noise while preserving every target projection. */
+@layer utilities {
+  .ng-reveal-details {
+    position: relative;
+  }
+
+  .ng-reveal-details > :first-child {
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .ng-reveal-card {
+    min-height: 7.25rem;
+    transition: border-color 180ms ease-out, background-color 180ms ease-out;
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .ng-reveal-card:hover {
+      border-color: rgba(125, 244, 255, 0.24);
+      background-color: rgba(125, 244, 255, 0.045);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .ng-reveal-card {
+      transition: none;
+    }
+  }
+}
+
+
+/* Addition 39 — Countdown progress projection: data-countdown mirrors existing revealSecondsLeft only. */
+@layer utilities {
+  .ng-result-transition::before {
+    content: '';
+    position: absolute;
+    inset: auto auto 0 0;
+    height: 2px;
+    width: 0;
+    background: theme('colors.primary-fixed');
+    opacity: 0.95;
+    transition: width 180ms ease-out;
+    z-index: 2;
+  }
+
+  .ng-result-transition[data-countdown='5']::before { width: 100%; }
+  .ng-result-transition[data-countdown='4']::before { width: 80%; }
+  .ng-result-transition[data-countdown='3']::before { width: 60%; }
+  .ng-result-transition[data-countdown='2']::before { width: 40%; }
+  .ng-result-transition[data-countdown='1']::before { width: 20%; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .ng-result-transition::before { transition: none; }
+  }
+}
+
+
+/* Addition 41 — Result action focus lane: keyboard clarity without changing control behavior. */
+@layer utilities {
+  .ng-action-rail > .ng-interactive:focus-visible {
+    outline: 2px solid theme('colors.primary-fixed');
+    outline-offset: 3px;
+    box-shadow: 0 0 0 4px rgba(125, 244, 255, 0.16), 0 0 24px rgba(125, 244, 255, 0.18);
+  }
+
+  .ng-action-rail > .ng-interactive:disabled:focus-visible {
+    outline-color: rgba(255, 255, 255, 0.35);
+    box-shadow: none;
+  }
+
+  @media (max-width: 390px) {
+    .ng-action-rail > .ng-interactive {
+      min-height: 3rem;
+      padding-inline: 0.875rem;
+    }
+  }
+}
+
+
+/* Addition 42 — Compact standings lane: presentation-only mobile density for existing rows. */
+@layer utilities {
+  @media (max-width: 390px) {
+    .ng-standings-board {
+      padding: 0.625rem;
+      gap: 0.375rem;
+    }
+
+    .ng-standing-row {
+      min-height: 3rem;
+      gap: 0.5rem;
+      padding: 0.625rem 0.6875rem;
+    }
+
+    .ng-standing-row > div:first-child {
+      min-width: 0;
+      gap: 0.5rem;
+    }
+
+    .ng-standing-row > div:first-child > div:last-child {
+      min-width: 0;
+    }
+
+    .ng-standing-row .text-body-lg {
+      display: block;
+      max-width: 10rem;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+  }
+}
+
+
+/* Addition 43 — Result state rails: clearer error and waiting projection without inferred state. */
+@layer utilities {
+  .ng-result-alert {
+    box-shadow: inset 3px 0 0 rgba(255, 122, 154, 0.78);
+  }
+
+  .ng-result-waiting {
+    border-radius: 0.75rem;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: rgba(255, 255, 255, 0.025);
+    letter-spacing: 0.08em;
+  }
+
+  @media (max-width: 390px) {
+    .ng-result-alert,
+    .ng-result-waiting {
+      padding-inline: 0.75rem;
+    }
+  }
+}
+
+
+/* Addition 44 — Waiting/loading action signal: preserve disabled and pending truth, improve scanability. */
+@layer utilities {
+  .ng-action-rail > .ng-interactive:disabled {
+    border-style: dashed;
+    filter: saturate(0.72);
+  }
+
+  .ng-action-rail > .ng-interactive:disabled::after {
+    content: '';
+    display: inline-block;
+    width: 0.35rem;
+    height: 0.35rem;
+    margin-inline-start: 0.45rem;
+    border-radius: 999px;
+    background: currentColor;
+    opacity: 0.72;
+    vertical-align: middle;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .ng-action-rail > .ng-interactive:disabled {
+      filter: none;
+    }
+  }
+}
+
+/* Addition 45: 1v1 visual parity with the 2v2/Four room-entry template. Presentation-only. */
+.ng-1v1-reference-lobby {
+  border-radius: 1.5rem;
+  background: linear-gradient(135deg, rgba(255,255,255,0.055), rgba(125,244,255,0.025) 55%, rgba(233,179,255,0.02));
+  box-shadow: 0 18px 60px rgba(0,0,0,0.22);
+}
+
+.ng-1v1-reference-lobby .ng-lobby-setup-switch {
+  margin-bottom: 0.5rem;
+  max-width: 28rem;
+}
+
+.ng-1v1-reference-lobby .ng-room-launch-header,
+.ng-1v1-reference-lobby .ng-join-room-context,
+.ng-1v1-reference-lobby .ng-host-identity-field,
+.ng-1v1-reference-lobby .ng-lobby-input-guidance {
+  border-radius: 1rem;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.12);
+}
+
+.ng-1v1-reference-lobby .ng-host-identity-field,
+.ng-1v1-reference-lobby .ng-lobby-mobile-actions {
+  gap: 0.75rem;
+}
+
+.ng-1v1-reference-lobby .ng-host-identity-field input,
+.ng-1v1-reference-lobby .ng-join-code-input,
+.ng-1v1-reference-lobby #join-name,
+.ng-1v1-reference-lobby #one-v-one-category {
+  min-height: 3rem;
+  border-radius: 0.75rem;
+}
+
+.ng-1v1-reference-lobby .premium-cta,
+.ng-1v1-reference-lobby .ng-join-room-action {
+  min-height: 3rem;
+  border-radius: 0.75rem;
+  box-shadow: 0 10px 28px rgba(125,244,255,0.16);
+}
+
+.ng-1v1-waiting-column > section {
+  border-radius: 1.5rem;
+  box-shadow: 0 18px 60px rgba(0,0,0,0.22);
+}
+
+.ng-1v1-waiting-column .ng-player-row,
+.ng-1v1-waiting-column .ng-lobby-empty-slot {
+  border-radius: 1rem;
+  min-height: 3.5rem;
+}
+
+@media (max-width: 640px) {
+  .ng-1v1-reference-lobby {
+    border-radius: 1rem;
+  }
+
+  .ng-1v1-reference-lobby .ng-lobby-setup-switch {
+    max-width: none;
+  }
+
+  .ng-1v1-waiting-column > section {
+    border-radius: 1rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ng-1v1-reference-lobby,
+  .ng-1v1-reference-lobby .premium-cta,
+  .ng-1v1-reference-lobby .ng-join-room-action,
+  .ng-1v1-waiting-column .ng-player-row {
+    transition: none !important;
+  }
+}
+
+
+/* AUTO MODE — 1V1 TRUE COMPETITIVE PARITY / ADDITIONS 157–166
+   Presentation-only: no state, timers, Firebase, callbacks, routes, or scoring changes. */
+.ng-1v1-reference-lobby {
+  --ng-1v1-surface: rgba(255, 255, 255, 0.045);
+  --ng-1v1-line: rgba(125, 244, 255, 0.22);
+  --ng-1v1-line-soft: rgba(255, 255, 255, 0.11);
+  gap: 1rem !important;
+  padding: 1rem !important;
+  border: 1px solid var(--ng-1v1-line) !important;
+  border-radius: 1.25rem !important;
+  background: linear-gradient(145deg, rgba(125,244,255,0.065), rgba(255,255,255,0.025) 52%, rgba(233,179,255,0.035)) !important;
+  box-shadow: 0 18px 54px rgba(0,0,0,0.2) !important;
+}
+
+.ng-1v1-reference-lobby .ng-lobby-setup-switch {
+  width: 100% !important;
+  max-width: none !important;
+  margin: 0 !important;
+  padding: 0.25rem !important;
+  gap: 0.25rem !important;
+  border: 1px solid var(--ng-1v1-line-soft) !important;
+  border-radius: 0.9rem !important;
+  background: rgba(0,0,0,0.18) !important;
+}
+
+.ng-1v1-reference-lobby .ng-lobby-setup-switch > div {
+  border-radius: 0.65rem !important;
+  background: rgba(125,244,255,0.14) !important;
+  border-color: rgba(125,244,255,0.44) !important;
+  box-shadow: 0 8px 24px rgba(125,244,255,0.1) !important;
+}
+
+.ng-1v1-reference-lobby .ng-lobby-setup-switch button {
+  min-height: 3rem !important;
+  border-radius: 0.65rem !important;
+  font-size: 0.78rem !important;
+  letter-spacing: 0.02em !important;
+}
+
+.ng-1v1-reference-lobby .ng-room-launch-header {
+  margin: 0 !important;
+  padding: 0.85rem 1rem !important;
+  border-radius: 1rem !important;
+  border-color: var(--ng-1v1-line) !important;
+  background: linear-gradient(135deg, rgba(125,244,255,0.09), rgba(255,255,255,0.025)) !important;
+}
+
+.ng-1v1-reference-lobby .ng-room-launch-header h2 {
+  font-size: 1.05rem !important;
+  line-height: 1.25 !important;
+}
+
+.ng-1v1-reference-lobby .ng-room-launch-header > span {
+  border-color: rgba(125,244,255,0.42) !important;
+  background: rgba(125,244,255,0.1) !important;
+}
+
+.ng-1v1-reference-lobby .ng-1v1-category-field,
+.ng-1v1-reference-lobby .ng-host-identity-field,
+.ng-1v1-reference-lobby .ng-join-room-context,
+.ng-1v1-reference-lobby .ng-lobby-input-guidance {
+  border-color: var(--ng-1v1-line-soft) !important;
+  border-radius: 1rem !important;
+  background: var(--ng-1v1-surface) !important;
+  box-shadow: none !important;
+}
+
+.ng-1v1-reference-lobby .ng-1v1-category-field {
+  margin-top: 0.25rem !important;
+  padding: 0.75rem !important;
+}
+
+.ng-1v1-reference-lobby input,
+.ng-1v1-reference-lobby select {
+  min-height: 3rem !important;
+  border: 1px solid var(--ng-1v1-line-soft) !important;
+  border-radius: 0.75rem !important;
+  background: rgba(0,0,0,0.2) !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.025) !important;
+}
+
+.ng-1v1-reference-lobby .premium-cta,
+.ng-1v1-reference-lobby .ng-join-room-action {
+  min-height: 3rem !important;
+  border-radius: 0.75rem !important;
+  border: 1px solid rgba(125,244,255,0.5) !important;
+  box-shadow: 0 10px 28px rgba(125,244,255,0.14) !important;
+  transition: transform 180ms ease-out, background-color 180ms ease-out, border-color 180ms ease-out, box-shadow 180ms ease-out !important;
+}
+
+.ng-1v1-reference-lobby .premium-cta:hover,
+.ng-1v1-reference-lobby .ng-join-room-action:hover {
+  transform: translateY(-1px) !important;
+  border-color: rgba(125,244,255,0.82) !important;
+  box-shadow: 0 14px 32px rgba(125,244,255,0.22) !important;
+}
+
+.ng-1v1-reference-lobby .ng-join-room-action {
+  border-color: rgba(233,179,255,0.5) !important;
+  box-shadow: 0 10px 28px rgba(233,179,255,0.14) !important;
+}
+
+.ng-1v1-reference-lobby .ng-join-room-action:hover {
+  border-color: rgba(233,179,255,0.82) !important;
+  box-shadow: 0 14px 32px rgba(233,179,255,0.22) !important;
+}
+
+.ng-1v1-reference-lobby .ng-lobby-mobile-actions {
+  gap: 0.75rem !important;
+}
+
+.ng-1v1-reference-lobby + .ng-lobby-error-frame,
+.ng-lobby-error-frame {
+  border-radius: 1rem !important;
+  box-shadow: none !important;
+}
+
+.ng-1v1-waiting-column > section {
+  border: 1px solid rgba(125,244,255,0.2) !important;
+  border-radius: 1.25rem !important;
+  background: linear-gradient(145deg, rgba(125,244,255,0.055), rgba(255,255,255,0.025)) !important;
+  box-shadow: 0 18px 54px rgba(0,0,0,0.2) !important;
+}
+
+.ng-1v1-waiting-column .ng-player-row,
+.ng-1v1-waiting-column .ng-lobby-empty-slot {
+  min-height: 3.25rem !important;
+  border-radius: 0.9rem !important;
+  border-color: var(--ng-1v1-line-soft) !important;
+  background: rgba(255,255,255,0.035) !important;
+  transition: border-color 180ms ease-out, background-color 180ms ease-out !important;
+}
+
+.ng-1v1-waiting-column .ng-player-row:hover {
+  border-color: rgba(125,244,255,0.32) !important;
+  background: rgba(125,244,255,0.06) !important;
+}
+
+@media (max-width: 640px) {
+  .ng-1v1-reference-lobby .ng-lobby-mobile-actions,
+  .ng-1v1-reference-lobby .ng-host-identity-field,
+  .ng-1v1-reference-lobby .ng-join-room-context {
+    width: 100% !important;
+  }
+
+  .ng-1v1-reference-lobby .ng-host-identity-field .premium-cta,
+  .ng-1v1-reference-lobby .ng-join-room-action {
+    width: 100% !important;
+  }
+
+  .ng-1v1-reference-lobby .ng-room-launch-header {
+    padding: 0.75rem !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ng-1v1-reference-lobby .premium-cta,
+  .ng-1v1-reference-lobby .ng-join-room-action,
+  .ng-1v1-waiting-column .ng-player-row {
+    transition: none !important;
+  }
+
+  .ng-1v1-reference-lobby .premium-cta:hover,
+  .ng-1v1-reference-lobby .ng-join-room-action:hover,
+  .ng-1v1-waiting-column .ng-player-row:hover {
+    transform: none !important;
+  }
+}
+
+
+/* AUTO MODE — HOME SCALE CONTINUATION / ADDITIONS 167–169
+   Presentation-only: existing navigate handlers, copy, state and mode routes remain unchanged. */
+.ng-home-gateway {
+  --ng-home-line: rgba(125,244,255,0.2);
+  --ng-home-line-soft: rgba(255,255,255,0.1);
+  --ng-home-card: rgba(255,255,255,0.035);
+}
+
+/* 167 — Equal Mode Card Rhythm: both primary modes share one visual grid language. */
+.ng-home-gateway .ng-home-route-card.premium-2v2-hero,
+.ng-home-gateway .ng-home-route-card.premium-1v1-hero {
+  min-height: 0 !important;
+  padding: 1rem !important;
+  border-radius: 1.25rem !important;
+  background: linear-gradient(145deg, var(--ng-home-card), rgba(255,255,255,0.018)) !important;
+  box-shadow: 0 14px 40px rgba(0,0,0,0.16) !important;
+}
+
+.ng-home-gateway .premium-2v2-hero > div,
+.ng-home-gateway .premium-1v1-hero > div {
+  gap: 1rem !important;
+}
+
+.ng-home-gateway .premium-2v2-hero > div > div:first-child,
+.ng-home-gateway .premium-1v1-hero > div > div:first-child {
+  width: 5.5rem !important;
+  min-height: 5.5rem !important;
+  border-radius: 1rem !important;
+}
+
+/* 168 — Readable Mobile Copy: preserve meaning while stopping descriptions from dominating the action. */
+.ng-home-gateway .premium-2v2-hero p,
+.ng-home-gateway .premium-1v1-hero p {
+  max-width: 46rem !important;
+  line-height: 1.55 !important;
+  text-wrap: balance !important;
+}
+
+.ng-home-gateway .premium-2v2-hero .premium-kicker,
+.ng-home-gateway .premium-1v1-hero .premium-kicker {
+  letter-spacing: 0.12em !important;
+  font-size: 0.65rem !important;
+}
+
+.ng-home-gateway .premium-2v2-hero .premium-pill,
+.ng-home-gateway .premium-1v1-hero .premium-pill {
+  min-height: 1.75rem !important;
+  padding-inline: 0.65rem !important;
+  border-radius: 999px !important;
+  border-color: var(--ng-home-line-soft) !important;
+  background: rgba(255,255,255,0.045) !important;
+}
+
+/* 169 — Shared Entry Action: calm, consistent buttons replace the visually noisy card-specific treatment. */
+.ng-home-gateway .premium-2v2-hero > div > button,
+.ng-home-gateway .premium-1v1-hero > div > button {
+  min-height: 3rem !important;
+  border-radius: 0.75rem !important;
+  padding-inline: 1rem !important;
+  letter-spacing: 0.045em !important;
+  box-shadow: 0 10px 26px rgba(0,0,0,0.16) !important;
+  transition: transform 180ms ease-out, background-color 180ms ease-out, border-color 180ms ease-out, box-shadow 180ms ease-out !important;
+}
+
+.ng-home-gateway .premium-2v2-hero > div > button:hover,
+.ng-home-gateway .premium-1v1-hero > div > button:hover {
+  transform: translateY(-1px) !important;
+  box-shadow: 0 14px 30px rgba(0,0,0,0.22) !important;
+}
+
+@media (max-width: 640px) {
+  .ng-home-gateway .ng-home-route-card.premium-2v2-hero,
+  .ng-home-gateway .ng-home-route-card.premium-1v1-hero {
+    padding: 0.9rem !important;
+  }
+
+  .ng-home-gateway .premium-2v2-hero > div > div:first-child,
+  .ng-home-gateway .premium-1v1-hero > div > div:first-child {
+    width: 100% !important;
+    min-height: 4.5rem !important;
+  }
+
+  .ng-home-gateway .premium-2v2-hero h2,
+  .ng-home-gateway .premium-1v1-hero h2 {
+    font-size: clamp(1.35rem, 7vw, 1.9rem) !important;
+    line-height: 1.05 !important;
+  }
+
+  .ng-home-gateway .premium-2v2-hero > div > button,
+  .ng-home-gateway .premium-1v1-hero > div > button {
+    width: 100% !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ng-home-gateway .premium-2v2-hero > div > button,
+  .ng-home-gateway .premium-1v1-hero > div > button {
+    transition: none !important;
+  }
+
+  .ng-home-gateway .premium-2v2-hero > div > button:hover,
+  .ng-home-gateway .premium-1v1-hero > div > button:hover {
+    transform: none !important;
+  }
+}
+
+
+/* AUTO MODE — HOME INTERACTION CLARITY / ADDITIONS 170–172
+   Presentation-only. Existing buttons, handlers, routes and state remain unchanged. */
+.ng-home-gateway .premium-2v2-hero,
+.ng-home-gateway .premium-1v1-hero {
+  min-width: 0 !important;
+  overflow: clip !important;
+}
+
+/* 170 — explicit keyboard focus; reset broad hover rules on touch-capable devices. */
+.ng-home-gateway .premium-2v2-hero > div > button,
+.ng-home-gateway .premium-1v1-hero > div > button {
+  transform: none !important;
+  outline: none !important;
+}
+.ng-home-gateway .premium-2v2-hero > div > button:focus-visible,
+.ng-home-gateway .premium-1v1-hero > div > button:focus-visible {
+  outline: 2px solid var(--ng-color-primary) !important;
+  outline-offset: 3px !important;
+  box-shadow: var(--ng-focus-ring) !important;
+}
+
+/* 171 — a stable action lane that does not depend on hover to communicate affordance. */
+.ng-home-gateway .premium-2v2-hero > div,
+.ng-home-gateway .premium-1v1-hero > div {
+  min-width: 0 !important;
+}
+.ng-home-gateway .premium-2v2-hero > div > button,
+.ng-home-gateway .premium-1v1-hero > div > button {
+  align-self: stretch !important;
+  justify-content: center !important;
+  white-space: normal !important;
+  text-wrap: balance !important;
+}
+
+/* 172 — narrow-screen rhythm and overflow protection for long mode labels/pills. */
+.ng-home-gateway .premium-2v2-hero h2,
+.ng-home-gateway .premium-1v1-hero h2,
+.ng-home-gateway .premium-2v2-hero p,
+.ng-home-gateway .premium-1v1-hero p,
+.ng-home-gateway .premium-2v2-hero .premium-pill,
+.ng-home-gateway .premium-1v1-hero .premium-pill {
+  min-width: 0 !important;
+  max-width: 100% !important;
+  overflow-wrap: anywhere !important;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .ng-home-gateway .premium-2v2-hero > div > button:hover,
+  .ng-home-gateway .premium-1v1-hero > div > button:hover {
+    transform: translateY(-1px) !important;
+  }
+}
+
+@media (max-width: 640px) {
+  .ng-home-gateway .premium-2v2-hero > div,
+  .ng-home-gateway .premium-1v1-hero > div {
+    gap: 0.8rem !important;
+  }
+  .ng-home-gateway .premium-2v2-hero > div > button,
+  .ng-home-gateway .premium-1v1-hero > div > button {
+    min-height: 3.25rem !important;
+    padding-inline: 0.85rem !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ng-home-gateway .premium-2v2-hero > div > button,
+  .ng-home-gateway .premium-1v1-hero > div > button {
+    transition: none !important;
+    transform: none !important;
+  }
+}
+
+
+/* AUTO MODE — HOME SCALE CONTINUATION / ADDITIONS 173–175
+   Presentation-only. Existing markup, routes, handlers, state and copy remain unchanged. */
+
+/* 173 — mode identity rail: a quiet product-specific edge signal replaces extra decoration. */
+.ng-home-gateway .ng-home-route-card.premium-2v2-hero,
+.ng-home-gateway .ng-home-route-card.premium-1v1-hero {
+  position: relative !important;
+  isolation: isolate;
+}
+
+.ng-home-gateway .ng-home-route-card.premium-2v2-hero::before,
+.ng-home-gateway .ng-home-route-card.premium-1v1-hero::before {
+  content: "";
+  position: absolute;
+  inset-block: 0.85rem;
+  inset-inline-start: 0;
+  width: 0.2rem;
+  border-radius: 999px;
+  background: linear-gradient(180deg, rgba(125,244,255,0.9), rgba(173,130,255,0.35));
+  opacity: 0.82;
+  pointer-events: none;
+}
+
+.ng-home-gateway .ng-home-route-card.premium-2v2-hero > *,
+.ng-home-gateway .ng-home-route-card.premium-1v1-hero > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* 174 — stable mode identity block: icon, kicker and title keep one readable alignment. */
+.ng-home-gateway .premium-2v2-hero > div,
+.ng-home-gateway .premium-1v1-hero > div {
+  align-items: stretch !important;
+}
+
+.ng-home-gateway .premium-2v2-hero > div > div:first-child,
+.ng-home-gateway .premium-1v1-hero > div > div:first-child {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  flex: 0 0 auto !important;
+  overflow: hidden !important;
+}
+
+.ng-home-gateway .premium-2v2-hero .premium-kicker,
+.ng-home-gateway .premium-1v1-hero .premium-kicker,
+.ng-home-gateway .premium-2v2-hero h2,
+.ng-home-gateway .premium-1v1-hero h2 {
+  min-width: 0 !important;
+  max-width: 100% !important;
+  overflow-wrap: anywhere !important;
+}
+
+/* 175 — compact mobile rhythm: content breathes without making the cards taller. */
+@media (max-width: 640px) {
+  .ng-home-gateway .ng-home-route-card.premium-2v2-hero,
+  .ng-home-gateway .ng-home-route-card.premium-1v1-hero {
+    gap: 0.75rem !important;
+    padding: 0.85rem !important;
+  }
+
+  .ng-home-gateway .premium-2v2-hero > div,
+  .ng-home-gateway .premium-1v1-hero > div {
+    gap: 0.7rem !important;
+  }
+
+  .ng-home-gateway .premium-2v2-hero p,
+  .ng-home-gateway .premium-1v1-hero p {
+    font-size: 0.82rem !important;
+    line-height: 1.45 !important;
+  }
+
+  .ng-home-gateway .premium-2v2-hero > div > button,
+  .ng-home-gateway .premium-1v1-hero > div > button {
+    min-height: 3.15rem !important;
+    margin-top: 0.1rem !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ng-home-gateway .ng-home-route-card.premium-2v2-hero,
+  .ng-home-gateway .ng-home-route-card.premium-1v1-hero,
+  .ng-home-gateway .premium-2v2-hero > div > button,
+  .ng-home-gateway .premium-1v1-hero > div > button {
+    transition: none !important;
+    transform: none !important;
+  }
+}
+
+
+/* AUTO MODE — HOME SCALE CONTINUATION / ADDITIONS 176–178
+   Presentation-only. Existing DOM, handlers, routes, state and copy remain unchanged. */
+/* 176 — metadata rhythm: pills stay readable as a resilient, wrapping signal row. */
+.ng-home-gateway .premium-2v2-hero .premium-pill,
+.ng-home-gateway .premium-1v1-hero .premium-pill {
+  flex: 0 1 auto !important;
+  min-width: min-content !important;
+  max-width: 100% !important;
+  white-space: normal !important;
+  text-align: center !important;
+  line-height: 1.15 !important;
+}
+.ng-home-gateway .premium-2v2-hero [class*="gap"],
+.ng-home-gateway .premium-1v1-hero [class*="gap"] {
+  min-width: 0 !important;
+}
+/* 177 — action separation: make the primary route legible without adding a new card. */
+.ng-home-gateway .premium-2v2-hero > div > button,
+.ng-home-gateway .premium-1v1-hero > div > button {
+  border-top: 1px solid rgba(125, 244, 255, 0.18) !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04), 0 0 0 1px rgba(255, 255, 255, 0.04) !important;
+}
+.ng-home-gateway .premium-2v2-hero > div > button:focus-visible,
+.ng-home-gateway .premium-1v1-hero > div > button:focus-visible {
+  border-top-color: rgba(125, 244, 255, 0.72) !important;
+}
+/* 178 — tactile state remains explicit on touch and keyboard without layout movement. */
+.ng-home-gateway .premium-2v2-hero > div > button:active:not(:disabled),
+.ng-home-gateway .premium-1v1-hero > div > button:active:not(:disabled) {
+  transform: translateY(1px) scale(0.985) !important;
+  filter: brightness(1.06) saturate(1.04) !important;
+}
+@media (max-width: 360px) {
+  .ng-home-gateway .premium-2v2-hero .premium-pill,
+  .ng-home-gateway .premium-1v1-hero .premium-pill {
+    min-height: 2rem !important;
+    padding-inline: 0.55rem !important;
+    font-size: 0.68rem !important;
+  }
+  .ng-home-gateway .premium-2v2-hero > div > button,
+  .ng-home-gateway .premium-1v1-hero > div > button {
+    min-height: 3rem !important;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ng-home-gateway .premium-2v2-hero > div > button,
+  .ng-home-gateway .premium-1v1-hero > div > button {
+    transform: none !important;
+    filter: none !important;
+    transition: none !important;
+  }
+}
+
+
+/* AUTO MODE — ROOM FEEDBACK SCALE / ADDITIONS 179–181
+   Presentation-only. Existing status projection, controls and callbacks remain unchanged. */
+/* 179 — feedback stack: alerts read as one calm system rail instead of disconnected boxes. */
+.ng-page-shell > [role="alert"],
+.ng-page-shell > [role="status"],
+.ng-page-shell > [role="dialog"] {
+  position: relative;
+  min-width: 0;
+  overflow-wrap: anywhere;
+  border-radius: var(--ng-radius-control, 12px);
+  background: rgba(255, 255, 255, 0.035);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+.ng-page-shell > [role="alert"] strong,
+.ng-page-shell > [role="status"] strong,
+.ng-page-shell > [role="dialog"] strong {
+  color: #ffffff;
+}
+/* 180 — exit control: visually secondary, compact, and still easy to hit. */
+.ng-page-shell > div:first-child > button[aria-busy],
+.ng-page-shell > div:first-child > button.touch-feedback {
+  min-height: 2.75rem;
+  flex: 0 0 auto;
+  white-space: nowrap;
+  border-radius: var(--ng-radius-control, 12px);
+}
+/* 181 — connection/recovery surfaces share a quiet telemetry edge without inventing state. */
+.ng-page-shell > [role="status"]::before,
+.ng-page-shell > [role="dialog"]::before {
+  content: "";
+  display: inline-block;
+  width: 0.4rem;
+  height: 0.4rem;
+  margin-inline-end: 0.5rem;
+  vertical-align: 0.08em;
+  border-radius: 999px;
+  background: var(--ng-color-primary, #7df4ff);
+  box-shadow: 0 0 10px rgba(125, 244, 255, 0.5);
+}
+@media (max-width: 640px) {
+  .ng-page-shell > [role="alert"],
+  .ng-page-shell > [role="status"],
+  .ng-page-shell > [role="dialog"] {
+    padding: 0.75rem !important;
+    line-height: 1.4;
+  }
+  .ng-page-shell > div:first-child {
+    align-items: flex-start !important;
+  }
+  .ng-page-shell > div:first-child > button[aria-busy],
+  .ng-page-shell > div:first-child > button.touch-feedback {
+    min-height: 2.75rem;
+    padding-inline: 0.8rem;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ng-page-shell > [role="alert"],
+  .ng-page-shell > [role="status"],
+  .ng-page-shell > [role="dialog"] {
+    transition: none !important;
+  }
+}
+
+
+/* AUTO MODE — 1V1 ROOM COMPRESSION / ADDITIONS 182–184
+   Presentation-only. Copy control styling is prepared, but no new callback is introduced here. */
+/* 182 — compact primary actions: smaller visual mass while preserving mobile hit area. */
+.ng-lobby-mobile-actions .premium-cta,
+.ng-lobby-mobile-actions .ng-join-room-action {
+  min-height: 2.75rem;
+  padding-block: 0.68rem;
+  padding-inline: 1rem;
+  border-radius: 0.7rem;
+  font-size: 0.78rem;
+  line-height: 1.1;
+}
+@media (min-width: 640px) {
+  .ng-lobby-mobile-actions .premium-cta,
+  .ng-lobby-mobile-actions .ng-join-room-action {
+    min-height: 2.65rem;
+    padding-inline: 1.15rem;
+  }
+}
+/* 183 — 1v1 compact portrait frame: a 2:3 visual rhythm without clipping content. */
+.ng-1v1-waiting-column {
+  width: min(100%, 24rem);
+  max-width: 24rem;
+  margin-inline: auto;
+}
+.ng-1v1-waiting-column > section,
+.ng-room-created-card {
+  min-height: clamp(22rem, 96vw, 34rem);
+  aspect-ratio: 2 / 3;
+}
+@media (max-width: 639px) {
+  .ng-1v1-waiting-column > section,
+  .ng-room-created-card {
+    min-height: 0;
+    aspect-ratio: 2 / 3;
+  }
+}
+/* 184 — code lane: keeps the code dominant and leaves a predictable slot for a future copy action. */
+.ng-room-code-spotlight,
+.ng-room-created-card {
+  min-width: 0;
+}
+.ng-room-code-primary {
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+.ng-room-code-copy {
+  min-width: 2.75rem;
+  min-height: 2.75rem;
+  padding: 0.55rem;
+  border-radius: 0.65rem;
+  border: 1px solid rgba(125, 244, 255, 0.28);
+  color: var(--ng-color-primary, #7df4ff);
+  background: rgba(125, 244, 255, 0.06);
+}
+@media (hover: hover) and (pointer: fine) {
+  .ng-room-code-copy:hover {
+    background: rgba(125, 244, 255, 0.12);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ng-room-code-copy {
+    transition: none !important;
+  }
+}
+
+
+/* AUTO MODE — ROOM HEADER & FORM POLISH / ADDITIONS 185–187
+   Presentation-only. Existing handlers, state and room outcomes remain unchanged. */
+/* 185 — mobile header hierarchy: mode identity stays readable without competing with Leave. */
+.ng-page-shell > div:first-child {
+  min-width: 0;
+}
+.ng-page-shell > div:first-child > div:first-child {
+  min-width: 0;
+}
+.ng-page-shell > div:first-child h1,
+.ng-page-shell > div:first-child .text-primary-fixed {
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+@media (max-width: 390px) {
+  .ng-page-shell > div:first-child {
+    gap: 0.65rem;
+  }
+  .ng-page-shell > div:first-child h1 {
+    font-size: clamp(1.25rem, 6.2vw, 1.65rem);
+    line-height: 1.08;
+  }
+  .ng-page-shell > div:first-child > button {
+    min-height: 2.65rem;
+    padding-inline: 0.7rem;
+    font-size: 0.7rem;
+  }
+}
+/* 186 — form rows: labels and controls align as one deliberate input lane. */
+.ng-lobby-input-guidance {
+  min-width: 0;
+}
+.ng-lobby-input-guidance > label {
+  min-height: 1rem;
+  letter-spacing: 0.08em;
+}
+.ng-lobby-input-guidance > input,
+.ng-lobby-input-guidance > select {
+  min-width: 0;
+  max-width: 100%;
+}
+/* 187 — room code hierarchy: code remains primary, supporting copy stays quiet and wrapped. */
+.ng-room-code-label,
+.ng-room-share-instruction,
+.ng-room-share-status {
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  text-align: center;
+}
+.ng-room-code-spotlight {
+  gap: 0.35rem;
+  max-width: 100%;
+}
+.ng-room-code-spotlight > span:last-child {
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+@media (max-width: 390px) {
+  .ng-room-created-card {
+    padding-inline: 0.85rem;
+  }
+  .ng-room-code-primary {
+    min-width: 0;
+    width: 100%;
+    font-size: clamp(1.15rem, 8vw, 1.5rem);
+  }
+}
+
+
+/* AUTO MODE — 1V1 COPY CODE POLISH / ADDITIONS 188–190
+   Presentation-only. Copy behavior and room state remain unchanged. */
+/* 188 — code lane: keep the code and action legible as one compact unit. */
+.ng-room-code-row {
+  min-width: 0;
+}
+.ng-room-code-row .ng-room-code-primary {
+  min-width: 0;
+  flex: 1 1 auto;
+}
+/* 189 — copy action: visible affordance without competing with the room code. */
+.ng-room-code-copy {
+  flex: 0 0 2.75rem;
+  color: var(--ng-color-primary, #7df4ff);
+  -webkit-tap-highlight-color: transparent;
+}
+.ng-room-code-copy:active {
+  transform: scale(0.96);
+}
+.ng-room-code-copy:focus-visible {
+  box-shadow: 0 0 0 3px rgba(125, 244, 255, 0.16);
+}
+/* 190 — copy feedback: reserve a stable, quiet line so success does not shift the card. */
+.ng-room-copy-status {
+  min-height: 1rem;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  text-align: center;
+  letter-spacing: 0.04em;
+}
+@media (max-width: 340px) {
+  .ng-room-code-row {
+    gap: 0.4rem;
+  }
+  .ng-room-code-row .ng-room-code-primary {
+    letter-spacing: 0.18em;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ng-room-code-copy:active {
+    transform: none;
+  }
+}
+
+
+/* AUTO MODE — COPY STATUS & MOBILE CODE RHYTHM / ADDITIONS 191–193
+   Presentation-only. Clipboard, room state, and existing actions remain unchanged. */
+/* 191 — status tone: feedback remains subordinate to the room code. */
+.ng-room-copy-status,
+.ng-room-share-status {
+  color: var(--ng-color-text-muted, #c2d2d3);
+  font-size: 0.72rem;
+  line-height: 1.35;
+}
+/* 192 — compact code row: preserve a stable action lane without clipping. */
+.ng-room-code-row {
+  align-items: center;
+  width: 100%;
+}
+.ng-room-code-row > * {
+  min-width: 0;
+}
+/* 193 — narrow viewport guard: allow the code to yield while the control stays usable. */
+@media (max-width: 360px) {
+  .ng-room-code-row .ng-room-code-primary {
+    font-size: clamp(1rem, 7.2vw, 1.3rem);
+    letter-spacing: 0.14em;
+  }
+  .ng-room-code-copy {
+    flex-basis: 2.65rem;
+    min-width: 2.65rem;
+    min-height: 2.65rem;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ng-room-code-copy {
+    transition: none !important;
+  }
+}
+
+
+/* AUTO MODE — COPY CODE FINISHING PASS / ADDITIONS 194–196
+   Presentation-only. Existing Copy behavior, room state, and actions remain unchanged. */
+/* 194 — semantic feedback contrast without overpowering the primary code. */
+.ng-room-copy-status[role="status"] {
+  display: block;
+  padding-inline: 0.25rem;
+  color: color-mix(in srgb, var(--ng-color-text-muted, #c2d2d3) 86%, var(--ng-color-primary, #7df4ff));
+}
+/* 195 — code/action seam: visually group the controls while preserving independent focus. */
+.ng-room-code-row {
+  isolation: isolate;
+}
+.ng-room-code-row .ng-room-code-copy {
+  position: relative;
+  z-index: 1;
+}
+/* 196 — compact mobile guard for long localized labels and generated room IDs. */
+@media (max-width: 390px) {
+  .ng-room-code-row {
+    gap: clamp(0.4rem, 2vw, 0.65rem);
+  }
+  .ng-room-code-primary {
+    text-wrap: balance;
+  }
+  .ng-room-copy-status[role="status"] {
+    min-height: 1.1rem;
+  }
+}
+
+
+/* AUTO MODE — COPY CODE ACCESSIBILITY PASS / ADDITIONS 197–199
+   Presentation-only. No callbacks, state, Firebase, or room behavior changed. */
+/* 197 — keep the code baseline visually stable beside the compact control. */
+.ng-room-code-primary {
+  min-width: 0;
+  overflow-wrap: anywhere;
+  line-height: 1.15;
+}
+/* 198 — retain a clear keyboard focus boundary without moving neighboring content. */
+.ng-room-code-copy:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--ng-color-primary, #7df4ff) 82%, white);
+  outline-offset: 3px;
+}
+/* 199 — preserve logical spacing when Arabic/RTL content is rendered. */
+[dir="rtl"] .ng-room-code-row {
+  flex-direction: row-reverse;
+}
+@media (max-width: 390px) {
+  .ng-room-code-copy {
+    flex: 0 0 auto;
+  }
+  .ng-room-code-primary {
+    letter-spacing: 0.08em;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ng-room-code-copy {
+    transition: none;
+  }
+}
+
+
+/* AUTO MODE — COPY CODE FINAL MOBILE PASS / ADDITIONS 200–202
+   Presentation-only. Existing callbacks, state, and room behavior remain unchanged. */
+/* 200 — give the code lane a quiet surface so the identifier reads as one unit. */
+.ng-room-code-row {
+  border-radius: 0.9rem;
+  background: color-mix(in srgb, var(--ng-color-surface, #10202a) 72%, transparent);
+}
+/* 201 — keep the compact control visually subordinate to the room identifier. */
+.ng-room-code-copy {
+  min-width: 2.75rem;
+  min-height: 2.75rem;
+  white-space: nowrap;
+}
+/* 202 — make long status copy wrap without shifting the code lane. */
+.ng-room-copy-status[role="status"] {
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+@media (max-width: 390px) {
+  .ng-room-code-row {
+    padding: 0.55rem;
+  }
+  .ng-room-code-copy {
+    min-width: 2.65rem;
+    min-height: 2.65rem;
+  }
+}
+
+
+/* AUTO MODE — 1V1 CODE CLARITY PASS / ADDITIONS 203–205
+   Presentation-only. No state, callbacks, Firebase, or room behavior changed. */
+/* 203 — numeric rhythm makes room identifiers scan faster at a glance. */
+.ng-1v1-reference-lobby .ng-room-code-primary {
+  font-variant-numeric: tabular-nums;
+  text-rendering: optimizeLegibility;
+}
+/* 204 — a restrained edge separates the code lane from surrounding glass surfaces. */
+.ng-1v1-reference-lobby .ng-room-code-row {
+  border: 1px solid color-mix(in srgb, var(--ng-color-primary, #7df4ff) 16%, transparent);
+  box-shadow: inset 0 1px 0 color-mix(in srgb, white 8%, transparent);
+}
+/* 205 — preserve the mobile action lane when the identifier is unusually long. */
+@media (max-width: 390px) {
+  .ng-1v1-reference-lobby .ng-room-code-row {
+    align-items: center;
+    gap: 0.45rem;
+  }
+  .ng-1v1-reference-lobby .ng-room-code-primary {
+    font-size: clamp(0.88rem, 4vw, 1.05rem);
+  }
+}
+
+
+/* AUTO MODE — ROOM ACTION CRAFT PASS / ADDITIONS 206–208
+   Presentation-only overrides. Existing callbacks and control order are preserved. */
+/* 206 — replace the broad JSX transition with explicit, GPU-safe properties. */
+.ng-1v1-reference-lobby .ng-room-share-action {
+  transition-property: transform, color, background-color, border-color;
+  transition-duration: 180ms;
+  transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+}
+/* 207 — keep Copy feedback crisp and interruptible without animating layout. */
+.ng-1v1-reference-lobby .ng-room-code-copy {
+  transition: transform 140ms cubic-bezier(0.22, 1, 0.36, 1), color 140ms ease-out,
+    background-color 140ms ease-out;
+}
+/* 208 — keep the room action lane readable when controls stack on narrow phones. */
+@media (max-width: 390px) {
+  .ng-1v1-reference-lobby .ng-room-share-action {
+    min-height: 2.75rem;
+    padding-inline: 0.85rem;
+  }
+  .ng-1v1-reference-lobby .ng-room-code-copy {
+    flex: 0 0 2.75rem;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ng-1v1-reference-lobby .ng-room-share-action,
+  .ng-1v1-reference-lobby .ng-room-code-copy {
+    transition: none;
+  }
+}
+
+
+/* AUTO MODE — 1v1 REFERENCE LOBBY RESET / ADDITIONS 209–211
+   Presentation-only. Keep existing JSX controls, callbacks, and state projection. */
+/* 209 — remove generic decorative blobs that make 1v1 feel unlike the reference modes. */
+.ng-1v1-reference-lobby .absolute.pointer-events-none {
+  display: none;
+}
+/* 210 — replace stacked social chrome with a quiet, mode-first waiting header. */
+.ng-1v1-reference-lobby .ng-social-lobby-kicker,
+.ng-1v1-reference-lobby .ng-social-capacity-pill,
+.ng-1v1-reference-lobby .ng-social-timer-capsule {
+  display: none;
+}
+.ng-1v1-reference-lobby .ng-room-code-spotlight {
+  background: color-mix(in srgb, var(--surface-dim, #111827) 82%, transparent);
+  border-color: color-mix(in srgb, var(--primary-fixed, #7df4ff) 24%, transparent);
+  box-shadow: none;
+}
+/* 211 — compact action language shared by Create, Join, and Start without changing targets. */
+.ng-1v1-reference-lobby .ng-create-room-action,
+.ng-1v1-reference-lobby .ng-join-room-action,
+.ng-1v1-reference-lobby .ng-lobby-action-dock > button {
+  min-height: 2.75rem;
+  border-radius: 0.75rem;
+  transition-property: transform, color, background-color, border-color, box-shadow;
+  transition-duration: 180ms;
+  transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+}
+@media (max-width: 390px) {
+  .ng-1v1-reference-lobby .ng-create-room-action,
+  .ng-1v1-reference-lobby .ng-join-room-action,
+  .ng-1v1-reference-lobby .ng-lobby-action-dock > button {
+    min-height: 2.65rem;
+    padding-inline: 0.85rem;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ng-1v1-reference-lobby .ng-create-room-action,
+  .ng-1v1-reference-lobby .ng-join-room-action,
+  .ng-1v1-reference-lobby .ng-lobby-action-dock > button {
+    transition: none;
+  }
+}
+
+
+/* AUTO MODE — 1v1 ROOM SHELL RECOMPOSITION / ADDITIONS 212–214
+   Replace noisy visual treatment while preserving category controls and state projection. */
+/* 212 — remove image-card spectacle; keep the existing category buttons as compact controls. */
+.ng-1v1-reference-lobby .ng-category-spotlight {
+  gap: 0.75rem;
+  padding: 0.85rem;
+  background: transparent;
+  border-color: color-mix(in srgb, var(--on-surface, #f6f7fb) 10%, transparent);
+  box-shadow: none;
+}
+.ng-1v1-reference-lobby .ng-category-spotlight > h2 {
+  margin: 0;
+  font-size: 0.7rem;
+  line-height: 1rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--on-surface, #f6f7fb) 58%, transparent);
+}
+.ng-1v1-reference-lobby .ng-category-spotlight > div {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.5rem;
+}
+.ng-1v1-reference-lobby .ng-category-spotlight > div > button {
+  min-height: 2.6rem;
+  aspect-ratio: auto;
+  padding: 0.55rem 0.65rem;
+  justify-content: center;
+  align-items: center;
+  border-radius: 0.7rem;
+  background: color-mix(in srgb, var(--surface-container, #1b2330) 78%, transparent);
+  box-shadow: none;
+  transition-property: transform, color, background-color, border-color;
+  transition-duration: 160ms;
+  transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+}
+/* Remove decorative image layers and retain only the semantic label/icon. */
+.ng-1v1-reference-lobby .ng-category-spotlight > div > button > .absolute {
+  display: none;
+}
+.ng-1v1-reference-lobby .ng-category-spotlight > div > button > div:last-child {
+  position: static;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.ng-1v1-reference-lobby .ng-category-spotlight > div > button .material-symbols-outlined {
+  display: none;
+}
+.ng-1v1-reference-lobby .ng-category-spotlight > div > button span {
+  font-size: 0.72rem;
+  line-height: 1.05rem;
+  text-align: center;
+}
+/* 213 — keep the create form as the visual anchor instead of duplicating room chrome. */
+.ng-1v1-reference-lobby .ng-room-setup-panel,
+.ng-1v1-reference-lobby .ng-room-summary-panel {
+  box-shadow: none;
+}
+/* 214 — make the lobby read as one compact waiting surface. */
+.ng-1v1-reference-lobby .ng-presence-ledger,
+.ng-1v1-reference-lobby .ng-1v1-waiting-state,
+.ng-1v1-reference-lobby .ng-lobby-action-dock {
+  max-width: 100%;
+}
+@media (max-width: 390px) {
+  .ng-1v1-reference-lobby .ng-category-spotlight > div > button {
+    min-width: 0;
+    padding-inline: 0.35rem;
+  }
+  .ng-1v1-reference-lobby .ng-category-spotlight > div > button span {
+    overflow-wrap: anywhere;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ng-1v1-reference-lobby .ng-category-spotlight > div > button {
+    transition: none;
+  }
+}
+
+/* Additions 215–219: explicit 1v1 surface replacement requested by user.
+   Presentation-only; state, callbacks, room authority, and Firebase remain intact. */
+.ng-1v1-visual-reset .ng-status-stack,
+.ng-1v1-visual-reset .ng-category-spotlight,
+.ng-1v1-visual-reset .ng-1v1-category-field {
+  display: none !important;
+}
+
+.ng-1v1-visual-reset .ng-home-gateway__intro {
+  max-width: 30rem;
+  margin-inline: auto;
+  text-align: center;
+}
+
+.ng-1v1-visual-reset .ng-home-route-card,
+.ng-1v1-visual-reset .ng-room-created-card,
+.ng-1v1-visual-reset .ng-1v1-waiting-column > section {
+  background-image: none;
+  box-shadow: none;
+}
+
+.ng-1v1-visual-reset .ng-room-launch-header,
+.ng-1v1-visual-reset .ng-join-room-context {
+  display: none;
+}
+
+.ng-1v1-visual-reset .ng-lobby-setup-switch {
+  margin-bottom: 0;
+  border-color: rgb(255 255 255 / 0.12);
+  background: rgb(255 255 255 / 0.035);
+}
+
+.ng-1v1-visual-reset .ng-lobby-setup-switch button {
+  min-height: 2.7rem;
+  padding-block: 0.55rem;
+  font-size: 0.78rem;
+}
+
+.ng-1v1-visual-reset .ng-host-identity-field,
+.ng-1v1-visual-reset .ng-room-created-card {
+  width: 100%;
+  border-color: rgb(255 255 255 / 0.12);
+  background: rgb(255 255 255 / 0.035);
+  padding: 0.8rem;
+  box-shadow: none;
+}
+
+.ng-1v1-visual-reset .ng-host-identity-field .premium-cta,
+.ng-1v1-visual-reset .ng-join-room-action {
+  min-height: 2.8rem;
+  padding: 0.65rem 1rem;
+  border-radius: 0.65rem;
+  box-shadow: none;
+  font-size: 0.78rem;
+  transition: transform 160ms ease-out, color 160ms ease-out, background-color 160ms ease-out, border-color 160ms ease-out;
+}
+
+.ng-1v1-visual-reset .ng-room-code-row {
+  justify-content: stretch;
+  gap: 0.4rem;
+}
+
+.ng-1v1-visual-reset .ng-room-code-primary {
+  min-width: 0;
+  flex: 1 1 auto;
+  padding: 0.52rem 0.65rem;
+  font-size: 1.15rem;
+  letter-spacing: 0.18em;
+  box-shadow: none;
+}
+
+.ng-1v1-visual-reset .ng-room-code-copy {
+  width: 2.25rem;
+  height: 2.25rem;
+  border: 1px solid rgb(255 255 255 / 0.14);
+  border-radius: 0.55rem;
+  color: rgb(125 244 255 / 0.78);
+  background: rgb(255 255 255 / 0.04);
+  transition: transform 140ms ease-out, color 140ms ease-out, background-color 140ms ease-out, border-color 140ms ease-out;
+}
+
+.ng-1v1-visual-reset .ng-room-code-copy:hover {
+  color: rgb(125 244 255);
+  border-color: rgb(125 244 255 / 0.4);
+  background: rgb(125 244 255 / 0.07);
+}
+
+.ng-1v1-visual-reset .ng-room-code-copy:active {
+  transform: scale(0.96);
+}
+
+.ng-1v1-visual-reset .ng-1v1-waiting-column {
+  gap: 0.75rem;
+}
+
+.ng-1v1-visual-reset .ng-1v1-waiting-column > section {
+  min-height: 0;
+  padding: 0.9rem;
+}
+
+.ng-1v1-visual-reset .ng-1v1-waiting-column h2 {
+  font-size: 0.82rem;
+  letter-spacing: 0.14em;
+}
+
+.ng-1v1-visual-reset .ng-1v1-waiting-column .ng-presence-ledger {
+  margin-bottom: 0.8rem;
+  gap: 0.55rem;
+}
+
+.ng-1v1-visual-reset .ng-1v1-waiting-column .ng-player-row {
+  padding: 0.65rem;
+  border-radius: 0.7rem;
+}
+
+.ng-1v1-visual-reset .ng-1v1-waiting-column .ng-1v1-waiting-state {
+  margin-top: 0.25rem;
+  padding: 0.55rem 0.7rem;
+}
+
+@media (min-width: 640px) {
+  .ng-1v1-visual-reset .ng-host-identity-field,
+  .ng-1v1-visual-reset .ng-room-created-card {
+    width: min(100%, 26rem);
+  }
+}
+
+@media (max-width: 389px) {
+  .ng-1v1-visual-reset .ng-room-code-primary {
+    font-size: 1.05rem;
+  }
+
+  .ng-1v1-visual-reset .ng-room-code-copy {
+    width: 2.15rem;
+    height: 2.15rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ng-1v1-visual-reset .ng-host-identity-field .premium-cta,
+  .ng-1v1-visual-reset .ng-join-room-action,
+  .ng-1v1-visual-reset .ng-room-code-copy {
+    transition: none;
+  }
+
+  .ng-1v1-visual-reset .ng-room-code-copy:active {
+    transform: none;
+  }
+}
+
+
+/* Visual Evolution Additions 220-222: 1v1 Play Type rail and compact lobby rhythm. Presentation-only. */
+@layer utilities {
+  /* Addition 220: compact play-type rail replaces image-heavy category presentation. */
+  .ng-1v1-play-type-rail {
+    padding: 0.75rem;
+    border: 1px solid rgba(125, 244, 255, 0.16);
+    border-radius: calc(var(--ng-radius-card) - 4px);
+    background: linear-gradient(180deg, rgba(125, 244, 255, 0.055), rgba(255, 255, 255, 0.018));
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.045);
+  }
+
+  .ng-1v1-play-type-label {
+    padding-inline: 0.2rem;
+    letter-spacing: 0.14em;
+  }
+
+  /* Addition 221: category buttons expose the existing selection state without new state. */
+  .ng-1v1-play-type-option {
+    border-color: rgba(255, 255, 255, 0.13);
+    background: rgba(255, 255, 255, 0.035);
+    color: var(--ng-color-text-muted);
+    transition: transform var(--ng-motion-fast) cubic-bezier(0.22, 1, 0.36, 1),
+      border-color var(--ng-motion-fast) ease-out,
+      background-color var(--ng-motion-fast) ease-out,
+      color var(--ng-motion-fast) ease-out;
+  }
+
+  .ng-1v1-play-type-option[aria-pressed='true'] {
+    border-color: rgba(125, 244, 255, 0.72);
+    background: linear-gradient(135deg, rgba(125, 244, 255, 0.16), rgba(233, 179, 255, 0.08));
+    color: var(--ng-color-primary);
+    box-shadow: inset 0 0 0 1px rgba(125, 244, 255, 0.12), 0 0 18px rgba(125, 244, 255, 0.08);
+  }
+
+  .ng-1v1-play-type-option:hover:not(:disabled) {
+    transform: translateY(-1px);
+    border-color: rgba(125, 244, 255, 0.42);
+    color: var(--ng-color-primary);
+  }
+
+  .ng-1v1-play-type-option:active:not(:disabled) {
+    transform: translateY(1px) scale(0.985);
+  }
+
+  /* Addition 222: one visual column keeps create/join surfaces calm on narrow screens. */
+  .ng-1v1-visual-reset .ng-home-gateway__intro {
+    max-width: 38rem;
+    margin-inline: auto;
+    text-align: center;
+  }
+
+  .ng-1v1-visual-reset .ng-room-launch-header,
+  .ng-1v1-visual-reset .ng-host-identity-field,
+  .ng-1v1-visual-reset .ng-room-created-card,
+  .ng-1v1-visual-reset .ng-join-room-context {
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.045);
+  }
+
+  .ng-1v1-visual-reset .ng-host-identity-field,
+  .ng-1v1-visual-reset .ng-room-created-card {
+    border-radius: calc(var(--ng-radius-card) - 4px);
+  }
+
+  @media (max-width: 390px) {
+    .ng-1v1-play-type-rail {
+      padding: 0.65rem;
+    }
+
+    .ng-1v1-play-type-options {
+      gap: 0.45rem;
+    }
+
+    .ng-1v1-play-type-option {
+      min-height: 2.75rem;
+      padding-inline: 0.7rem;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .ng-1v1-play-type-option {
+      transition: border-color var(--ng-motion-fast) ease-out, background-color var(--ng-motion-fast) ease-out, color var(--ng-motion-fast) ease-out;
+    }
+
+    .ng-1v1-play-type-option:hover:not(:disabled),
+    .ng-1v1-play-type-option:active:not(:disabled) {
+      transform: none;
+    }
+  }
+}
+
+
+
+/* Visual Evolution Additions 223-225: 1v1 entry rhythm and room-code affordance. Presentation-only. */
+@layer utilities {
+  /* Addition 223: make the existing Create/Join switch read as one compact command rail. */
+  .ng-1v1-reference-lobby .ng-lobby-setup-switch {
+    align-self: center;
+    width: 100%;
+    max-width: 24rem;
+    padding: 0.25rem;
+    background: rgba(255, 255, 255, 0.035);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05), 0 8px 22px rgba(0, 0, 0, 0.12);
+  }
+
+  .ng-1v1-reference-lobby .ng-lobby-setup-switch > button {
+    min-height: 2.75rem;
+    border-radius: calc(var(--ng-radius-control) - 4px);
+    letter-spacing: 0.01em;
+  }
+
+  /* Addition 224: keep room identity and task identity on a predictable baseline. */
+  .ng-1v1-reference-lobby .ng-room-launch-header {
+    align-items: center;
+    border-color: rgba(125, 244, 255, 0.22);
+    background: linear-gradient(100deg, rgba(125, 244, 255, 0.07), rgba(233, 179, 255, 0.035));
+  }
+
+  .ng-1v1-reference-lobby .ng-room-launch-header h2 {
+    letter-spacing: -0.01em;
+  }
+
+  /* Addition 225: a small, discoverable copy affordance beside the existing code. */
+  .ng-1v1-reference-lobby .ng-room-code-copy {
+    min-width: 2.75rem;
+    min-height: 2.75rem;
+    border: 1px solid rgba(125, 244, 255, 0.28);
+    border-radius: 0.65rem;
+    background: rgba(125, 244, 255, 0.07);
+    color: var(--ng-color-primary);
+    transition: transform var(--ng-motion-fast) cubic-bezier(0.22, 1, 0.36, 1),
+      background-color var(--ng-motion-fast) ease-out,
+      border-color var(--ng-motion-fast) ease-out,
+      color var(--ng-motion-fast) ease-out;
+  }
+
+  .ng-1v1-reference-lobby .ng-room-code-copy:hover:not(:disabled) {
+    background: rgba(125, 244, 255, 0.14);
+    border-color: rgba(125, 244, 255, 0.62);
+  }
+
+  .ng-1v1-reference-lobby .ng-room-code-copy:active:not(:disabled) {
+    transform: translateY(1px) scale(0.97);
+  }
+
+  .ng-1v1-reference-lobby .ng-room-code-copy:focus-visible {
+    outline: 2px solid var(--ng-color-primary);
+    outline-offset: 2px;
+    box-shadow: 0 0 0 4px rgba(125, 244, 255, 0.14);
+  }
+
+  @media (max-width: 390px) {
+    .ng-1v1-reference-lobby .ng-lobby-setup-switch > button {
+      font-size: 0.78rem;
+    }
+
+    .ng-1v1-reference-lobby .ng-room-code-primary {
+      min-width: 0;
+      flex: 1 1 auto;
+      letter-spacing: 0.2em;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .ng-1v1-reference-lobby .ng-room-code-copy {
+      transition: background-color var(--ng-motion-fast) ease-out, border-color var(--ng-motion-fast) ease-out, color var(--ng-motion-fast) ease-out;
+    }
+
+    .ng-1v1-reference-lobby .ng-room-code-copy:active:not(:disabled) {
+      transform: none;
+    }
+  }
+}
+
+
+
+/* Visual Evolution Additions 226-228: 1v1 density, field rhythm, and waiting-state clarity. Presentation-only. */
+@layer utilities {
+  /* Addition 226: keep the create action stack readable instead of stretching across the card. */
+  .ng-1v1-reference-lobby .ng-host-identity-field,
+  .ng-1v1-reference-lobby .ng-room-created-card {
+    align-self: center;
+    width: 100%;
+    max-width: 28rem;
+  }
+
+  .ng-1v1-reference-lobby .ng-host-identity-field .premium-cta,
+  .ng-1v1-reference-lobby .ng-room-share-action {
+    min-height: 2.75rem;
+    border-radius: 0.7rem;
+  }
+
+  /* Addition 227: make labels and inputs read as a single compact form rhythm. */
+  .ng-1v1-reference-lobby .ng-lobby-input-guidance > label,
+  .ng-1v1-reference-lobby .ng-join-code-label {
+    line-height: 1.2;
+    letter-spacing: 0.1em;
+  }
+
+  .ng-1v1-reference-lobby input {
+    min-height: 2.75rem;
+    border-radius: 0.7rem;
+  }
+
+  /* Addition 228: give the waiting state a calm status boundary without adding a new state. */
+  .ng-1v1-waiting-column .ng-1v1-waiting-state {
+    border: 1px solid rgba(125, 244, 255, 0.14);
+    border-left: 2px solid rgba(125, 244, 255, 0.62);
+    border-radius: 0.7rem;
+    background: linear-gradient(90deg, rgba(125, 244, 255, 0.06), rgba(255, 255, 255, 0.018));
+  }
+
+  .ng-1v1-waiting-column .ng-player-row {
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.035);
+  }
+
+  @media (max-width: 390px) {
+    .ng-1v1-reference-lobby .ng-host-identity-field,
+    .ng-1v1-reference-lobby .ng-room-created-card {
+      max-width: none;
+    }
+
+    .ng-1v1-reference-lobby .ng-room-share-instruction,
+    .ng-1v1-reference-lobby .ng-room-copy-status {
+      max-width: 18rem;
+      text-align: center;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .ng-1v1-reference-lobby .ng-host-identity-field .premium-cta,
+    .ng-1v1-reference-lobby .ng-room-share-action {
+      transition: background-color var(--ng-motion-fast) ease-out, border-color var(--ng-motion-fast) ease-out, color var(--ng-motion-fast) ease-out, box-shadow var(--ng-motion-fast) ease-out;
+    }
+  }
+}
+
+
+
+/* Visual Evolution Additions 229-231: compact control rail, code row balance, and roster rhythm. Presentation-only. */
+@layer utilities {
+  /* Addition 229: give the existing Create/Join switcher a tighter, faster competitive control surface. */
+  .ng-1v1-reference-lobby .ng-lobby-setup-switch {
+    min-height: 3rem;
+    border-radius: 0.75rem;
+    background: rgba(8, 15, 28, 0.52);
+  }
+
+  .ng-1v1-reference-lobby .ng-lobby-setup-switch > .absolute {
+    transition: transform 180ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .ng-1v1-reference-lobby .ng-lobby-setup-switch > button {
+    min-height: 2.75rem;
+    border-radius: 0.55rem;
+  }
+
+  /* Addition 230: keep Room Code and its action as one bounded mobile cluster. */
+  .ng-1v1-reference-lobby .ng-room-code-row {
+    max-width: 100%;
+    min-width: 0;
+  }
+
+  .ng-1v1-reference-lobby .ng-room-code-primary {
+    min-width: 0;
+    max-width: min(100%, 12rem);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  /* Addition 231: establish a quieter roster rhythm while preserving every player row. */
+  .ng-1v1-waiting-column .ng-presence-ledger {
+    gap: 0.55rem;
+  }
+
+  .ng-1v1-waiting-column .ng-player-row {
+    min-height: 3.25rem;
+    gap: 0.65rem;
+  }
+
+  @media (max-width: 390px) {
+    .ng-1v1-reference-lobby .ng-lobby-setup-switch {
+      margin-bottom: 0.35rem;
+    }
+
+    .ng-1v1-reference-lobby .ng-room-code-row {
+      gap: 0.45rem;
+    }
+
+    .ng-1v1-reference-lobby .ng-room-code-primary {
+      font-size: 1.05rem;
+      letter-spacing: 0.2em;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .ng-1v1-reference-lobby .ng-lobby-setup-switch > .absolute {
+      transition: none;
+    }
+  }
+}
+
+
+
+/* Visual Evolution Additions 232-234: focus clarity, play-type hierarchy, and waiting action balance. Presentation-only. */
+@layer utilities {
+  /* Addition 232: make keyboard focus unmistakable without adding motion. */
+  .ng-1v1-reference-lobby .ng-lobby-setup-switch > button:focus-visible,
+  .ng-1v1-reference-lobby .ng-1v1-play-type-option:focus-visible,
+  .ng-1v1-reference-lobby input:focus-visible {
+    outline: 2px solid rgba(233, 179, 255, 0.92);
+    outline-offset: 2px;
+    box-shadow: 0 0 0 3px rgba(125, 244, 255, 0.16);
+  }
+
+  /* Addition 233: clarify the Play Type rail as a selectable control group. */
+  .ng-1v1-reference-lobby .ng-1v1-play-type-label {
+    display: block;
+    margin-bottom: 0.55rem;
+    color: rgba(233, 179, 255, 0.82);
+  }
+
+  .ng-1v1-reference-lobby .ng-1v1-play-type-options {
+    align-items: stretch;
+  }
+
+  .ng-1v1-reference-lobby .ng-1v1-play-type-option {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    min-width: 0;
+  }
+
+  /* Addition 234: reserve a calm action lane below the roster without changing action truth. */
+  .ng-1v1-waiting-column .premium-cta {
+    width: 100%;
+    min-height: 2.75rem;
+    border-radius: 0.7rem;
+  }
+
+  .ng-1v1-waiting-column .ng-1v1-waiting-state + .premium-cta {
+    margin-top: 0.2rem;
+  }
+
+  @media (max-width: 390px) {
+    .ng-1v1-reference-lobby .ng-1v1-play-type-option {
+      justify-content: center;
+      text-align: center;
+    }
+
+    .ng-1v1-waiting-column .premium-cta {
+      min-height: 3rem;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .ng-1v1-reference-lobby .ng-1v1-play-type-option,
+    .ng-1v1-waiting-column .premium-cta {
+      transition: none;
+    }
+  }
+}
+
+
+
+/* Visual Evolution Additions 235-237: room card compression, action rhythm, and waiting header balance. Presentation-only. */
+@layer utilities {
+  /* Addition 235: keep the created-room card compact while preserving its full invite affordance. */
+  .ng-1v1-reference-lobby .ng-room-created-card {
+    max-width: 28rem;
+    margin-inline: auto;
+    overflow: hidden;
+  }
+
+  .ng-1v1-reference-lobby .ng-room-share-instruction,
+  .ng-1v1-reference-lobby .ng-room-copy-status {
+    max-width: 100%;
+    text-align: center;
+    overflow-wrap: anywhere;
+  }
+
+  /* Addition 236: make the join form read as one intentional action lane. */
+  .ng-1v1-reference-lobby .ng-lobby-mobile-actions {
+    align-items: stretch;
+    row-gap: 0.8rem;
+  }
+
+  .ng-1v1-reference-lobby .ng-lobby-input-guidance {
+    min-width: 0;
+  }
+
+  .ng-1v1-reference-lobby .ng-join-room-action,
+  .ng-1v1-reference-lobby .ng-room-share-action {
+    min-height: 3rem;
+  }
+
+  /* Addition 237: prevent the Waiting Room header code spotlight from competing with the title. */
+  .ng-1v1-waiting-column .ng-room-code-spotlight {
+    min-width: 5.25rem;
+    align-items: center;
+  }
+
+  .ng-1v1-waiting-column .ng-social-lobby-count-row {
+    min-width: 0;
+  }
+
+  @media (max-width: 390px) {
+    .ng-1v1-reference-lobby .ng-room-created-card {
+      padding-inline: 0.85rem;
+    }
+
+    .ng-1v1-reference-lobby .ng-room-code-row {
+      max-width: 100%;
+    }
+
+    .ng-1v1-waiting-column .ng-room-code-spotlight {
+      padding-inline: 0.65rem;
+    }
+  }
+}
+
+
+
+/* Visual Evolution Additions 238-240: roster rhythm and mobile waiting clarity. Presentation-only. */
+@layer utilities {
+  /* Addition 238: use a calmer roster rhythm for the compact 1v1 waiting column. */
+  .ng-1v1-waiting-column .ng-presence-ledger {
+    gap: 0.65rem;
+    min-width: 0;
+  }
+
+  /* Addition 239: keep player identity and status readable without row overflow. */
+  .ng-1v1-waiting-column .ng-player-row {
+    min-width: 0;
+    align-items: center;
+  }
+
+  .ng-1v1-waiting-column .ng-player-row > div:nth-child(2) {
+    min-width: 0;
+  }
+
+  .ng-1v1-waiting-column .ng-player-row p {
+    overflow-wrap: anywhere;
+  }
+
+  /* Addition 240: make the open slot feel like an intentional capacity state. */
+  .ng-1v1-waiting-column .ng-lobby-empty-slot {
+    min-height: 3.75rem;
+    min-width: 0;
+    border-style: solid;
+    border-color: rgba(125, 244, 255, 0.18);
+    background: rgba(125, 244, 255, 0.04);
+  }
+
+  @media (max-width: 390px) {
+    .ng-1v1-waiting-column .ng-player-row {
+      padding-inline: 0.75rem;
+    }
+
+    .ng-1v1-waiting-column .ng-player-row > .material-symbols-outlined:last-child {
+      flex-shrink: 0;
+    }
+  }
+}
+
+
+
+/* Visual Evolution Additions 241-243: mobile feedback clarity and invite hierarchy. Presentation-only. */
+@layer utilities {
+  /* Addition 241: keep join guidance secondary but legible. */
+  .ng-1v1-reference-lobby .ng-join-room-context {
+    max-width: 34rem;
+    margin-inline: auto;
+  }
+
+  .ng-1v1-reference-lobby .ng-join-room-context p:last-child {
+    overflow-wrap: anywhere;
+  }
+
+  /* Addition 242: make the invite code the stable visual anchor of the created-room card. */
+  .ng-1v1-reference-lobby .ng-room-code-primary {
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .ng-1v1-reference-lobby .ng-room-code-copy {
+    min-width: 2.75rem;
+    min-height: 2.75rem;
+    border: 1px solid rgba(125, 244, 255, 0.28);
+    border-radius: 0.6rem;
+    color: rgb(125, 244, 255);
+    background: rgba(125, 244, 255, 0.06);
+  }
+
+  /* Addition 243: give error feedback a predictable, non-competing width. */
+  .ng-1v1-reference-lobby .ng-lobby-error-frame {
+    max-width: 34rem;
+    margin-inline: auto;
+    overflow-wrap: anywhere;
+  }
+
+  @media (max-width: 390px) {
+    .ng-1v1-reference-lobby .ng-room-code-primary {
+      min-width: 0;
+      flex: 1 1 auto;
+      font-size: 1.25rem;
+      letter-spacing: 0.2em;
+    }
+
+    .ng-1v1-reference-lobby .ng-room-code-row {
+      align-items: stretch;
+    }
+  }
+}
+
+
+
+/* Visual Evolution Additions 244-246: code row balance, invite density, and focus clarity. Presentation-only. */
+@layer utilities {
+  /* Addition 244: keep the code and its action aligned as one compact control group. */
+  .ng-1v1-reference-lobby .ng-room-code-row {
+    min-width: 0;
+    gap: 0.55rem;
+  }
+
+  /* Addition 245: reduce secondary invite copy without sacrificing readability. */
+  .ng-1v1-reference-lobby .ng-room-share-instruction {
+    font-size: 0.72rem;
+    line-height: 1.35;
+    letter-spacing: 0.01em;
+  }
+
+  /* Addition 246: make keyboard focus unmistakable on the high-value copy action. */
+  .ng-1v1-reference-lobby .ng-room-code-copy:focus-visible,
+  .ng-1v1-reference-lobby .ng-join-room-action:focus-visible,
+  .ng-1v1-reference-lobby .ng-room-share-action:focus-visible {
+    outline: 2px solid rgb(125, 244, 255);
+    outline-offset: 3px;
+    box-shadow: 0 0 0 4px rgba(125, 244, 255, 0.14);
+  }
+
+  @media (max-width: 390px) {
+    .ng-1v1-reference-lobby .ng-room-share-instruction {
+      font-size: 0.68rem;
+    }
+  }
+}
+
+
+
+/* Visual Evolution Additions 247-249: invite action hierarchy and waiting-column breathing room. Presentation-only. */
+@layer utilities {
+  /* Addition 247: provide a quiet pressed state without introducing motion. */
+  .ng-1v1-reference-lobby .ng-room-code-copy:active,
+  .ng-1v1-reference-lobby .ng-room-share-action:active,
+  .ng-1v1-reference-lobby .ng-join-room-action:active {
+    background: rgba(125, 244, 255, 0.14);
+    border-color: rgba(125, 244, 255, 0.42);
+  }
+
+  /* Addition 248: separate the primary invite action from its supporting copy action. */
+  .ng-1v1-reference-lobby .ng-room-share-action {
+    min-width: 0;
+    justify-content: center;
+    text-align: center;
+  }
+
+  .ng-1v1-reference-lobby .ng-room-code-copy {
+    flex: 0 0 auto;
+  }
+
+  /* Addition 249: keep the waiting column visually contained on narrow screens. */
+  .ng-1v1-waiting-column {
+    min-width: 0;
+    overflow: hidden;
+  }
+
+  @media (max-width: 390px) {
+    .ng-1v1-waiting-column {
+      padding-inline: 0.15rem;
+    }
+
+    .ng-1v1-reference-lobby .ng-room-share-action {
+      min-height: 2.75rem;
+    }
+  }
+}
+
+
+
+/* Visual Evolution Additions 250-252: waiting clarity, start-dock rhythm, and empty-seat balance. Presentation-only. */
+@layer utilities {
+  /* Addition 250: keep the 1v1 waiting signal compact and readable at narrow widths. */
+  .ng-1v1-waiting-state {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    min-width: 0;
+    padding: 0.6rem 0.75rem;
+    border: 1px solid rgba(125, 244, 255, 0.16);
+    border-radius: 0.65rem;
+    background: rgba(125, 244, 255, 0.045);
+    color: rgba(230, 249, 255, 0.72);
+    font-size: 0.72rem;
+    line-height: 1.35;
+  }
+
+  .ng-1v1-waiting-state span:last-child {
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+
+  /* Addition 251: give the final lobby action a deliberate, quiet boundary. */
+  .ng-1v1-waiting-column .ng-lobby-action-dock {
+    padding-top: 0.75rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  /* Addition 252: align the open seat with the player-row rhythm without extra decoration. */
+  .ng-1v1-waiting-column .ng-lobby-empty-slot {
+    min-width: 0;
+    border-color: rgba(125, 244, 255, 0.18);
+    background: rgba(125, 244, 255, 0.035);
+  }
+
+  @media (max-width: 390px) {
+    .ng-1v1-waiting-state {
+      padding-inline: 0.65rem;
+      font-size: 0.68rem;
+    }
+
+    .ng-1v1-waiting-column .ng-lobby-action-dock {
+      padding-top: 0.65rem;
+    }
+  }
+}
+
+
+
+/* Visual Evolution Additions 253-255: roster resilience, status clarity, and compact host actions. Presentation-only. */
+@layer utilities {
+  /* Addition 253: keep player rows shrink-safe when names or status text are long. */
+  .ng-1v1-waiting-column .ng-player-row {
+    min-width: 0;
+    align-items: center;
+  }
+
+  /* Addition 254: keep roster status readable without forcing the row wider. */
+  .ng-1v1-waiting-column .ng-player-row p {
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+
+  .ng-1v1-waiting-column .ng-player-row p + p {
+    max-width: 100%;
+  }
+
+  /* Addition 255: keep the host-only removal control compact on narrow screens. */
+  .ng-1v1-waiting-column .ng-player-row button {
+    flex: 0 1 auto;
+    max-width: 7.5rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  @media (max-width: 390px) {
+    .ng-1v1-waiting-column .ng-player-row {
+      gap: 0.6rem;
+      padding-inline: 0.65rem;
+    }
+
+    .ng-1v1-waiting-column .ng-player-row button {
+      max-width: 5.25rem;
+      padding-inline: 0.45rem;
+    }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ng-1v1-waiting-column .ng-player-row,
+  .ng-1v1-waiting-column .ng-player-row button {
+    transition: none;
+  }
+}
+
+
+/* Visual Evolution Additions 256-258: room-code anchor, avatar stability, and status-signal clarity. Presentation-only. */
+@layer utilities {
+  /* Addition 256: keep the room-code spotlight compact and independent from the title block. */
+  .ng-1v1-waiting-column .ng-room-code-spotlight {
+    flex: 0 0 auto;
+    min-width: 4.25rem;
+    max-width: 100%;
+  }
+
+  /* Addition 257: prevent the player avatar from shrinking beside long content. */
+  .ng-1v1-waiting-column .ng-player-row img {
+    flex: 0 0 auto;
+  }
+
+  /* Addition 258: preserve the connection signal as a stable visual state marker. */
+  .ng-1v1-waiting-column .ng-player-connection-dot {
+    flex: 0 0 auto;
+  }
+
+  @media (max-width: 390px) {
+    .ng-1v1-waiting-column .ng-room-code-spotlight {
+      min-width: 3.75rem;
+      padding-inline: 0.6rem;
+    }
+  }
+}
+
+
+/* Visual Evolution Additions 259-261: roster status clarity and stable state markers. Presentation-only. */
+@layer utilities {
+  /* Addition 259: keep roster status pills readable without creating a second line cascade. */
+  .ng-1v1-waiting-column .ng-player-row p + p {
+    max-width: min(100%, 11rem);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* Addition 260: keep the semantic connection icon visible beside long roster content. */
+  .ng-1v1-waiting-column .ng-player-row > .material-symbols-outlined {
+    flex: 0 0 auto;
+  }
+
+  /* Addition 261: preserve the open-seat marker as a stable anchor in the empty state. */
+  .ng-1v1-waiting-column .ng-lobby-empty-slot > div:first-child {
+    flex: 0 0 auto;
+  }
+
+  @media (max-width: 390px) {
+    .ng-1v1-waiting-column .ng-player-row p + p {
+      max-width: 8.5rem;
+    }
+  }
+}
+
+
+/* Visual Evolution Additions 262-264: final 1v1 waiting-room density and action clarity. Presentation-only. */
+@layer utilities {
+  /* Addition 262: keep the roster stack visually even without enlarging empty states. */
+  .ng-1v1-waiting-column .ng-presence-ledger {
+    gap: 0.65rem;
+    margin-bottom: 0.85rem;
+  }
+
+  /* Addition 263: prevent the invite code from competing with the waiting-room title. */
+  .ng-1v1-waiting-column .ng-room-code-spotlight span:last-child {
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    letter-spacing: 0.16em;
+  }
+
+  /* Addition 264: give the 1v1 start gate and its requirement note one compact reading unit. */
+  .ng-1v1-waiting-column .ng-lobby-action-dock > p {
+    max-width: 30ch;
+    margin-inline: auto;
+    line-height: 1.35;
+  }
+
+  @media (max-width: 390px) {
+    .ng-1v1-waiting-column .ng-presence-ledger {
+      gap: 0.55rem;
+      margin-bottom: 0.7rem;
+    }
+
+    .ng-1v1-waiting-column .ng-room-code-spotlight span:last-child {
+      font-size: 0.92rem;
+    }
+
+    .ng-1v1-waiting-column .ng-lobby-action-dock > p {
+      max-width: 24ch;
+      font-size: 0.58rem;
+    }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ng-1v1-waiting-column .ng-presence-ledger,
+  .ng-1v1-waiting-column .ng-room-code-spotlight,
+  .ng-1v1-waiting-column .ng-lobby-action-dock {
+    transition: none;
+  }
+}
+
+/* End additions 262-264. */
+
+
+/* Visual Evolution Additions 265-267: roster hierarchy, empty-seat balance, and action-dock breathing room. Presentation-only. */
+@layer utilities {
+  /* Addition 265: keep the player's name/status cluster visually centered beside fixed controls. */
+  .ng-1v1-waiting-column .ng-player-row > .flex-1 {
+    align-self: center;
+    min-width: 0;
+  }
+
+  /* Addition 266: give the open-seat copy a stable two-level hierarchy on narrow screens. */
+  .ng-1v1-waiting-column .ng-lobby-empty-slot > .flex-1 {
+    min-width: 0;
+  }
+
+  .ng-1v1-waiting-column .ng-lobby-empty-slot > .flex-1 p:first-child {
+    line-height: 1.2;
+  }
+
+  .ng-1v1-waiting-column .ng-lobby-empty-slot > .flex-1 p:last-child {
+    line-height: 1.25;
+    overflow-wrap: anywhere;
+  }
+
+  /* Addition 267: keep the final action area readable without competing with status content. */
+  .ng-1v1-waiting-column .ng-lobby-action-dock {
+    min-width: 0;
+  }
+
+  .ng-1v1-waiting-column .ng-lobby-action-dock > button {
+    min-width: 0;
+  }
+
+  @media (max-width: 390px) {
+    .ng-1v1-waiting-column .ng-player-row > .flex-1 {
+      padding-block: 0.05rem;
+    }
+
+    .ng-1v1-waiting-column .ng-lobby-empty-slot > .flex-1 p:first-child {
+      font-size: 0.66rem;
+    }
+
+    .ng-1v1-waiting-column .ng-lobby-action-dock > button {
+      width: 100%;
+    }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ng-1v1-waiting-column .ng-player-row > .flex-1,
+  .ng-1v1-waiting-column .ng-lobby-empty-slot > .flex-1,
+  .ng-1v1-waiting-column .ng-lobby-action-dock {
+    transition: none;
+  }
+}
+
+/* End additions 265-267. */
+
+
+/* Visual Evolution Additions 268-270: 1v1 connection and error-state refinement. Presentation-only. */
+@layer utilities {
+  /* Addition 268: keep connection capsules readable and shrink-safe on narrow screens. */
+  .ng-status-stack .ng-connection-capsule {
+    display: grid;
+    grid-template-columns: auto auto minmax(0, 1fr);
+    align-items: center;
+    min-width: 0;
+    column-gap: 0.5rem;
+    overflow-wrap: anywhere;
+  }
+
+  .ng-status-stack .ng-connection-capsule__dot,
+  .ng-status-stack .ng-connection-capsule__icon {
+    flex: 0 0 auto;
+  }
+
+  .ng-status-stack .ng-connection-capsule .font-label-caps {
+    min-width: 0;
+    white-space: nowrap;
+  }
+
+  /* Addition 269: preserve the error signal while giving long copy a safe measure. */
+  .ng-lobby-error-frame {
+    min-width: 0;
+    align-items: flex-start;
+  }
+
+  .ng-lobby-error-frame > .material-symbols-outlined {
+    flex: 0 0 auto;
+  }
+
+  .ng-lobby-error-frame > p {
+    min-width: 0;
+    max-width: 65ch;
+    overflow-wrap: anywhere;
+  }
+
+  /* Addition 270: make consecutive status surfaces read as one calm state layer. */
+  .ng-status-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .ng-status-stack > .ng-connection-capsule,
+  .ng-status-stack > .ng-lobby-error-frame {
+    margin-top: 0;
+  }
+
+  @media (max-width: 390px) {
+    .ng-status-stack .ng-connection-capsule {
+      grid-template-columns: auto minmax(0, 1fr);
+      align-items: start;
+      row-gap: 0.2rem;
+      padding-block: 0.55rem;
+    }
+
+    .ng-status-stack .ng-connection-capsule__dot,
+    .ng-status-stack .ng-connection-capsule__icon {
+      grid-row: 1 / span 2;
+      margin-top: 0.1rem;
+    }
+
+    .ng-status-stack .ng-connection-capsule .font-label-caps {
+      white-space: normal;
+    }
+
+    .ng-lobby-error-frame {
+      gap: 0.6rem;
+      padding-inline: 0.8rem;
+    }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ng-status-stack .ng-connection-capsule,
+  .ng-lobby-error-frame {
+    transition: none;
+  }
+}
+
+/* End additions 268-270. */
+
+
+/* Visual Evolution Additions 271–273: results hierarchy and round-transition clarity. Presentation-only. */
+@layer utilities {
+  /* 271 — keep the result shell calm and let the primary outcome lead the scan. */
+  .ng-result-shell {
+    min-width: 0;
+    isolation: isolate;
+  }
+
+  .ng-result-shell > .ng-result-heading,
+  .ng-result-shell > .ng-winner-card,
+  .ng-result-shell > .ng-result-transition {
+    min-width: 0;
+  }
+
+  /* 272 — protect winner identity and score from competing with long names or narrow widths. */
+  .ng-result-shell .ng-winner-card {
+    align-items: center;
+    min-width: 0;
+    border-color: rgba(125, 244, 255, 0.22);
+    background: linear-gradient(110deg, rgba(125, 244, 255, 0.075), rgba(255, 255, 255, 0.025));
+  }
+
+  .ng-result-shell .ng-winner-card > .flex-grow {
+    min-width: 0;
+  }
+
+  .ng-result-shell .ng-winner-card h3,
+  .ng-result-shell .ng-winner-card p {
+    max-width: 100%;
+    overflow-wrap: anywhere;
+  }
+
+  .ng-result-shell .ng-winner-score {
+    min-width: 3.25rem;
+  }
+
+  /* 273 — make the existing next-round signal read as a stable status rail. */
+  .ng-result-shell .ng-result-transition {
+    min-width: 0;
+    border-color: rgba(125, 244, 255, 0.28);
+    background: linear-gradient(90deg, rgba(125, 244, 255, 0.075), rgba(173, 130, 255, 0.055));
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  }
+
+  .ng-result-shell .ng-result-transition p {
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+
+  @media (max-width: 390px) {
+    .ng-result-shell {
+      padding-inline: 0.7rem;
+    }
+
+    .ng-result-shell .ng-winner-card {
+      padding: 0.75rem;
+      gap: 0.7rem;
+    }
+
+    .ng-result-shell .ng-winner-card > .relative {
+      width: 4.25rem;
+      height: 4.25rem;
+    }
+
+    .ng-result-shell .ng-winner-score {
+      min-width: 2.75rem;
+    }
+
+    .ng-result-shell .ng-result-transition {
+      padding-inline: 0.7rem;
+    }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ng-result-shell .ng-winner-card,
+  .ng-result-shell .ng-result-transition {
+    transition: none;
+  }
+}
+
+/* End additions 271–273. */
+
+
+/* Visual Evolution Additions 274–276: mobile navigation dock clarity. Presentation-only. */
+@layer utilities {
+  /* 274 — bound frequent press feedback to a small, GPU-safe transform. */
+  .ng-mobile-nav-link {
+    transform: translateZ(0);
+    will-change: transform;
+  }
+
+  .ng-mobile-nav-link--active {
+    position: relative;
+    filter: drop-shadow(0 0 8px rgba(125, 244, 255, 0.36));
+  }
+
+  /* 275 — give the fixed dock a deliberate NEON GUESS surface and safe-area breathing room. */
+  .ng-mobile-nav-dock {
+    padding-bottom: max(0.35rem, env(safe-area-inset-bottom));
+    background: linear-gradient(180deg, rgba(9, 14, 29, 0.78), rgba(9, 14, 29, 0.94));
+    box-shadow: 0 -10px 28px rgba(3, 8, 22, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  }
+
+  /* 276 — expose the selected mode with a static marker, not glow alone. */
+  .ng-mobile-nav-link--active::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    bottom: 0.18rem;
+    width: 1.35rem;
+    height: 0.16rem;
+    border-radius: 999px;
+    background: rgb(125, 244, 255);
+    opacity: 0.9;
+    transform: translateX(-50%);
+    pointer-events: none;
+  }
+
+  @media (max-width: 390px) {
+    .ng-mobile-nav-dock {
+      height: 4.55rem;
+    }
+
+    .ng-mobile-nav-link {
+      padding-inline: 0.15rem;
+    }
+
+    .ng-mobile-nav-link--active::after {
+      width: 1.1rem;
+    }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ng-mobile-nav-link {
+    transform: none;
+    transition: none;
+    will-change: auto;
+  }
+}
+
+/* End additions 274–276. */
+
+/* Auto Mode Batch 277-279: 1v1 mobile-first command surface. Presentation-only. */
+/* Addition 277: give the 1v1 create/join surface one compact reading column. */
+.ng-1v1-visual-reset .ng-lobby-mobile-actions {
+  align-items: stretch;
+  min-width: 0;
+  gap: 0.75rem;
+}
+
+/* Addition 278: keep the primary room action visually strong without consuming the viewport. */
+.ng-1v1-visual-reset .ng-lobby-mobile-actions > button {
+  flex: 0 0 auto;
+  min-height: 2.875rem;
+  padding-inline: 1rem;
+  border-radius: 0.75rem;
+  letter-spacing: 0.04em;
+  transition-property: color, background-color, border-color, box-shadow, transform;
+  transition-duration: 150ms;
+}
+
+/* Addition 279: align field guidance and long copy with the same shrink-safe rhythm. */
+.ng-1v1-visual-reset .ng-lobby-input-guidance {
+  min-width: 0;
+}
+
+.ng-1v1-visual-reset .ng-lobby-input-guidance label,
+.ng-1v1-visual-reset .ng-lobby-input-guidance p {
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+
+@media (min-width: 640px) {
+  .ng-1v1-visual-reset .ng-lobby-mobile-actions {
+    align-items: flex-end;
+  }
+
+  .ng-1v1-visual-reset .ng-lobby-mobile-actions > button {
+    min-width: 8.5rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ng-1v1-visual-reset .ng-lobby-mobile-actions > button {
+    transition: none;
+  }
+}
+
+/* Auto Mode Batch 280-282: 1v1 recovery and leave-confirmation surfaces. Presentation-only. */
+/* Addition 280: keep recovery identity and copy readable as one shrink-safe command row. */
+.ng-1v1-visual-reset .ng-recovery-card {
+  min-width: 0;
+  isolation: isolate;
+}
+
+.ng-1v1-visual-reset .ng-recovery-copy {
+  min-width: 0;
+}
+
+.ng-1v1-visual-reset .ng-recovery-copy h2,
+.ng-1v1-visual-reset .ng-recovery-copy p {
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+
+/* Addition 281: make recovery actions compact on mobile and measured on wider screens. */
+.ng-1v1-visual-reset .ng-recovery-actions,
+.ng-1v1-visual-reset .ng-recovery-actions .ng-button-cluster {
+  min-width: 0;
+}
+
+.ng-1v1-visual-reset .ng-recovery-actions .ng-button-cluster > button {
+  min-height: 2.75rem;
+  flex: 1 1 9rem;
+  transition-property: color, background-color, border-color, box-shadow, transform;
+  transition-duration: 150ms;
+}
+
+/* Addition 282: give the leave dialog the same focused NEON command-surface grammar. */
+.ng-1v1-leave-dialog {
+  backdrop-filter: blur(14px);
+}
+
+.ng-1v1-leave-dialog__panel {
+  min-width: 0;
+  box-shadow: 0 22px 70px rgba(0, 0, 0, 0.42), 0 0 0 1px rgba(125, 244, 255, 0.08);
+}
+
+.ng-1v1-leave-dialog__panel h2,
+.ng-1v1-leave-dialog__panel p {
+  overflow-wrap: anywhere;
+}
+
+@media (min-width: 640px) {
+  .ng-1v1-visual-reset .ng-recovery-actions .ng-button-cluster > button {
+    flex: 0 0 auto;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ng-1v1-visual-reset .ng-recovery-actions .ng-button-cluster > button {
+    transition: none;
+  }
+}

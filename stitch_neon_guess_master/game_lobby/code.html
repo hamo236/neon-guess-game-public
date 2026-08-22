@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Neon Guess - Home</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&amp;family=JetBrains+Mono:wght@700&amp;family=Inter:wght@400&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-error-container": "#ffdad6",
+                    "surface-container-highest": "#323536",
+                    "surface-container-low": "#191c1d",
+                    "tertiary-container": "#dcd9d8",
+                    "on-error": "#690005",
+                    "on-tertiary": "#313030",
+                    "surface-bright": "#373a3b",
+                    "on-surface": "#e1e3e4",
+                    "surface-container-high": "#282a2b",
+                    "on-primary-fixed": "#002022",
+                    "primary": "#dbfcff",
+                    "primary-fixed": "#7df4ff",
+                    "on-secondary-container": "#e5a9ff",
+                    "tertiary": "#f8f5f5",
+                    "surface-variant": "#323536",
+                    "tertiary-fixed": "#e5e2e1",
+                    "surface": "#111415",
+                    "surface-dim": "#111415",
+                    "secondary-fixed": "#f6d9ff",
+                    "background": "#111415",
+                    "on-primary-fixed-variant": "#004f54",
+                    "on-secondary-fixed-variant": "#7200a3",
+                    "secondary-container": "#7d01b1",
+                    "error": "#ffb4ab",
+                    "on-tertiary-container": "#5f5e5e",
+                    "on-primary": "#00363a",
+                    "primary-fixed-dim": "#00dbe9",
+                    "on-surface-variant": "#b9cacb",
+                    "on-tertiary-fixed-variant": "#474746",
+                    "outline-variant": "#3b494b",
+                    "on-background": "#e1e3e4",
+                    "inverse-primary": "#006970",
+                    "surface-tint": "#00dbe9",
+                    "on-tertiary-fixed": "#1c1b1b",
+                    "surface-container-lowest": "#0c0f10",
+                    "tertiary-fixed-dim": "#c8c6c5",
+                    "inverse-on-surface": "#2e3132",
+                    "surface-container": "#1d2021",
+                    "secondary": "#e9b3ff",
+                    "inverse-surface": "#e1e3e4",
+                    "on-primary-container": "#006970",
+                    "primary-container": "#00f0ff",
+                    "on-secondary-fixed": "#310048",
+                    "error-container": "#93000a",
+                    "secondary-fixed-dim": "#e9b3ff",
+                    "on-secondary": "#510074",
+                    "outline": "#849495"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "stack-md": "16px",
+                    "stack-lg": "24px",
+                    "stack-sm": "8px",
+                    "gutter": "12px",
+                    "container-margin": "20px"
+            },
+            "fontFamily": {
+                    "display-lg": [
+                            "Sora"
+                    ],
+                    "headline-md": [
+                            "Sora"
+                    ],
+                    "headline-sm": [
+                            "Sora"
+                    ],
+                    "label-caps": [
+                            "JetBrains Mono"
+                    ],
+                    "body-lg": [
+                            "Inter"
+                    ],
+                    "stats-num": [
+                            "Sora"
+                    ],
+                    "body-sm": [
+                            "Inter"
+                    ]
+            },
+            "fontSize": {
+                    "display-lg": [
+                            "40px",
+                            {
+                                    "lineHeight": "48px",
+                                    "letterSpacing": "-0.02em",
+                                    "fontWeight": "800"
+                            }
+                    ],
+                    "headline-md": [
+                            "24px",
+                            {
+                                    "lineHeight": "32px",
+                                    "fontWeight": "700"
+                            }
+                    ],
+                    "headline-sm": [
+                            "20px",
+                            {
+                                    "lineHeight": "28px",
+                                    "fontWeight": "600"
+                            }
+                    ],
+                    "label-caps": [
+                            "12px",
+                            {
+                                    "lineHeight": "16px",
+                                    "letterSpacing": "0.1em",
+                                    "fontWeight": "700"
+                            }
+                    ],
+                    "body-lg": [
+                            "16px",
+                            {
+                                    "lineHeight": "24px",
+                                    "fontWeight": "400"
+                            }
+                    ],
+                    "stats-num": [
+                            "18px",
+                            {
+                                    "lineHeight": "22px",
+                                    "letterSpacing": "0.05em",
+                                    "fontWeight": "700"
+                            }
+                    ],
+                    "body-sm": [
+                            "14px",
+                            {
+                                    "lineHeight": "20px",
+                                    "fontWeight": "400"
+                            }
+                    ]
+            }
+    },
+        },
+      }
+    </script>
+<style>
+        body {
+            background-color: #111415; /* bg-background */
+            background-image: radial-gradient(circle at 50% 0%, rgba(125, 244, 255, 0.1) 0%, transparent 70%),
+                              url('data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noiseFilter%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.65%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noiseFilter)%22 opacity=%220.05%22/%3E%3C/svg%3E');
+            color: #e1e3e4; /* text-on-background */
+        }
+        
+        /* Glassmorphism Utilities */
+        .glass-panel-1 {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+        
+        .glass-panel-2 {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            border-left: 1px solid rgba(255, 255, 255, 0.1);
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .neon-border-glow {
+            box-shadow: inset 0 0 0 2px #7df4ff, 0 0 15px rgba(125, 244, 255, 0.4);
+            border-color: transparent !important;
+        }
+
+        .neon-text-glow {
+            text-shadow: 0 0 8px rgba(125, 244, 255, 0.6);
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.02);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(125, 244, 255, 0.2);
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(125, 244, 255, 0.4);
+        }
+        
+        .pb-safe {
+            padding-bottom: env(safe-area-inset-bottom, 20px);
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col font-body-lg overflow-x-hidden selection:bg-primary-fixed selection:text-on-primary-fixed">
+<!-- TopAppBar -->
+<header class="bg-white/10 backdrop-blur-xl fixed top-0 w-full z-50 border-b border-white/20 shadow-none flex justify-between items-center px-container-margin h-16 hidden md:flex">
+<button class="text-on-surface-variant hover:bg-white/5 transition-colors active:scale-95 duration-150 p-2 rounded-full flex items-center justify-center">
+<span class="material-symbols-outlined">menu</span>
+</button>
+<h1 class="font-display-lg text-display-lg text-primary-fixed uppercase tracking-tighter">NEON GUESS</h1>
+<button class="text-on-surface-variant hover:bg-white/5 transition-colors active:scale-95 duration-150 p-2 rounded-full flex items-center justify-center">
+<span class="material-symbols-outlined">lock</span>
+</button>
+</header>
+<!-- Navigation Drawer (Desktop/Tablet) -->
+<nav class="hidden md:flex flex-col p-stack-lg bg-surface-dim/95 backdrop-blur-3xl h-full w-80 border-r border-white/10 shadow-2xl fixed left-0 top-16 z-40 transform -translate-x-full transition-transform duration-300" id="desktop-drawer">
+<!-- Header Profile -->
+<div class="flex items-center gap-4 mb-8">
+<div class="relative">
+<img class="w-12 h-12 rounded-full object-cover border-2 border-primary-fixed" data-alt="A highly detailed avatar portrait of a cyberpunk gamer character with glowing neon blue and purple accents, wearing a futuristic headset in a dark, moody high-tech environment. The style is sharp, sleek, 2D flat vector art with premium glassmorphism elements." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDWdA-bsDZ2QVXMvoNoKFLD-pPXAK1Hl0Nbd7JhSH0n2ga7kcnDfh5kmHEFPs19UIePDiFGFCV8qy5kbHPEsgko0d_5txYSiyYTc9ZbfukeXtXDPH-R3L53_i_X0syfPo5HJQPOfThoHdEdTZ-JkV55SyDsbOPBwESbpX_C0Y6-qhIs4cKYaeApKL0vikSn7OcueEVcxa16AzT_DsIrjNjnfJMg9wMg0TtIhvITE8Rfjt9HNNYhkOnPEg"/>
+<div class="absolute bottom-0 right-0 w-3 h-3 bg-primary rounded-full border-2 border-surface-dim"></div>
+</div>
+<div>
+<h3 class="font-headline-sm text-headline-sm text-primary-fixed">CyberPlayer_01</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Level 42 Guessing Master</p>
+<p class="font-label-caps text-label-caps text-secondary-fixed mt-1">Rank #128</p>
+</div>
+</div>
+<!-- Nav Links -->
+<ul class="flex flex-col gap-2">
+<li>
+<a class="flex items-center gap-3 p-3 rounded-lg text-on-surface-variant hover:bg-white/5 transition-all active:translate-x-1 duration-150" href="#">
+<span class="material-symbols-outlined">account_circle</span>
+<span class="font-body-lg text-body-lg">Profile</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-3 p-3 rounded-lg text-on-surface-variant hover:bg-white/5 transition-all active:translate-x-1 duration-150" href="#">
+<span class="material-symbols-outlined">history</span>
+<span class="font-body-lg text-body-lg">Game History</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-3 p-3 rounded-lg text-on-surface-variant hover:bg-white/5 transition-all active:translate-x-1 duration-150" href="#">
+<span class="material-symbols-outlined">military_tech</span>
+<span class="font-body-lg text-body-lg">Achievements</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-3 p-3 rounded-lg text-on-surface-variant hover:bg-white/5 transition-all active:translate-x-1 duration-150" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-body-lg text-body-lg">Settings</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-3 p-3 rounded-lg text-on-surface-variant hover:bg-white/5 transition-all active:translate-x-1 duration-150 mt-auto" href="#">
+<span class="material-symbols-outlined">admin_panel_settings</span>
+<span class="font-body-lg text-body-lg">Admin Lock</span>
+</a>
+</li>
+</ul>
+</nav>
+<!-- Main Content Canvas -->
+<main class="flex-1 w-full max-w-6xl mx-auto px-container-margin pt-24 pb-32 md:pt-32 relative z-10 flex flex-col gap-stack-lg">
+<!-- Mobile Header (Visible only on md:hidden) -->
+<div class="md:hidden flex justify-center items-center mb-stack-md">
+<h1 class="font-display-lg text-display-lg text-primary-fixed uppercase tracking-tighter neon-text-glow">NEON GUESS</h1>
+</div>
+<!-- Bento Grid Layout -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter lg:gap-stack-lg">
+<!-- Left Column: Category & Mode (Spans 8 cols on desktop) -->
+<div class="lg:col-span-8 flex flex-col gap-stack-lg">
+<!-- Category Selector -->
+<section class="glass-panel-2 rounded-xl p-stack-lg flex flex-col gap-stack-md">
+<h2 class="font-headline-md text-headline-md text-on-surface flex items-center gap-2">
+<span class="material-symbols-outlined text-primary-fixed">category</span>
+                        Select Category
+                    </h2>
+<div class="grid grid-cols-1 sm:grid-cols-3 gap-gutter">
+<!-- Category Card 1 (Active) -->
+<button class="relative overflow-hidden rounded-lg aspect-square sm:aspect-auto sm:h-32 glass-panel-1 flex flex-col justify-end p-4 group transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] neon-border-glow">
+<div class="absolute inset-0 bg-gradient-to-t from-surface-dim to-transparent z-10"></div>
+<div class="absolute inset-0 bg-[url('placeholder')] bg-cover bg-center opacity-40 mix-blend-screen transition-opacity group-hover:opacity-60 z-0" data-alt="A highly stylized, 2D flat vector illustration of cartoon characters in a dark cyberpunk setting. Glowing neon outlines, vibrant colors against a dark background, deep atmospheric perspective, glassmorphism UI elements integrated into the scene." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBg1rzMuchZ7RMBQDqfAfOIHI1GDAfh5UcB39o2dQUUBumuyzxmvHyfkEVqegotOIwjwfWDc6UFU-8FCB_uLcgQE4zSkIiaNtHSEy8vGWMKjMc0f1DPH1FrVWBmiEusYezI9Mwh4QnjMvLTE7mWERYL6Ugh9I1Ny3AkxYiiZ664nBQ0Jvcgin6MpPtr_TpD2GQ0BqwwrNv7V2obC8rKdiGq2A91i1MSjAXCOyO6wPZ_x-uivXX9Ax3PGA')"></div>
+<div class="relative z-20 flex flex-col items-start gap-1">
+<span class="material-symbols-outlined text-primary-fixed text-3xl mb-1 drop-shadow-[0_0_8px_rgba(125,244,255,0.8)]">animation</span>
+<span class="font-headline-sm text-headline-sm text-white drop-shadow-md">Cartoons</span>
+</div>
+<!-- Active indicator -->
+<div class="absolute top-3 right-3 z-20 w-3 h-3 rounded-full bg-primary-fixed shadow-[0_0_10px_#7df4ff]"></div>
+</button>
+<!-- Category Card 2 -->
+<button class="relative overflow-hidden rounded-lg aspect-square sm:aspect-auto sm:h-32 glass-panel-1 flex flex-col justify-end p-4 group transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] border border-white/10 hover:border-white/30">
+<div class="absolute inset-0 bg-gradient-to-t from-surface-dim to-transparent z-10"></div>
+<div class="absolute inset-0 bg-[url('placeholder')] bg-cover bg-center opacity-30 mix-blend-screen transition-opacity group-hover:opacity-50 z-0" data-alt="A stylized, neon-lit digital painting of famous football players in action within a futuristic, dark sci-fi stadium. Glowing holographic player stats floating in the air. 2D flat vector style, crisp edges, high-contrast lighting, dark glassmorphism aesthetic." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDjPffF20eNhglPzOgqvyRWrBOYIY79S3rtGn-N7LBO_44H88Vw1D5uvH5RdwJSvBu4qEiNvC0tMVogfw1rMO-r3ClnsJmrnsB8gQtE8nDgYQDFrfxTAS6BsX_g72bldCiV-g5pLzeWTNU8JFwaDqyuG-4io8ojmNgPvXekHW_Dm3s_Zx6evhQ1gsdQKUMidlPBpk-WuMVJqXjniAS71QoB8ZqM_LDm6SJ5sUSY-TVq5oWpFHg5fHfQzg')"></div>
+<div class="relative z-20 flex flex-col items-start gap-1">
+<span class="material-symbols-outlined text-on-surface-variant text-3xl mb-1 group-hover:text-primary transition-colors">sports_soccer</span>
+<span class="font-headline-sm text-headline-sm text-on-surface group-hover:text-white transition-colors">Football Players</span>
+</div>
+</button>
+<!-- Category Card 3 -->
+<button class="relative overflow-hidden rounded-lg aspect-square sm:aspect-auto sm:h-32 glass-panel-1 flex flex-col justify-end p-4 group transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] border border-white/10 hover:border-white/30">
+<div class="absolute inset-0 bg-gradient-to-t from-surface-dim to-transparent z-10"></div>
+<div class="absolute inset-0 bg-[url('placeholder')] bg-cover bg-center opacity-30 mix-blend-screen transition-opacity group-hover:opacity-50 z-0" data-alt="A dynamic, abstract digital composition representing various sports equipment (basketball, tennis racket, baseball bat) glowing with intense neon colors against a deep void-like background. Clean vector art, flat design, subtle glass-like reflections and refractions." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAW5yKgFk7wFdcTn5u_qXzDS-WI2ynbdYX9GxS0gOO3JdX5Xydk43Ph_7dXwRNvnM3tSIMoQ2z3fhbXY80nCAXZ5zY-sHVGjLN_iAtRR9wdC9oxHWsfvAAoJYCpmKoSZkxqh-JCOrZQlfJD7K_DCifcBLKS0AN5PZUuqsP522nyI62Gc7fO0OOS9eM1J_CaDp7Gdnb0wwYLchRhmJjq9KipTUU-kqeAQZA1VFTXMHJI_-g5y30500j2nw')"></div>
+<div class="relative z-20 flex flex-col items-start gap-1">
+<span class="material-symbols-outlined text-on-surface-variant text-3xl mb-1 group-hover:text-primary transition-colors">sports</span>
+<span class="font-headline-sm text-headline-sm text-on-surface group-hover:text-white transition-colors">Sports</span>
+</div>
+</button>
+</div>
+</section>
+<!-- Mode Selector & Action -->
+<section class="glass-panel-2 rounded-xl p-stack-lg flex flex-col sm:flex-row gap-stack-lg items-center justify-between">
+<div class="flex-1 w-full flex flex-col gap-stack-sm">
+<h2 class="font-headline-md text-headline-md text-on-surface flex items-center gap-2 mb-2">
+<span class="material-symbols-outlined text-secondary-fixed">tune</span>
+                            Game Mode
+                        </h2>
+<!-- Custom Toggle -->
+<div class="relative flex p-1 glass-panel-1 rounded-lg border border-white/10 w-full sm:max-w-md">
+<div class="absolute inset-y-1 left-1 w-[calc(50%-4px)] bg-primary-fixed/20 backdrop-blur-md rounded-md border border-primary-fixed/50 shadow-[0_0_15px_rgba(125,244,255,0.2)] transition-transform duration-300 ease-out z-0"></div>
+<button class="relative flex-1 py-3 text-center z-10 font-body-lg text-body-lg text-primary-fixed font-semibold">
+                                1v1 (Guess Who)
+                            </button>
+<button class="relative flex-1 py-3 text-center z-10 font-body-lg text-body-lg text-on-surface-variant hover:text-white transition-colors">
+                                3-4 (Impostor)
+                            </button>
+</div>
+</div>
+<div class="w-full sm:w-auto flex flex-col gap-2">
+<button class="bg-primary-fixed text-on-primary-fixed font-headline-sm text-headline-sm px-8 py-4 rounded-lg shadow-[0_0_20px_rgba(125,244,255,0.4)] hover:shadow-[0_0_30px_rgba(125,244,255,0.6)] hover:bg-primary transition-all active:scale-95 duration-150 flex items-center justify-center gap-2 w-full whitespace-nowrap">
+<span class="material-symbols-outlined font-bold" style="font-variation-settings: 'FILL' 1;">add_circle</span>
+                            Create Room
+                        </button>
+</div>
+</section>
+</div>
+<!-- Right Column: Lobby Area (Spans 4 cols on desktop) -->
+<div class="lg:col-span-4 flex flex-col gap-stack-lg">
+<section class="glass-panel-2 rounded-xl p-stack-lg flex-1 flex flex-col relative overflow-hidden">
+<!-- Subtle background decoration -->
+<div class="absolute -top-20 -right-20 w-64 h-64 bg-primary-fixed/10 rounded-full blur-[80px] pointer-events-none"></div>
+<div class="flex justify-between items-start mb-stack-md relative z-10">
+<div>
+<h2 class="font-headline-md text-headline-md text-on-surface flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary-fixed">groups</span>
+                                Lobby
+                            </h2>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1">Waiting for players (2/4)</p>
+</div>
+<!-- Room Code Display -->
+<div class="glass-panel-1 px-3 py-2 rounded-md border border-white/20 flex flex-col items-end">
+<span class="font-label-caps text-label-caps text-on-surface-variant mb-1">Code</span>
+<span class="font-stats-num text-stats-num text-primary-fixed tracking-widest neon-text-glow">X7J2</span>
+</div>
+</div>
+<!-- Avatars List -->
+<div class="flex flex-col gap-3 flex-1 relative z-10 mb-stack-lg">
+<!-- Player 1 (Host) -->
+<div class="glass-panel-1 rounded-lg p-3 flex items-center gap-3 border border-primary-fixed/30 bg-primary-fixed/5">
+<div class="relative">
+<img class="w-10 h-10 rounded-full object-cover border-2 border-primary-fixed" data-alt="A highly detailed avatar portrait of a cyberpunk gamer character with glowing neon blue and purple accents, wearing a futuristic headset in a dark, moody high-tech environment. The style is sharp, sleek, 2D flat vector art with premium glassmorphism elements." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAkTuApbyfmM3ZTGxnHI8re5LGZdO_buGYgwjPmksNb4ZwvBcGpGb77Idl9YApiAxUsElUyZLh90OE3o_qVqSlsdF2x5WRTkcIHed0m7YWgIkw151QrWnWwrtGF-4IyUQ-Up4Dc2bArN-f-9QiJlMgnCPG79ezgwkqgghiVlB-wsV-RPzSbUdv2Ev0uOOr0rumRa7-K4LLCb61d5gR9k1V1PKi-lTmOHdgMH1Qn_hGX4CRHznrYV4o0YQ"/>
+<div class="absolute -top-1 -right-1 bg-surface-dim rounded-full p-[2px]">
+<span class="material-symbols-outlined text-[12px] text-secondary-fixed" style="font-variation-settings: 'FILL' 1;">star</span>
+</div>
+</div>
+<div class="flex-1 min-w-0">
+<p class="font-body-lg text-body-lg text-white truncate">CyberPlayer_01</p>
+<p class="font-label-caps text-label-caps text-primary-fixed mt-0.5">Host</p>
+</div>
+<span class="material-symbols-outlined text-primary-fixed">check_circle</span>
+</div>
+<!-- Player 2 (Joined) -->
+<div class="glass-panel-1 rounded-lg p-3 flex items-center gap-3 border border-white/10 hover:border-white/20 transition-colors">
+<img class="w-10 h-10 rounded-full object-cover border border-white/30" data-alt="A stylish 2D flat vector illustration of an anonymous gamer avatar. A mysterious figure wearing a sleek, dark visor reflecting neon pink light, set against a dark void background. Minimalist details, clean lines, premium glassmorphism." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDnR5dAs9CXRCc-JgeTBVoynYWqMHDeS5FVMSnl4tJeKSvETohGkLAhswnV-gZ0y-DvggujCEVUCRHJaqJyfj2OncZAT2pDdWviCB6W32PQJsv9qo1isDYaoWkueJJO6JNTOBDLGKvLxhe1CXZ2Iyxtt8ZDQIDb7jFpxXb-SGcUyVS2Fk_F46Ljuh3P4DhneJ-tF8DPWJm0taL-SNXhGe6PZxa84eN0_qZBUsv2U8M0XbuPqGd4R4GDYg"/>
+<div class="flex-1 min-w-0">
+<p class="font-body-lg text-body-lg text-on-surface truncate">NeonNinja99</p>
+<p class="font-label-caps text-label-caps text-on-surface-variant mt-0.5">Ready</p>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant">check_circle</span>
+</div>
+<!-- Empty Slot -->
+<div class="rounded-lg p-3 flex items-center gap-3 border border-dashed border-white/20 bg-white/5 opacity-50">
+<div class="w-10 h-10 rounded-full border border-dashed border-white/40 flex items-center justify-center bg-black/20">
+<span class="material-symbols-outlined text-white/40">person_add</span>
+</div>
+<div class="flex-1">
+<p class="font-body-sm text-body-sm text-white/50 italic">Waiting...</p>
+</div>
+</div>
+</div>
+<!-- Lobby Actions -->
+<div class="flex flex-col gap-3 mt-auto relative z-10">
+<button class="glass-panel-1 text-on-surface font-body-lg text-body-lg py-3 rounded-lg border border-white/20 hover:bg-white/10 transition-colors flex items-center justify-center gap-2 active:scale-95 duration-150">
+<span class="material-symbols-outlined">share</span>
+                            Share Link
+                        </button>
+<button class="bg-surface-tint text-on-primary-fixed font-headline-sm text-headline-sm py-4 rounded-lg shadow-[0_0_15px_rgba(0,219,233,0.3)] hover:shadow-[0_0_25px_rgba(0,219,233,0.5)] transition-all active:scale-95 duration-150 flex items-center justify-center gap-2 opacity-50 cursor-not-allowed">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">play_arrow</span>
+                            Start Game
+                        </button>
+<p class="text-center font-label-caps text-label-caps text-error text-[10px] mt-1">Requires 1 more player</p>
+</div>
+</section>
+</div>
+</div>
+</main>
+<!-- BottomNavBar (Mobile only) -->
+<nav class="bg-white/5 backdrop-blur-2xl fixed bottom-0 w-full z-50 rounded-t-xl border-t border-white/10 shadow-none flex justify-around items-center h-20 pb-safe md:hidden">
+<!-- Active Tab: Lobby -->
+<a class="flex flex-col items-center justify-center text-primary-fixed drop-shadow-[0_0_8px_rgba(125,244,255,0.6)] w-1/4 active:scale-90 duration-200" href="#">
+<span class="material-symbols-outlined mb-1" style="font-variation-settings: 'FILL' 1;">home</span>
+<span class="font-label-caps text-label-caps">Lobby</span>
+</a>
+<!-- Inactive Tabs -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary-fixed-dim transition-all w-1/4 active:scale-90 duration-200" href="#">
+<span class="material-symbols-outlined mb-1">sports_esports</span>
+<span class="font-label-caps text-label-caps">Game</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary-fixed-dim transition-all w-1/4 active:scale-90 duration-200" href="#">
+<span class="material-symbols-outlined mb-1">leaderboard</span>
+<span class="font-label-caps text-label-caps">Stats</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary-fixed-dim transition-all w-1/4 active:scale-90 duration-200" href="#">
+<span class="material-symbols-outlined mb-1">forum</span>
+<span class="font-label-caps text-label-caps">Social</span>
+</a>
+</nav>
+<script>
+        // Simple drawer toggle logic for demo purposes
+        document.addEventListener('DOMContentLoaded', () => {
+            const menuBtn = document.querySelector('header button:first-child');
+            const drawer = document.getElementById('desktop-drawer');
+            
+            if(menuBtn && drawer) {
+                menuBtn.addEventListener('click', () => {
+                    drawer.classList.toggle('-translate-x-full');
+                });
+            }
+        });
+    </script>
+</body></html>

@@ -1,0 +1,32 @@
+{
+  "note": "Existing game items with NO matching entry in the Gemini dataset (different 45-item selection). Cannot download without guessing.",
+  "unmatched": [
+    { "id": "c03", "name": "Bugs Bunny", "category": "cartoons", "reason": "Not in Gemini dataset (Gemini has Anna, Olaf, Simba, Jerry, etc. instead)" },
+    { "id": "c05", "name": "Homer Simpson", "category": "cartoons", "reason": "Not in Gemini dataset" },
+    { "id": "c07", "name": "Scooby-Doo", "category": "cartoons", "reason": "Not in Gemini dataset" },
+    { "id": "c09", "name": "Bart Simpson", "category": "cartoons", "reason": "Not in Gemini dataset" },
+    { "id": "c10", "name": "Goku", "category": "cartoons", "reason": "Not in Gemini dataset" },
+    { "id": "c11", "name": "Naruto", "category": "cartoons", "reason": "Not in Gemini dataset" },
+    { "id": "c12", "name": "Optimus Prime", "category": "cartoons", "reason": "Not in Gemini dataset" },
+    { "id": "f01", "name": "Messi", "category": "football", "reason": "Not in Gemini dataset (Gemini has Griezmann, Saka, Kane, etc. instead)" },
+    { "id": "f02", "name": "Ronaldo", "category": "football", "reason": "Not in Gemini dataset" },
+    { "id": "f03", "name": "Neymar", "category": "football", "reason": "Not in Gemini dataset" },
+    { "id": "f04", "name": "Mbappé", "category": "football", "reason": "Not in Gemini dataset" },
+    { "id": "f05", "name": "Haaland", "category": "football", "reason": "Not in Gemini dataset" },
+    { "id": "f08", "name": "Salah", "category": "football", "reason": "Not in Gemini dataset" },
+    { "id": "f09", "name": "Vinicius Jr", "category": "football", "reason": "Not in Gemini dataset" },
+    { "id": "f12", "name": "Mbappe Twin", "category": "football", "reason": "Not in Gemini dataset" },
+    { "id": "f15", "name": "Osimhen", "category": "football", "reason": "Not in Gemini dataset" },
+    { "id": "s10", "name": "Gymnastics", "category": "sports", "reason": "Not in Gemini dataset (Gemini has table-tennis, cricket, etc. instead)" },
+    { "id": "s11", "name": "Archery", "category": "sports", "reason": "Not in Gemini dataset" },
+    { "id": "s13", "name": "Rowing", "category": "sports", "reason": "Not in Gemini dataset" },
+    { "id": "s14", "name": "Surfing", "category": "sports", "reason": "Not in Gemini dataset" },
+    { "id": "s15", "name": "Fencing", "category": "sports", "reason": "Not in Gemini dataset" }
+  ],
+  "geminiOnlyNotInProject": [
+    "antoine-griezmann", "bruno-fernandes", "bukayo-saka", "rodri", "lautaro-martinez",
+    "thibaut-courtois", "harry-kane", "virgil-van-dijk", "son-heung-min",
+    "anna", "olaf", "simba", "jerry", "minion-bob", "po", "spider-man",
+    "table-tennis", "american-football", "cricket", "badminton", "formula-1"
+  ]
+}

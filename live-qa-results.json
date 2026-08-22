@@ -1,0 +1,30 @@
+{
+  "roomCode": "QA369124",
+  "results": [
+    {
+      "name": "host room creation",
+      "status": "LIVE FIREBASE VERIFIED",
+      "details": "QA369124"
+    },
+    {
+      "name": "player 2 join",
+      "status": "LIVE FIREBASE VERIFIED",
+      "details": "8M79ZYAXH2UoBKP114aNob98wmg1"
+    },
+    {
+      "name": "player 3 join",
+      "status": "LIVE FIREBASE VERIFIED",
+      "details": "1dn7j4hJeCg7LaQyOFIfG1zthOp2"
+    },
+    {
+      "name": "player 4 join",
+      "status": "LIVE FIREBASE VERIFIED",
+      "details": "3r8HUjJn1Mg2jXpIlCquVlxyM6t1"
+    },
+    {
+      "name": "fifth new UID rejected",
+      "status": "LIVE FIREBASE VERIFIED",
+      "details": "committed=true; playerCount=4"
+    }
+  ]
+}

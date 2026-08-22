@@ -1,0 +1,170 @@
+{
+  "rules": {
+    "tournamentRooms": {
+      "$roomId": {
+        ".read": "auth != null",
+        ".write": "auth != null && (!data.exists() || data.child('hostId').val() === auth.uid || (data.child('status').val() === 'lobby' && data.child('phase').val() === 'lobby' && ((!data.child('players').child(auth.uid).exists() && newData.child('players').child(auth.uid).exists()) || data.child('players').child(auth.uid).exists())))",
+        "players": {
+          "$uid": {
+            ".write": "auth != null && auth.uid === $uid && data.parent().parent().child('status').val() !== 'finished'"
+          }
+        },
+        "leftPlayers": {
+          "$uid": {
+            ".write": "auth != null && auth.uid === $uid"
+          }
+        },
+        "private": {
+          "$uid": {
+            "$matchId": {
+              "target": {
+                ".read": "auth != null && auth.uid === $uid",
+                ".write": "auth != null && (auth.uid === $uid || data.parent().parent().parent().parent().child('hostId').val() === auth.uid)"
+              }
+            }
+          }
+        }
+      }
+    },
+    "teamRooms": {
+      "$roomId": {
+        ".read": "auth != null",
+        ".write": "auth != null && (!data.exists() || data.child('hostId').val() === auth.uid || (data.child('status').val() === 'lobby' && data.child('phase').val() === 'lobby' && ((!data.child('players').child(auth.uid).exists() && newData.child('players').child(auth.uid).exists()) || data.child('players').child(auth.uid).exists())))",
+        "players": {
+          "$uid": {
+            ".write": "auth != null && auth.uid === $uid && data.parent().parent().child('status').val() !== 'finished'"
+          }
+        },
+        "leftPlayers": {
+          "$uid": {
+            ".write": "auth != null && auth.uid === $uid"
+          }
+        },
+        "match": {
+          "confirmations": {
+            "$teamId": {
+              "$uid": {
+                ".write": "auth != null && auth.uid === $uid && ($teamId === 'team_a' || $teamId === 'team_b') && root.child('teamRooms').child($roomId).child('players').child(auth.uid).child('teamId').val() === $teamId && root.child('teamRooms').child($roomId).child('match').child('status').val() === 'playing' && newData.child('playerId').val() === auth.uid && newData.child('teamId').val() === $teamId && newData.child('matchId').val() === root.child('teamRooms').child($roomId).child('match').child('matchId').val() && newData.child('roundNumber').val() === root.child('teamRooms').child($roomId).child('roundNumber').val() && !data.exists()"
+              }
+            }
+          }
+        }
+      }
+    },
+    "teamBattlePrivateTargets": {
+      "$roomId": {
+        "$uid": {
+          "$matchId": {
+            "target": {
+              ".read": "auth != null && auth.uid === $uid",
+              ".write": "auth != null && (auth.uid === $uid || root.child('teamRooms').child($roomId).child('hostId').val() === auth.uid) && (!newData.exists() || (newData.child('playerId').val() === $uid && newData.child('matchId').val() === $matchId && newData.child('targetId').exists() && newData.child('targetOwnerTeamId').exists() && newData.child('ownedTarget').child('targetId').exists()))"
+            }
+          }
+        }
+      }
+    },
+    "rooms": {
+      "$roomCode": {
+        ".read": "auth != null && (data.child('players').child(auth.uid).exists() || !data.exists())",
+        ".write": "auth != null && !data.exists()",
+
+        "private": {
+          "$uid": {
+            ".read": "auth != null && auth.uid === $uid",
+            ".write": "auth != null && (auth.uid === $uid || data.parent().parent().child('hostId').val() === auth.uid)"
+          }
+        },
+
+        "actions": {
+          "$roundId": {
+            "$matchId": {
+              "$actorId": {
+                ".read": "auth != null && data.parent().parent().parent().parent().child('players').child(auth.uid).exists()",
+                ".write": "auth != null && auth.uid === $actorId && newData.child('type').val() === 'confirm_guess' && newData.child('actorId').val() === auth.uid && newData.child('roundId').val() === $roundId && newData.child('matchId').val() === $matchId && !data.exists() && data.parent().parent().parent().parent().child('mode').val() === 'social' && data.parent().parent().parent().parent().child('roundId').val() === $roundId && data.parent().parent().parent().parent().child('players').child(auth.uid).exists() && data.parent().parent().parent().parent().child('playerAssignments').child(auth.uid).child('matchId').val() === $matchId && data.parent().parent().parent().parent().child('playerAssignments').child(auth.uid).child('opponentPlayerId').val() === newData.child('targetPlayerId').val() && data.parent().parent().parent().parent().child('bracket').child('matches').child($matchId).child('status').val() === 'active'"
+              }
+            }
+          }
+        },
+
+        "players": {
+          "$uid": {
+            ".read": "auth != null && data.parent().parent().child('players').child(auth.uid).exists()",
+            ".write": "auth != null && (auth.uid === $uid || data.parent().parent().child('hostId').val() === auth.uid)"
+          }
+        },
+
+        "hostId": {
+          ".write": "auth != null && (auth.uid === data.val() || auth.uid === newData.val())"
+        },
+        "phase": {
+          ".write": "auth != null && data.parent().child('hostId').val() === auth.uid"
+        },
+        "scores": {
+          ".write": "auth != null && data.parent().child('hostId').val() === auth.uid"
+        },
+        "round": {
+          ".write": "auth != null && data.parent().child('hostId').val() === auth.uid"
+        },
+        "roundId": {
+          ".write": "auth != null && data.parent().child('hostId').val() === auth.uid"
+        },
+        "matchId": {
+          ".write": "auth != null && data.parent().child('hostId').val() === auth.uid"
+        },
+        "activePlayerIds": {
+          ".write": "auth != null && data.parent().child('hostId').val() === auth.uid"
+        },
+        "status": {
+          ".write": "auth != null && data.parent().child('hostId').val() === auth.uid"
+        },
+        "bracket": {
+          ".write": "auth != null && data.parent().child('hostId').val() === auth.uid"
+        },
+        "playerAssignments": {
+          ".write": "auth != null && data.parent().child('hostId').val() === auth.uid"
+        },
+        "matchResults": {
+          ".write": "auth != null && data.parent().child('hostId').val() === auth.uid"
+        },
+        "standings": {
+          ".write": "auth != null && data.parent().child('hostId').val() === auth.uid"
+        },
+        "timerEndTimestamp": {
+          ".write": "auth != null && data.parent().child('hostId').val() === auth.uid"
+        },
+        "currentTurnPlayerId": {
+          ".write": "auth != null && data.parent().child('hostId').val() === auth.uid"
+        },
+        "roundResult": {
+          ".write": "auth != null && data.parent().child('hostId').val() === auth.uid"
+        },
+        "roundResults": {
+          "$roundId": {
+            ".write": "auth != null && data.parent().parent().child('hostId').val() === auth.uid && !data.exists()"
+          }
+        },
+        "messages": {
+          ".read": "auth != null && data.parent().child('players').child(auth.uid).exists()",
+          "$msgId": {
+            ".write": "auth != null && data.parent().parent().child('players').child(auth.uid).exists()"
+          }
+        },
+        "votes": {
+          "$voterId": {
+            ".read": "auth != null && data.parent().parent().child('players').child(auth.uid).exists()",
+            ".write": "auth != null && auth.uid === $voterId"
+          }
+        },
+        "eliminatedCards": {
+          "$playerId": {
+            ".read": "auth != null && data.parent().parent().child('players').child(auth.uid).exists()",
+            ".write": "auth != null && auth.uid === $playerId"
+          }
+        },
+        "usedTargetIds": {
+          ".write": "auth != null && data.parent().child('hostId').val() === auth.uid"
+        }
+      }
+    }
+  }
+}

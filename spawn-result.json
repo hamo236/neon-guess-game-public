@@ -1,0 +1,6 @@
+{
+  "status": 1,
+  "signal": null,
+  "stdout": "SKIP c03 (exists)\n",
+  "stderr": "FAIL c01 SpongeBob: HTTP 404 for https://upload.wikimedia.org/wikipedia/en/3/3b/SpongeBob_SquarePants_character.svg\nFAIL c02 Tom: HTTP 404 for https://upload.wikimedia.org/wikipedia/en/f/f6/Tom_Tom_and_Jerry.org.png\nfile:///H:/%D8%A8%D9%83%D8%A7%D8%B3%D8%A9%20-%20Copy/stitch_neon_guess_master/scripts/migrate-images.mjs:128\r\n      results.failed.push({ id, ...meta, error: err.message });\r\n                                                    ^\r\n\r\nTypeError: Cannot read properties of undefined (reading 'message')\r\n    at main (file:///H:/%D8%A8%D9%83%D8%A7%D8%B3%D8%A9%20-%20Copy/stitch_neon_guess_master/scripts/migrate-images.mjs:128:53)\r\n\r\nNode.js v24.15.0\r\n"
+}

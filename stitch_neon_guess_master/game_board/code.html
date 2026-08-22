@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/>
+<title>Neon Guess - In-Game</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&amp;family=JetBrains+Mono:wght@700&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "on-error-container": "#ffdad6",
+                        "surface-container-highest": "#323536",
+                        "surface-container-low": "#191c1d",
+                        "tertiary-container": "#dcd9d8",
+                        "on-error": "#690005",
+                        "on-tertiary": "#313030",
+                        "surface-bright": "#373a3b",
+                        "on-surface": "#e1e3e4",
+                        "surface-container-high": "#282a2b",
+                        "on-primary-fixed": "#002022",
+                        "primary": "#dbfcff",
+                        "primary-fixed": "#7df4ff",
+                        "on-secondary-container": "#e5a9ff",
+                        "tertiary": "#f8f5f5",
+                        "surface-variant": "#323536",
+                        "tertiary-fixed": "#e5e2e1",
+                        "surface": "#111415",
+                        "surface-dim": "#111415",
+                        "secondary-fixed": "#f6d9ff",
+                        "background": "#111415",
+                        "on-primary-fixed-variant": "#004f54",
+                        "on-secondary-fixed-variant": "#7200a3",
+                        "secondary-container": "#7d01b1",
+                        "error": "#ffb4ab",
+                        "on-tertiary-container": "#5f5e5e",
+                        "on-primary": "#00363a",
+                        "primary-fixed-dim": "#00dbe9",
+                        "on-surface-variant": "#b9cacb",
+                        "on-tertiary-fixed-variant": "#474746",
+                        "outline-variant": "#3b494b",
+                        "on-background": "#e1e3e4",
+                        "inverse-primary": "#006970",
+                        "surface-tint": "#00dbe9",
+                        "on-tertiary-fixed": "#1c1b1b",
+                        "surface-container-lowest": "#0c0f10",
+                        "tertiary-fixed-dim": "#c8c6c5",
+                        "inverse-on-surface": "#2e3132",
+                        "surface-container": "#1d2021",
+                        "secondary": "#e9b3ff",
+                        "inverse-surface": "#e1e3e4",
+                        "on-primary-container": "#006970",
+                        "primary-container": "#00f0ff",
+                        "on-secondary-fixed": "#310048",
+                        "error-container": "#93000a",
+                        "secondary-fixed-dim": "#e9b3ff",
+                        "on-secondary": "#510074",
+                        "outline": "#849495"
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    spacing: {
+                        "stack-md": "16px",
+                        "stack-lg": "24px",
+                        "stack-sm": "8px",
+                        "gutter": "12px",
+                        "container-margin": "20px"
+                    },
+                    fontFamily: {
+                        "display-lg": ["Sora", "sans-serif"],
+                        "headline-md": ["Sora", "sans-serif"],
+                        "headline-sm": ["Sora", "sans-serif"],
+                        "label-caps": ["JetBrains Mono", "monospace"],
+                        "body-lg": ["Inter", "sans-serif"],
+                        "stats-num": ["Sora", "sans-serif"],
+                        "body-sm": ["Inter", "sans-serif"]
+                    },
+                    fontSize: {
+                        "display-lg": ["40px", { "lineHeight": "48px", "letterSpacing": "-0.02em", "fontWeight": "800" }],
+                        "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "700" }],
+                        "headline-sm": ["20px", { "lineHeight": "28px", "fontWeight": "600" }],
+                        "label-caps": ["12px", { "lineHeight": "16px", "letterSpacing": "0.1em", "fontWeight": "700" }],
+                        "body-lg": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "stats-num": ["18px", { "lineHeight": "22px", "letterSpacing": "0.05em", "fontWeight": "700" }],
+                        "body-sm": ["14px", { "lineHeight": "20px", "fontWeight": "400" }]
+                    },
+                    backgroundImage: {
+                        'cyber-grid': 'linear-gradient(to right, rgba(255, 255, 255, 0.05) 1px, transparent 1px), linear-gradient(to bottom, rgba(255, 255, 255, 0.05) 1px, transparent 1px)'
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body {
+            background-color: #111415;
+            color: #e1e3e4;
+            overscroll-behavior: none;
+        }
+        
+        .bg-cyber-grid {
+            background-size: 20px 20px;
+            background-position: center center;
+        }
+
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+            border-left: 1px solid rgba(255, 255, 255, 0.1);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            border-right: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .neon-border {
+            box-shadow: inset 0 0 0 1px rgba(125, 244, 255, 0.5), 0 0 10px rgba(125, 244, 255, 0.2);
+        }
+        
+        .neon-text-glow {
+            text-shadow: 0 0 8px rgba(125, 244, 255, 0.6);
+        }
+
+        /* Pulse animation for timer */
+        @keyframes pulse-neon {
+            0%, 100% { opacity: 1; text-shadow: 0 0 8px rgba(125, 244, 255, 0.8); }
+            50% { opacity: 0.7; text-shadow: 0 0 4px rgba(125, 244, 255, 0.4); }
+        }
+        
+        .animate-pulse-neon {
+            animation: pulse-neon 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        
+        /* Hide scrollbar for chat */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+</head>
+<body class="h-screen w-screen overflow-hidden flex flex-col relative bg-cyber-grid">
+<!-- Background Gradient Overlay -->
+<div class="absolute inset-0 bg-gradient-to-b from-surface-container-lowest/80 via-surface/90 to-surface-container/90 pointer-events-none z-0"></div>
+<!-- Top Navigation Shell (Hidden Nav for transactional/in-game focus) -->
+<!-- We suppress standard nav here per "The Destination Rule" for task-focused screens, 
+         but we keep a contextual game header -->
+<!-- Game Header Bar -->
+<header class="relative z-20 flex justify-between items-center px-container-margin h-16 bg-white/5 backdrop-blur-xl border-b border-white/10 shrink-0 mt-safe">
+<!-- Left: Scores -->
+<div class="flex items-center gap-gutter">
+<div class="flex flex-col items-center">
+<span class="font-label-caps text-label-caps text-primary">YOU</span>
+<span class="font-stats-num text-stats-num text-on-surface">12</span>
+</div>
+<div class="h-8 w-px bg-white/20"></div>
+<div class="flex flex-col items-center">
+<span class="font-label-caps text-label-caps text-on-surface-variant">OPP</span>
+<span class="font-stats-num text-stats-num text-on-surface-variant">08</span>
+</div>
+</div>
+<!-- Center: Round Info -->
+<div class="absolute left-1/2 -translate-x-1/2 flex flex-col items-center">
+<h1 class="font-headline-sm text-headline-sm text-primary neon-text-glow">ROUND 1/3</h1>
+</div>
+<!-- Right: Timer -->
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary-fixed animate-pulse-neon" data-icon="timer">timer</span>
+<span class="font-stats-num text-stats-num text-primary-fixed animate-pulse-neon">01:45</span>
+</div>
+</header>
+<!-- Main Game Canvas -->
+<main class="relative z-10 flex-1 flex flex-col overflow-hidden pb-[400px]"> <!-- padding bottom to accommodate chat drawer -->
+<!-- Secret Target Banner -->
+<div class="px-container-margin py-stack-sm shrink-0">
+<div class="glass-panel rounded-lg p-3 flex items-center justify-between neon-border bg-primary-fixed/5">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary-fixed" data-icon="visibility">visibility</span>
+<div class="flex flex-col">
+<span class="font-label-caps text-label-caps text-on-surface-variant uppercase">Your Target</span>
+<span class="font-body-sm text-body-sm text-on-surface font-semibold">Character 07</span>
+</div>
+</div>
+<div class="h-10 w-10 rounded bg-white/10 overflow-hidden border border-white/20">
+<img alt="Target Thumbnail" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCfKrb8POMh1gz3IIRgKyGo6bSiP35CzuvYOiGhKw5FQlzYsGMAUpX6B46823kygtWYekoLThajH_0Wu8TCWPU_nBFN5iqna2sbKXGSTEYO98D9dyvf-JE3rPGOfV792iKS5XW06blM7GFAVkI0xlv4-fIfGWiTqoWEw2T2R7TDmipcM1zfPeZZTkErmB-vV0JEiHGka0_BJk_41layNfQWKS7yV4sDHx9196HdEofwW-atM51q217fNQ"/>
+</div>
+</div>
+</div>
+<!-- 15-Image Grid Area -->
+<div class="flex-1 overflow-y-auto px-container-margin py-stack-sm no-scrollbar">
+<div class="grid grid-cols-3 gap-2">
+<!-- Grid Items (Generated manually to show states) -->
+<!-- Active Item 1 -->
+<button class="relative aspect-square rounded-lg overflow-hidden glass-panel group transition-transform active:scale-95">
+<img alt="Character 1" class="w-full h-full object-cover opacity-90 group-hover:opacity-100 transition-opacity" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCj1aWxUVkr7rph5iT-54V2rXEYtwwJdzPlEBGVS3hL_-ICuhx70va9icDk8bIdIF5dbck0TgfC977ss4jMBkIRah96vBjLbEqXC3dbNtGS0Kp3fZJv4uiCoWxUHXOStm4E3oxxYb7UbrRdRQnhwEy3Cto8pebtku2KVH_ruoYWscq4Yv8z7Z7HW9w3V-50oGAY3u6c14DdhhiNtlDpuEb7RvoU6NLroGHeZyoGzgBQFETJlH-Tzs1MKg"/>
+<div class="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/80 to-transparent p-1 pt-4 flex justify-center">
+<span class="font-label-caps text-[10px] leading-tight text-white tracking-wider">Char 01</span>
+</div>
+</button>
+<!-- Eliminated Item (Dimmed, Grayscale) -->
+<button class="relative aspect-square rounded-lg overflow-hidden glass-panel border-white/5 opacity-40 grayscale group transition-transform">
+<img alt="Character 2" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDs_jzAWjOpFFqu0O78ZBs49tjK0TkXtouxwZmattiI49_q_LKKt29zUVLOveDSjL9fTReECy2UxrVQVrQUH223uNduui4fN0cRo9muhXYtvLie-qea0pAHAcaAwLgGuQ4Rp8NXE_ph5-VpT6gsVv4R8ZacuOlF2s1CmUvttf1PDX6at9lYvlYy3Bu2tSUYUPCeW5TPru55DtQoTZFQmgmETOkoUEiLDLge_09QsiioJMXMCjjUedvPRg"/>
+<div class="absolute inset-0 flex items-center justify-center bg-black/40">
+<span class="material-symbols-outlined text-error text-3xl" data-icon="close">close</span>
+</div>
+<div class="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/80 to-transparent p-1 pt-4 flex justify-center">
+<span class="font-label-caps text-[10px] leading-tight text-white tracking-wider">Char 02</span>
+</div>
+</button>
+<!-- Active Item 3 -->
+<button class="relative aspect-square rounded-lg overflow-hidden glass-panel group transition-transform active:scale-95 border-primary-fixed/50 shadow-[0_0_10px_rgba(125,244,255,0.2)]">
+<img alt="Character 3" class="w-full h-full object-cover opacity-90" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB1ur_0QnM6Od0S3VTiba6q3x5TEY5ztqS2UlnTQwjYJ33BfQYITE0SJWu0doid3W_V_IAeNhVn5epaa9ffFRwA2-mjAkjyhkL9uUVskbl8J8WJndJoKqJSgfMJlSQMSO-z6_ZZmK9jllr9VXlFzMPU2aYMnbC_yAVTa7n0nLQdtyujDMvyaDECALPcbhHX_QQMp-__IPvOD3ks8m34RVHBPudfexlbSuZSTGLNikoggaD22u0h0Y2Vew"/>
+<div class="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/80 to-transparent p-1 pt-4 flex justify-center">
+<span class="font-label-caps text-[10px] leading-tight text-primary-fixed tracking-wider">Char 03</span>
+</div>
+</button>
+<!-- Active Item 4 -->
+<button class="relative aspect-square rounded-lg overflow-hidden glass-panel group transition-transform active:scale-95">
+<img alt="Character 4" class="w-full h-full object-cover opacity-90" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBkBTvMEwNG2t0QS-qo4Zk-bz7eABOfMqk3x91usKxnGw2ivdh2oQ302Pe_9B0WliCxMnIf2J8Ai1KrC1Th7M7UMHM9RERFrf8v-UG1qF6ie5-6XPrEU7QlSf1raIlFxxuVi3XS70DrN4uZZEd5fJvwpjsiOrlBwuuWw0YK-eSIHoT8B_yqBtSKYSDKJLijr2XppqIZkEHaQSTSugAv5jApPqYwVRJfufLWREwH5_msuFaZk9g4DEWElg"/>
+<div class="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/80 to-transparent p-1 pt-4 flex justify-center">
+<span class="font-label-caps text-[10px] leading-tight text-white tracking-wider">Char 04</span>
+</div>
+</button>
+<!-- Eliminated Item -->
+<button class="relative aspect-square rounded-lg overflow-hidden glass-panel border-white/5 opacity-40 grayscale group transition-transform">
+<img alt="Character 5" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAdEP--fFhBo12jIwOpYY3mgR05dsa2KAXTpXLUi6NU4ResbPWcchdd9RKxlxWQ3xYZ_4VCrPYl15P-yH55CTAenGlHMAEUBaDAVnY0bPQZLuIqq4gpU7-d6MIFq-TOgxN3k5vGAw6X3EDRpYrgsznw_i07Rkpbt7rQqhZ-zwUlLtnfJeCj59TveII6_AkKiGWeV2b3_tn8qAiQY3175x_b0QH3QXg1Ttb9R4hDOUrQFMzJIK7QUK7FCg"/>
+<div class="absolute inset-0 flex items-center justify-center bg-black/40">
+<span class="material-symbols-outlined text-error text-3xl" data-icon="close">close</span>
+</div>
+<div class="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/80 to-transparent p-1 pt-4 flex justify-center">
+<span class="font-label-caps text-[10px] leading-tight text-white tracking-wider">Char 05</span>
+</div>
+</button>
+<!-- More dummy items to fill grid up to 15 (simulated) -->
+<button class="relative aspect-square rounded-lg overflow-hidden glass-panel group transition-transform active:scale-95"><img class="w-full h-full object-cover opacity-90" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD5LjWYpth0I0RYHXZq_wztLDVMQ3pfV3RA9_Hx7ZgxByyL7iZZYaIt8NN1-IaMKneAf6lNOMZ3FB0EAfgyvkrV4an_P4IyJYdfapcx6i6DYQ-cDnO6OQ0s6mC9jiNFi6owvJzLUPKW8HuYarut6G0jZLhq_n9BSRjnIMWX3Hwn49eMQuSFH7FBB-h0alvl9vliqsW2Q0zb2N699TLAEW_j4Ntfg7nX-xUIn9DzNiA8W5_yOlloEvJtaA"/><div class="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/80 to-transparent p-1 pt-4 flex justify-center"><span class="font-label-caps text-[10px] leading-tight text-white tracking-wider">Char 06</span></div></button>
+<button class="relative aspect-square rounded-lg overflow-hidden glass-panel group transition-transform active:scale-95"><img class="w-full h-full object-cover opacity-90" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDsZFoU6wMuraXBEDTk0cbDUtf2hDenkuyoMzHCoAJUhcGwbawEK7gh2zPSH08rL7pDyQsCfyIYIC8t9Fxo-ikkYaNamVjDfkXRwow2q2nr48UEaNZUDlSZ7jUOOHmTZMpd1o0t3Y8NoIHcdkCh1ZzmZrM4UEKc12HhAQUm6duDcp67b9JIQAOn49Mg1omG6krwxKc6II-A26jNIrlalP3PKHueXxAdCoyJMYFzPi3jYX9B1bqxfFxLqA"/><div class="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/80 to-transparent p-1 pt-4 flex justify-center"><span class="font-label-caps text-[10px] leading-tight text-white tracking-wider">Char 07</span></div></button>
+<button class="relative aspect-square rounded-lg overflow-hidden glass-panel border-white/5 opacity-40 grayscale"><img class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDm_0lh3MN8Ka0COK44B-o2nz7g1ZLwC67ipIisGmTxpDkGvbdfsu3KkQIk_LxqeLfzrP59LiziLbWUNm5URyauagiLJ01Qv75Nn9wYW38GfK1cZcLyi9acMEe0CNb9w9pQRic3a924wNoH0J0WWBEofMX3u8AElZ5sSfGzxM9ulPE6YEm2z3cRnuHnFCE03TY8uYM03VQ8SHMLVWOwmJYaGQo6dV67DMns0AwwhSXSUg1GfJxBgBLrjg"/><div class="absolute inset-0 flex items-center justify-center bg-black/40"><span class="material-symbols-outlined text-error text-3xl" data-icon="close">close</span></div><div class="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/80 to-transparent p-1 pt-4 flex justify-center"><span class="font-label-caps text-[10px] leading-tight text-white tracking-wider">Char 08</span></div></button>
+<button class="relative aspect-square rounded-lg overflow-hidden glass-panel group transition-transform active:scale-95"><img class="w-full h-full object-cover opacity-90" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAq3Z7sKXQeO6rHtnc2eUNGYh1ngyO3fcHf1HBxN0KJ5C12g2RoB2cJwZNE9aQIQ_TCDfQJCwbdd3-uvA51O7qV_0kGgmeXPi4OgTqFvKP5whEivI7ce4aVcCbpPsqpwGUyALyAjA1wn346zeS1AAjOylUeoDz8O7bRHM6BUzXOp0sLyLDsGU-UypaUU-Bu_-5OzcUI2m44GdbdoItyddHhrcOsOSTBCt3OUjV1g5JAtWlOTQPVooqMCA"/><div class="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/80 to-transparent p-1 pt-4 flex justify-center"><span class="font-label-caps text-[10px] leading-tight text-white tracking-wider">Char 09</span></div></button>
+</div>
+</div>
+</main>
+<!-- Bottom Chat Drawer (Fixed at bottom) -->
+<div class="fixed bottom-0 inset-x-0 z-30 h-[400px] flex flex-col bg-surface/95 backdrop-blur-2xl border-t border-white/10 rounded-t-2xl shadow-[0_-10px_40px_rgba(0,0,0,0.5)]">
+<!-- Drawer Handle -->
+<div class="w-full h-6 flex justify-center items-center shrink-0 cursor-pointer">
+<div class="w-12 h-1 bg-white/20 rounded-full"></div>
+</div>
+<!-- Chat History -->
+<div class="flex-1 overflow-y-auto px-container-margin pb-stack-sm flex flex-col gap-4 no-scrollbar">
+<!-- Opponent Message -->
+<div class="flex items-end gap-2 self-start max-w-[85%]">
+<div class="w-6 h-6 rounded-full bg-secondary/20 flex items-center justify-center shrink-0 border border-secondary/30">
+<span class="font-label-caps text-[10px] text-secondary">OP</span>
+</div>
+<div class="glass-panel bg-white/5 rounded-2xl rounded-bl-sm px-4 py-2 border-white/10">
+<p class="font-body-sm text-body-sm text-on-surface">Does your character wear glasses?</p>
+</div>
+</div>
+<!-- Player Reply (Yes/No Bubble) -->
+<div class="flex items-end gap-2 self-end max-w-[85%] flex-row-reverse">
+<div class="w-6 h-6 rounded-full bg-primary-fixed/20 flex items-center justify-center shrink-0 border border-primary-fixed/50">
+<span class="font-label-caps text-[10px] text-primary-fixed">ME</span>
+</div>
+<div class="glass-panel bg-primary-fixed/10 rounded-2xl rounded-br-sm px-4 py-2 border-primary-fixed/30 neon-border">
+<p class="font-body-sm text-body-sm text-primary-fixed font-semibold">NO</p>
+</div>
+</div>
+<!-- Opponent Message -->
+<div class="flex items-end gap-2 self-start max-w-[85%]">
+<div class="w-6 h-6 rounded-full bg-secondary/20 flex items-center justify-center shrink-0 border border-secondary/30">
+<span class="font-label-caps text-[10px] text-secondary">OP</span>
+</div>
+<div class="glass-panel bg-white/5 rounded-2xl rounded-bl-sm px-4 py-2 border-white/10">
+<p class="font-body-sm text-body-sm text-on-surface">Are they blonde?</p>
+</div>
+</div>
+<!-- Player Pending Reply -->
+<div class="flex items-end gap-2 self-end max-w-[85%] flex-row-reverse mt-2 opacity-50">
+<div class="glass-panel bg-white/5 rounded-2xl rounded-br-sm px-4 py-2 border-white/10">
+<div class="flex gap-1 items-center h-5">
+<div class="w-1.5 h-1.5 bg-on-surface-variant rounded-full animate-bounce" style="animation-delay: 0s"></div>
+<div class="w-1.5 h-1.5 bg-on-surface-variant rounded-full animate-bounce" style="animation-delay: 0.1s"></div>
+<div class="w-1.5 h-1.5 bg-on-surface-variant rounded-full animate-bounce" style="animation-delay: 0.2s"></div>
+</div>
+</div>
+</div>
+</div>
+<!-- Input Area (Yes/No + Type) -->
+<div class="p-container-margin border-t border-white/10 bg-surface-container/50 pb-safe">
+<!-- Quick Actions -->
+<div class="flex gap-2 mb-3">
+<button class="flex-1 py-3 rounded-lg glass-panel bg-error/10 border-error/30 text-error font-label-caps text-label-caps active:scale-95 transition-transform">NO</button>
+<button class="flex-1 py-3 rounded-lg glass-panel bg-primary-fixed/10 border-primary-fixed/30 text-primary-fixed font-label-caps text-label-caps active:scale-95 transition-transform shadow-[0_0_15px_rgba(125,244,255,0.1)]">YES</button>
+</div>
+<!-- Text Input -->
+<div class="relative flex items-center">
+<input class="w-full bg-white/5 border border-white/10 rounded-full py-3 pl-4 pr-12 font-body-sm text-body-sm text-on-surface focus:outline-none focus:border-primary-fixed/50 focus:ring-1 focus:ring-primary-fixed/50 placeholder-on-surface-variant/50 transition-all" placeholder="Type a question..." type="text"/>
+<button class="absolute right-2 w-8 h-8 rounded-full bg-primary-fixed text-on-primary-fixed flex items-center justify-center active:scale-90 transition-transform">
+<span class="material-symbols-outlined text-[18px]" data-icon="send">send</span>
+</button>
+</div>
+</div>
+</div>
+</body></html>

@@ -1,0 +1,14 @@
+[
+  {
+    "port": 9332,
+    "url": "http://127.0.0.1:5176/",
+    "text": "NEON GUESS\nNEW ISOLATED MODES\nChoose a competitive circuit\n\nThese rooms use dedicated Firebase namespaces and do not alter 1v1 state.\n\n4-PLAYER TOURNAMENT\n2v2 TEAM BATTLE\nFirebase Connected — Real-time Multiplayer Active\ncategory\nSelect Category\nanimation\nCartoon Characters\nsports_soccer\nFootball Players\nsports\nTypes of Sports\nCreate Room\nJoin Room\nYour Name\nRoom Code\nlogin\nJoin Room\n\nerror\nGame already in progress. Only returning players can rejoin with this code.\n\ngroups\nLobby\n\nPlayers (0/4)\n\nperson_add\n\nWaiting...\n\nperson_add\n\nWaiting...\n\nplay_arrow\nStart Game\n\nCreate or join a room first\n\nhome\nLobby\nsports_esports\nGame\nleaderboard\nStats\nforum\nSocial",
+    "storage": {}
+  },
+  {
+    "port": 9333,
+    "url": "http://127.0.0.1:5176/",
+    "text": "NEON GUESS\nNEW ISOLATED MODES\nChoose a competitive circuit\n\nThese rooms use dedicated Firebase namespaces and do not alter 1v1 state.\n\n4-PLAYER TOURNAMENT\n2v2 TEAM BATTLE\nFirebase Connected — Real-time Multiplayer Active\ncategory\nSelect Category\nanimation\nCartoon Characters\nsports_soccer\nFootball Players\nsports\nTypes of Sports\nCreate Room\nJoin Room\nYour Name\nRoom Code\nlogin\nJoin Room\n\nerror\nGame already in progress. Only returning players can rejoin with this code.\n\ngroups\nLobby\n\nPlayers (0/4)\n\nperson_add\n\nWaiting...\n\nperson_add\n\nWaiting...\n\nplay_arrow\nStart Game\n\nCreate or join a room first\n\nhome\nLobby\nsports_esports\nGame\nleaderboard\nStats\nforum\nSocial",
+    "storage": {}
+  }
+]

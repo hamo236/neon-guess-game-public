@@ -1,0 +1,316 @@
+{
+  "success": [],
+  "failed": [
+    {
+      "id": "c01",
+      "url": "https://upload.wikimedia.org/wikipedia/en/3/3b/SpongeBob_SquarePants_character.svg",
+      "category": "cartoons",
+      "name": "SpongeBob",
+      "source": "gemini",
+      "error": "HTTP 404 for https://upload.wikimedia.org/wikipedia/en/3/3b/SpongeBob_SquarePants_character.svg"
+    },
+    {
+      "id": "c02",
+      "url": "https://upload.wikimedia.org/wikipedia/en/f/f6/Tom_Tom_and_Jerry.org.png",
+      "category": "cartoons",
+      "name": "Tom",
+      "source": "gemini",
+      "error": "HTTP 404 for https://upload.wikimedia.org/wikipedia/en/f/f6/Tom_Tom_and_Jerry.org.png"
+    },
+    {
+      "id": "c04",
+      "url": "https://upload.wikimedia.org/wikipedia/en/d/d4/Mickey_Mouse.png",
+      "category": "cartoons",
+      "name": "Mickey Mouse",
+      "source": "gemini",
+      "error": "HTTP 404 for https://upload.wikimedia.org/wikipedia/en/d/d4/Mickey_Mouse.png"
+    },
+    {
+      "id": "c08",
+      "url": "https://upload.wikimedia.org/wikipedia/en/a/a6/Pikachu_pokemon_in_anime.png",
+      "category": "cartoons",
+      "name": "Pikachu",
+      "source": "gemini",
+      "error": "HTTP 404 for https://upload.wikimedia.org/wikipedia/en/a/a6/Pikachu_pokemon_in_anime.png"
+    },
+    {
+      "id": "c09",
+      "url": "https://upload.wikimedia.org/wikipedia/en/a/aa/Bart_Simpson.svg",
+      "category": "cartoons",
+      "name": "Bart Simpson",
+      "source": "supplementary",
+      "error": "HTTP 404 for https://upload.wikimedia.org/wikipedia/en/a/aa/Bart_Simpson.svg"
+    },
+    {
+      "id": "c10",
+      "url": "https://upload.wikimedia.org/wikipedia/en/4/41/Goku_%28Dragon_Ball%29.png",
+      "category": "cartoons",
+      "name": "Goku",
+      "source": "supplementary",
+      "error": "HTTP 404 for https://upload.wikimedia.org/wikipedia/en/4/41/Goku_%28Dragon_Ball%29.png"
+    },
+    {
+      "id": "c11",
+      "url": "https://upload.wikimedia.org/wikipedia/en/9/94/Naruto_Uzumaki.png",
+      "category": "cartoons",
+      "name": "Naruto",
+      "source": "supplementary",
+      "error": "HTTP 404 for https://upload.wikimedia.org/wikipedia/en/9/94/Naruto_Uzumaki.png"
+    },
+    {
+      "id": "c12",
+      "url": "https://upload.wikimedia.org/wikipedia/en/b/b5/Optimus_Prime_%28Transformers%29.png",
+      "category": "cartoons",
+      "name": "Optimus Prime",
+      "source": "supplementary",
+      "error": "HTTP 404 for https://upload.wikimedia.org/wikipedia/en/b/b5/Optimus_Prime_%28Transformers%29.png"
+    },
+    {
+      "id": "c14",
+      "url": "https://upload.wikimedia.org/wikipedia/en/b/b4/Buzz_Lightyear.png",
+      "category": "cartoons",
+      "name": "Buzz Lightyear",
+      "source": "gemini",
+      "error": "HTTP 404 for https://upload.wikimedia.org/wikipedia/en/b/b4/Buzz_Lightyear.png"
+    },
+    {
+      "id": "c15",
+      "url": "https://upload.wikimedia.org/wikipedia/en/0/01/Woody_Toy_Story_3.png",
+      "category": "cartoons",
+      "name": "Woody",
+      "source": "gemini",
+      "error": "HTTP 404 for https://upload.wikimedia.org/wikipedia/en/0/01/Woody_Toy_Story_3.png"
+    },
+    {
+      "id": "f03",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/6/65/20180610_FIFA_Match_Cost_Rica_vs_Serbia_Neymar_850_0705.jpg",
+      "category": "football",
+      "name": "Neymar",
+      "source": "supplementary",
+      "error": "HTTP 404 for https://upload.wikimedia.org/wikipedia/commons/6/65/20180610_FIFA_Match_Cost_Rica_vs_Serbia_Neymar_850_0705.jpg"
+    },
+    {
+      "id": "f04",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/9/9e/Kylian_Mbapp%C3%A9_2018.jpg",
+      "category": "football",
+      "name": "Mbappé",
+      "source": "supplementary",
+      "error": "HTTP 404 for https://upload.wikimedia.org/wikipedia/commons/9/9e/Kylian_Mbapp%C3%A9_2018.jpg"
+    },
+    {
+      "id": "f05",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/0/07/Erling_Haaland_2023.jpg",
+      "category": "football",
+      "name": "Haaland",
+      "source": "supplementary",
+      "error": "HTTP 404 for https://upload.wikimedia.org/wikipedia/commons/0/07/Erling_Haaland_2023.jpg"
+    },
+    {
+      "id": "f06",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/e/ec/Karim_Benzema_2018.jpg",
+      "category": "football",
+      "name": "Benzema",
+      "source": "gemini",
+      "error": "HTTP 404 for https://upload.wikimedia.org/wikipedia/commons/e/ec/Karim_Benzema_2018.jpg"
+    },
+    {
+      "id": "f07",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/4/40/Kevin_De_Bruyne_2018.jpg",
+      "category": "football",
+      "name": "De Bruyne",
+      "source": "gemini",
+      "error": "HTTP 404 for https://upload.wikimedia.org/wikipedia/commons/4/40/Kevin_De_Bruyne_2018.jpg"
+    },
+    {
+      "id": "f08",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/7/7a/Mohamed_Salah_2018.jpg",
+      "category": "football",
+      "name": "Salah",
+      "source": "supplementary",
+      "error": "HTTP 404 for https://upload.wikimedia.org/wikipedia/commons/7/7a/Mohamed_Salah_2018.jpg"
+    },
+    {
+      "id": "f09",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/4/4e/Vin%C3%ADcius_Jr._2018.jpg",
+      "category": "football",
+      "name": "Vinicius Jr",
+      "source": "supplementary",
+      "error": "HTTP 404 for https://upload.wikimedia.org/wikipedia/commons/4/4e/Vin%C3%ADcius_Jr._2018.jpg"
+    },
+    {
+      "id": "f10",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/0/03/Robert_Lewandowski_2018.jpg",
+      "category": "football",
+      "name": "Lewandowski",
+      "source": "gemini",
+      "error": "HTTP 404 for https://upload.wikimedia.org/wikipedia/commons/0/03/Robert_Lewandowski_2018.jpg"
+    },
+    {
+      "id": "f11",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/e/e9/Luka_Modri%C3%A7_2018.jpg",
+      "category": "football",
+      "name": "Modric",
+      "source": "gemini",
+      "error": "HTTP 404 for https://upload.wikimedia.org/wikipedia/commons/e/e9/Luka_Modri%C3%A7_2018.jpg"
+    },
+    {
+      "id": "f12",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/2/2f/Kylian_Mbapp%C3%A9_World_Cup_2022.jpg",
+      "category": "football",
+      "name": "Mbappe Twin",
+      "source": "supplementary",
+      "error": "HTTP 404 for https://upload.wikimedia.org/wikipedia/commons/2/2f/Kylian_Mbapp%C3%A9_World_Cup_2022.jpg"
+    },
+    {
+      "id": "f13",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/b/b8/Pedri_2021.jpg",
+      "category": "football",
+      "name": "Pedri",
+      "source": "gemini",
+      "error": "HTTP 404 for https://upload.wikimedia.org/wikipedia/commons/b/b8/Pedri_2021.jpg"
+    },
+    {
+      "id": "f14",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/d/d3/Jude_Bellingham_2023.jpg",
+      "category": "football",
+      "name": "Bellingham",
+      "source": "gemini",
+      "error": "HTTP 404 for https://upload.wikimedia.org/wikipedia/commons/d/d3/Jude_Bellingham_2023.jpg"
+    },
+    {
+      "id": "f15",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/1/1e/Victor_Osimhen_2023.jpg",
+      "category": "football",
+      "name": "Osimhen",
+      "source": "supplementary",
+      "error": "HTTP 404 for https://upload.wikimedia.org/wikipedia/commons/1/1e/Victor_Osimhen_2023.jpg"
+    },
+    {
+      "id": "s08",
+      "url": "https://images.unsplash.com/photo-1519861537184-64ff942f8474?w=600",
+      "category": "sports",
+      "name": "Baseball",
+      "source": "supplementary",
+      "error": "HTTP 404 for https://images.unsplash.com/photo-1519861537184-64ff942f8474?w=600"
+    },
+    {
+      "id": "s09",
+      "url": "https://images.unsplash.com/photo-1517649763962-0c6232661a0b?w=600",
+      "category": "sports",
+      "name": "Cycling",
+      "source": "gemini",
+      "error": "HTTP 404 for https://images.unsplash.com/photo-1517649763962-0c6232661a0b?w=600"
+    },
+    {
+      "id": "s11",
+      "url": "https://images.unsplash.com/photo-1564769680524-3bf9f7685b2f?w=600",
+      "category": "sports",
+      "name": "Archery",
+      "source": "supplementary",
+      "error": "fetch failed"
+    },
+    {
+      "id": "s14",
+      "url": "https://images.unsplash.com/photo-1502680390469-be688c047602?w=600",
+      "category": "sports",
+      "name": "Surfing",
+      "source": "supplementary",
+      "error": "fetch failed"
+    },
+    {
+      "id": "s15",
+      "url": "https://images.unsplash.com/photo-1593341646788-0bd3350540c3?w=600",
+      "category": "sports",
+      "name": "Fencing",
+      "source": "supplementary",
+      "error": "fetch failed"
+    }
+  ],
+  "skipped": [
+    {
+      "id": "c03",
+      "path": "/images/cartoons/c03.webp",
+      "bytes": 17058
+    },
+    {
+      "id": "c05",
+      "path": "/images/cartoons/c05.webp",
+      "bytes": 14252
+    },
+    {
+      "id": "c06",
+      "path": "/images/cartoons/c06.webp",
+      "bytes": 22492
+    },
+    {
+      "id": "c07",
+      "path": "/images/cartoons/c07.webp",
+      "bytes": 13642
+    },
+    {
+      "id": "c13",
+      "path": "/images/cartoons/c13.webp",
+      "bytes": 19402
+    },
+    {
+      "id": "f01",
+      "path": "/images/football/f01.webp",
+      "bytes": 27972
+    },
+    {
+      "id": "f02",
+      "path": "/images/football/f02.webp",
+      "bytes": 24370
+    },
+    {
+      "id": "s01",
+      "path": "/images/sports/s01.webp",
+      "bytes": 27842
+    },
+    {
+      "id": "s02",
+      "path": "/images/sports/s02.webp",
+      "bytes": 14216
+    },
+    {
+      "id": "s03",
+      "path": "/images/sports/s03.webp",
+      "bytes": 23894
+    },
+    {
+      "id": "s04",
+      "path": "/images/sports/s04.webp",
+      "bytes": 38368
+    },
+    {
+      "id": "s05",
+      "path": "/images/sports/s05.webp",
+      "bytes": 11000
+    },
+    {
+      "id": "s06",
+      "path": "/images/sports/s06.webp",
+      "bytes": 20864
+    },
+    {
+      "id": "s07",
+      "path": "/images/sports/s07.webp",
+      "bytes": 13746
+    },
+    {
+      "id": "s10",
+      "path": "/images/sports/s10.webp",
+      "bytes": 18902
+    },
+    {
+      "id": "s12",
+      "path": "/images/sports/s12.webp",
+      "bytes": 35356
+    },
+    {
+      "id": "s13",
+      "path": "/images/sports/s13.webp",
+      "bytes": 37220
+    }
+  ]
+}
