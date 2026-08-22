@@ -1,26 +1,31 @@
 /**
  * src/firebase/config.js
  * Firebase initialization & environment check.
- * Enables graceful fallback to local engine if env variables are missing.
+ *
+ * Firebase Web configuration is public client configuration. The production
+ * fallback keeps static deployments functional when a CI provider does not
+ * expose VITE_* variables; authorization remains enforced by Firebase Auth
+ * and Realtime Database Rules.
  */
 
 import { initializeApp } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
 import { getDatabase } from 'firebase/database';
+import { firebasePublicConfig } from './firebasePublicConfig.js';
 
 const env = import.meta.env || {};
 
 const firebaseConfig = {
-  apiKey: env.VITE_FIREBASE_API_KEY,
-  authDomain: env.VITE_FIREBASE_AUTH_DOMAIN,
-  databaseURL: env.VITE_FIREBASE_DATABASE_URL,
-  projectId: env.VITE_FIREBASE_PROJECT_ID,
-  storageBucket: env.VITE_FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: env.VITE_FIREBASE_MESSAGING_SENDER_ID,
-  appId: env.VITE_FIREBASE_APP_ID,
+  apiKey: env.VITE_FIREBASE_API_KEY || firebasePublicConfig.apiKey,
+  authDomain: env.VITE_FIREBASE_AUTH_DOMAIN || firebasePublicConfig.authDomain,
+  databaseURL: env.VITE_FIREBASE_DATABASE_URL || firebasePublicConfig.databaseURL,
+  projectId: env.VITE_FIREBASE_PROJECT_ID || firebasePublicConfig.projectId,
+  storageBucket: env.VITE_FIREBASE_STORAGE_BUCKET || firebasePublicConfig.storageBucket,
+  messagingSenderId: env.VITE_FIREBASE_MESSAGING_SENDER_ID || firebasePublicConfig.messagingSenderId,
+  appId: env.VITE_FIREBASE_APP_ID || firebasePublicConfig.appId,
 };
 
-// Check if Firebase is properly configured with real env vars
+// Check if Firebase is properly configured with real values.
 export const isFirebaseConfigured = Boolean(
   firebaseConfig.apiKey &&
   firebaseConfig.apiKey !== 'your_api_key_here' &&
