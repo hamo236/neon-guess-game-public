@@ -4,7 +4,7 @@ import { TEAM_IDS } from '../src/modes/teamBattleEngine.js';
 import { targetIdsForRound, targetMapForTeams } from '../src/modes/teamBattleTargetPlan.js';
 
 const expectedCategoryCounts = {
-  [CATEGORIES.FOOTBALL]: 29,
+  [CATEGORIES.FOOTBALL]: 28,
   [CATEGORIES.SPORTS]: 19,
   [CATEGORIES.CARTOONS]: 21,
 };

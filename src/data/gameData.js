@@ -1,6 +1,6 @@
 /**
  * NEON GUESS — Game Dataset
- * 69 verified items across 3 categories: 29 football, 19 sports, 21 cartoons. Ice Hockey is intentionally excluded.
+ * 68 verified items across 3 categories: 28 football, 19 sports, 21 cartoons. Ice Hockey is intentionally excluded.
  * Local images served from /public/images/.
  */
 
@@ -98,7 +98,6 @@ export const ALL_ITEMS = resolveImages([
   { id: 'f24', name: 'Phil Foden', category: CATEGORIES.FOOTBALL, image: '/images/football/phil-foden.jpg' },
   { id: 'f25', name: 'Viktor Gyökeres', category: CATEGORIES.FOOTBALL, image: '/images/football/viktor-gyokeres.jpg' },
   { id: 'f26', name: 'Jeremie Frimpong', category: CATEGORIES.FOOTBALL, image: '/images/football/jeremie-frimpong.jpg' },
-  { id: 'f27', name: 'Nico Schlotterbeck', category: CATEGORIES.FOOTBALL, image: '/images/football/nico-schlotterbeck.jpg' },
   { id: 'f28', name: 'Bryan Mbeumo', category: CATEGORIES.FOOTBALL, image: '/images/football/bryan-mbeumo.jpg' },
   { id: 'f29', name: 'Morgan Gibbs-White', category: CATEGORIES.FOOTBALL, image: '/images/football/morgan-gibbs-white.jpg' },
 
