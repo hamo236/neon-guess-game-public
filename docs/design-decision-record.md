@@ -1360,3 +1360,18 @@ No protected gameplay or Firebase surface was edited in this cycle.
 - **Motion review:** `APPROVE` at source level. New motion is bounded to a 150ms transition on existing recovery buttons; dialog treatment is static, and `prefers-reduced-motion` removes the recovery transition.
 - **Verification gates:** source review complete; Windows build remains blocked by the Node installation error; runtime mobile review remains pending.
 - **Rollback:** revert only the new dialog class names, Batch 280â€“282 CSS block, and this DDR section.
+
+
+# Four Target Presentation — Guest Card Removal
+
+**Scope:** Four-player gameplay presentation only. The `Guest Card`/`OpponentTargetCard` wrapper is removed from Four and replaced with a compact image-plus-name row. The existing 1v1 `OpponentTargetCard` remains unchanged to avoid an unrequested cross-mode visual regression.
+
+**Protected:** target source and asset-selection logic, display-target privacy, Firebase reads/writes/listeners, gameplay, scoring, timers, rounds, bracket progression, callbacks, navigation, and synchronization remain unchanged.
+
+**Chat finding:** the shared `GameBoardPage` already renders a bottom chat surface and the legacy `GameStateContext` already sends chat messages. `CompetitiveModeContext` has no equivalent chat action/path in source, so synchronized chat for Four and 2v2 is a scope expansion requiring a dedicated Firebase engineering design, sanitization, rules, lifecycle, and multi-client tests. It is not added in this visual patch.
+
+**Image finding:** the local dataset uses `/images/...` assets and live GitHub Pages asset URLs return HTTP 200. The current competitive target write/read path carries `target.image`. The reported missing image therefore remains **NOT ROOT-CAUSED** from source inspection; no asset-selection or Firebase payload change is made speculatively.
+
+**Motion:** no new motion introduced. Existing chat and gameplay motion remain outside this presentation-only patch. `MOTION_SOURCE_VERIFIED`; no motion behavior changed.
+
+**Acceptance gates:** Four has no `OpponentTargetCard` wrapper; Four retains target name and image source when available; 1v1 render path remains unchanged; chat code remains unchanged; build succeeds; protected source files outside the presentation patch remain unchanged; no constitution change.

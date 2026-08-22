@@ -442,7 +442,23 @@ const GameBoardPage = () => {
                 </div>
               </section>
 
-              <OpponentTargetCard target={opponentTarget} />
+              {isFourPlayerSocial ? (
+                opponentTarget ? (
+                  <figure className="w-full max-w-[320px] flex items-center gap-3 rounded-2xl border border-white/10 bg-white/[0.035] p-3" aria-label={`Opponent target: ${opponentTarget.name}`}>
+                    <img
+                      src={opponentTarget.image}
+                      alt={opponentTarget.name}
+                      className="h-20 w-20 shrink-0 rounded-xl object-cover border border-primary-fixed/35"
+                    />
+                    <figcaption className="min-w-0">
+                      <span className="block font-label-caps text-[10px] tracking-[0.12em] text-primary-fixed">OPPONENT TARGET</span>
+                      <span className="mt-1 block truncate font-headline-sm text-headline-sm text-white">{opponentTarget.name}</span>
+                    </figcaption>
+                  </figure>
+                ) : null
+              ) : (
+                <OpponentTargetCard target={opponentTarget} />
+              )}
 
               {isFourPlayerSocial && (
 <section className="w-full glass-panel rounded-2xl p-3 sm:p-4 border border-white/10" aria-label="Four-player roster">
