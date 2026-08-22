@@ -89,6 +89,7 @@ assert(competitivePage.includes("pendingAction === 'leave'"), 'Competitive leave
 assert(competitivePage.includes('role="alert"'), 'Competitive failure feedback is missing an accessible alert role.');
 assert(competitivePage.includes('pendingAction={pendingAction}'), 'Competitive player-removal pending state is not wired.');
 assert(competitivePage.includes('MATCH READINESS'), 'Competitive lobby readiness strip is missing.');
+assert(competitivePage.includes('const safeMatch = match ||') && competitivePage.includes('Array.isArray(safeMatch.playerIds)'), 'Tournament bracket must safely render pending matches before final/consolation players are assigned.');
 assert(competitivePage.includes('role="status"') && competitivePage.includes('aria-live="polite"'), 'Competitive readiness feedback is missing an accessible status live region.');
 assert(competitivePage.includes('aria-busy={pendingAction === \'create\'}'), 'Competitive create action is missing semantic busy state.');
 assert(competitivePage.includes('aria-busy={pendingAction === \'join\'}'), 'Competitive join action is missing semantic busy state.');
