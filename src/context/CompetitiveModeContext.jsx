@@ -321,11 +321,12 @@ export function CompetitiveModeProvider({ mode, children }) {
     const ownedTarget = privateTarget?.ownedTarget || state.match?.targets?.[playerId] || null;
     const targetMatchesCurrentRound = privateTarget?.matchId === state.match.matchId && Number(privateTarget?.roundNumber) === currentRoundNumber;
     const fallbackTargetMatchesCurrentRound = !privateTarget?.ownedTarget && Number(state.match?.roundNumber || state.roundNumber) === currentRoundNumber;
-    if (!team?.teamId || !targetReady || !ownedTarget?.id || (!targetMatchesCurrentRound && !fallbackTargetMatchesCurrentRound)) return;
-    const targetSnapshot = { id: ownedTarget.id, targetId: ownedTarget.targetId || ownedTarget.id, name: ownedTarget.name, image: ownedTarget.image, teamId: team.teamId };
+    if (!team?.teamId || !canMutateCompetitive) return;
+    const targetSnapshot = ownedTarget?.id && (targetMatchesCurrentRound || fallbackTargetMatchesCurrentRound)
+      ? { id: ownedTarget.id, targetId: ownedTarget.targetId || ownedTarget.id, name: ownedTarget.name, image: ownedTarget.image, teamId: team.teamId }
+      : null;
     await mutateCompetitiveState({ mode, roomId, mutate: (current) => confirmTeamRound(current, playerId, Date.now(), { targetSnapshot }) });
-  }, [mode, playerId, roomId, state, privateTarget, targetReady]);
-
+  }, [mode, playerId, roomId, state, privateTarget, targetReady, canMutateCompetitive]);
   const resolveTeamRound = useCallback(async () => {
     if (!state || state.match?.status !== 'playing' || !canMutateCompetitive) return;
     await mutateCompetitiveState({ mode, roomId, mutate: (current) => {
