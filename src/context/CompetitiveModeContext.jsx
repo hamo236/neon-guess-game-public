@@ -45,7 +45,7 @@ async function writePrivateTargets(mode, roomId, state) {
   if (mode === COMPETITIVE_MODES.TOURNAMENT) {
     Object.values(state.matches || {}).filter((match) => ['playing', 'round_result'].includes(match.status)).forEach((match) => match.playerIds.forEach((playerId) => {
       if (match.status === 'round_result') {
-        writes.push(writeCompetitiveTarget({ mode, roomId, matchId: match.matchId, playerId, target: { matchId: match.matchId, roundNumber: match.roundNumber, targetReady: true, revealSnapshot: clone(match.result?.revealSnapshot || []) } }));
+        writes.push(writeCompetitiveTarget({ mode, roomId, matchId: match.matchId, playerId, target: { id: `reveal-${match.matchId}-${match.roundNumber}`, targetId: `reveal-${match.matchId}-${match.roundNumber}`, matchId: match.matchId, roundNumber: match.roundNumber, targetReady: true, revealSnapshot: clone(match.result?.revealSnapshot || []) } }));
         return;
       }
       const opponentId = match.playerIds.find((id) => id !== playerId);
@@ -162,6 +162,14 @@ export function CompetitiveModeProvider({ mode, children }) {
       setPrivateTarget(target); setTargetReady(true);
     }, onError: (e) => { setError(e?.message || 'Target synchronization error.'); } });
   }, [mode, roomId, playerId, targetSpec?.matchId, targetSpec?.roundNumber]);
+
+  useEffect(() => {
+    if (mode !== COMPETITIVE_MODES.TOURNAMENT || !roomId || !state || !canMutateCompetitive || state.hostId !== playerId) return undefined;
+    const hasTargetLifecycle = Object.values(state.matches || {}).some((match) => ['playing', 'round_result'].includes(match.status));
+    if (!hasTargetLifecycle) return undefined;
+    writePrivateTargets(mode, roomId, state).catch((targetError) => setError(targetError?.message || 'Tournament target synchronization error.'));
+    return undefined;
+  }, [mode, roomId, playerId, state, canMutateCompetitive]);
 
   const retrySessionRecovery = useCallback(async () => {
     if (roomId || recoveryAttemptedRef.current) return;
