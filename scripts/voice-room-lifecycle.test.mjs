@@ -14,5 +14,5 @@ assert.match(competitive, /state\?\.match \?/);
 assert.match(competitive, /\['playing', 'finished'\]\.includes\(match\.status\)/);
 assert.match(panel, /compact = false/);
 assert.match(panel, /phone_in_talk/);
-assert.match(panel, /aria-label="Join voice call"/);
+assert.match(panel, /label="Join voice call"/);
 console.log('Voice lifecycle regression checks passed.');

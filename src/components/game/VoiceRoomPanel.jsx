@@ -1,4 +1,3 @@
-import React from 'react';
 import { useVoiceRoom } from '../../hooks/useVoiceRoom.js';
 
 const statusCopy = {
@@ -9,32 +8,66 @@ const statusCopy = {
   error: 'Voice call needs attention',
 };
 
+const statusIcon = {
+  'requesting-microphone': 'mic',
+  waiting: 'phone_in_talk',
+  joining: 'call',
+  connected: 'phone_in_talk',
+  error: 'phone_disabled',
+};
+
+function IconButton({ label, icon, onClick, pressed = false, tone = 'neutral', disabled = false }) {
+  const toneClass = tone === 'active'
+    ? 'border-emerald-300/45 bg-emerald-300/12 text-emerald-200 hover:bg-emerald-300/20'
+    : tone === 'danger'
+      ? 'border-rose-300/45 bg-rose-300/10 text-rose-200 hover:bg-rose-300/18'
+      : 'border-white/15 bg-white/[0.06] text-white/85 hover:bg-white/[0.12]';
+
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      disabled={disabled}
+      className={`touch-feedback inline-flex h-9 w-9 items-center justify-center rounded-full border ${toneClass} transition-[transform,background-color,color,box-shadow] duration-150 ease-out motion-reduce:transition-none active:scale-[0.96] disabled:cursor-not-allowed disabled:opacity-40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-fixed`}
+      aria-label={label}
+      aria-pressed={pressed}
+      title={label}
+    >
+      <span className="material-symbols-outlined text-[18px]" aria-hidden="true">{icon}</span>
+    </button>
+  );
+}
+
 export default function VoiceRoomPanel({ roomType, roomId, scopeId = 'room', playerId, displayName, eligibleParticipantIds, label = 'VOICE ROOM', compact = false }) {
   const voice = useVoiceRoom({ roomType, roomId, scopeId, playerId, displayName, eligibleParticipantIds });
   const participantCount = Object.keys(voice.participants || {}).length;
   const hasCall = Boolean(voice.currentCall);
+  const currentStatus = voice.error ? 'error' : voice.status;
+  const connectionLabel = voice.error || (voice.status !== 'idle' ? (statusCopy[voice.status] || 'Voice room ready') : hasCall ? `Call available · ${participantCount} joined` : 'Optional audio call');
+  const statusGlyph = statusIcon[currentStatus] || (voice.joined ? 'phone_in_talk' : 'phone');
 
   if (!roomId || !playerId) return null;
 
   return (
-    <section className={`rounded-xl border border-primary-fixed/20 bg-surface/90 backdrop-blur-xl shadow-[0_10px_30px_rgba(0,0,0,0.16)] ${compact ? 'px-3 py-2.5' : 'p-3'}`} aria-label={label}>
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <div className="min-w-0">
-          <div className="flex items-center gap-2">
-            <span className={`h-2 w-2 rounded-full ${voice.joined ? 'bg-primary-fixed' : 'bg-white/35'}`} aria-hidden="true" />
-            <span className="font-label-caps text-[10px] tracking-[0.14em] text-primary-fixed">{label}</span>
-          </div>
-          <p className="mt-1 text-xs text-on-surface-variant" aria-live="polite">
-            {voice.error || (voice.status !== 'idle' ? (statusCopy[voice.status] || 'Voice room ready') : hasCall ? `Call available · ${participantCount} joined` : 'Optional audio call')}
-          </p>
+    <section className={`voice-room-panel rounded-2xl border border-white/12 bg-surface/92 shadow-[0_8px_24px_rgba(0,0,0,0.2)] backdrop-blur-xl ${compact ? 'px-2.5 py-2' : 'p-3'}`} aria-label={label}>
+      <div className="flex items-center justify-between gap-2">
+        <div className="flex min-w-0 items-center gap-2" aria-live="polite">
+          <span className={`material-symbols-outlined shrink-0 text-[18px] ${voice.joined ? 'text-emerald-300' : voice.error ? 'text-rose-300' : 'text-primary-fixed'}`} aria-hidden="true">{statusGlyph}</span>
+          <span className="sr-only">{label}: {connectionLabel}</span>
+          <span className="hidden truncate text-[10px] font-semibold uppercase tracking-[0.14em] text-primary-fixed sm:inline">{label}</span>
         </div>
-        <div className="flex flex-wrap items-center gap-2">
-          {!voice.joined && !hasCall && <button type="button" onClick={voice.startCall} className="touch-feedback inline-flex min-h-10 items-center gap-1.5 rounded-lg bg-primary-fixed px-3 py-2 text-xs font-semibold text-on-primary-fixed transition-[transform,background-color,box-shadow] duration-150 ease-out hover:bg-primary-fixed/90 hover:shadow-[0_4px_16px_rgba(125,244,255,0.22)] active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-fixed" aria-label="Start voice call"><span className="material-symbols-outlined text-[17px]" aria-hidden="true">phone_in_talk</span><span>{compact ? 'Start' : 'Start call'}</span></button>}
-          {!voice.joined && hasCall && <button type="button" onClick={voice.joinCall} className="touch-feedback inline-flex min-h-10 items-center gap-1.5 rounded-lg bg-primary-fixed px-3 py-2 text-xs font-semibold text-on-primary-fixed transition-[transform,background-color,box-shadow] duration-150 ease-out hover:bg-primary-fixed/90 hover:shadow-[0_4px_16px_rgba(125,244,255,0.22)] active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-fixed" aria-label="Join voice call"><span className="material-symbols-outlined text-[17px]" aria-hidden="true">call</span><span>{compact ? 'Join' : 'Join call'}</span></button>}
+
+        <div className="flex shrink-0 items-center gap-1.5">
+          {!voice.joined && !hasCall && (
+            <IconButton label="Start voice call" icon="phone_in_talk" onClick={voice.startCall} tone="active" />
+          )}
+          {!voice.joined && hasCall && (
+            <IconButton label="Join voice call" icon="call" onClick={voice.joinCall} tone="active" />
+          )}
           {voice.joined && <>
-            <button type="button" onClick={voice.toggleMute} className="touch-feedback min-h-10 rounded-lg border border-white/15 px-3 py-2 text-xs text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-fixed" aria-pressed={voice.isMuted}>{voice.isMuted ? 'Unmute mic' : 'Mute mic'}</button>
-            <button type="button" onClick={voice.toggleOutputMute} className="touch-feedback min-h-10 rounded-lg border border-white/15 px-3 py-2 text-xs text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-fixed" aria-pressed={voice.isOutputMuted}>{voice.isOutputMuted ? 'Hear call' : 'Mute call'}</button>
-            <button type="button" onClick={voice.leaveCall} className="touch-feedback min-h-10 rounded-lg border border-error/40 px-3 py-2 text-xs text-error focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-error">Leave call</button>
+            <IconButton label={voice.isMuted ? 'Unmute microphone' : 'Mute microphone'} icon={voice.isMuted ? 'mic_off' : 'mic'} onClick={voice.toggleMute} pressed={voice.isMuted} tone={voice.isMuted ? 'danger' : 'active'} />
+            <IconButton label={voice.isOutputMuted ? 'Hear voice call' : 'Mute voice call'} icon={voice.isOutputMuted ? 'volume_off' : 'volume_up'} onClick={voice.toggleOutputMute} pressed={voice.isOutputMuted} tone={voice.isOutputMuted ? 'danger' : 'active'} />
+            <IconButton label="Leave voice call" icon="call_end" onClick={voice.leaveCall} tone="active" />
           </>}
         </div>
       </div>
