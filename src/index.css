@@ -21,8 +21,11 @@
   --ng-motion-fast: 140ms;
   --ng-motion-standard: 180ms;
   --ng-focus-ring: 0 0 0 3px rgba(125, 244, 255, 0.22), 0 0 0 1px var(--ng-color-primary);
-  --ng-shadow-surface: 0 10px 30px rgba(0, 0, 0, 0.16);
-  --ng-shadow-elevated: 0 16px 40px rgba(0, 0, 0, 0.22), 0 0 24px rgba(125, 244, 255, 0.08);
+  /* Keep the neon depth while limiting full-surface paint and blur work. */
+  --ng-shadow-surface: 0 8px 24px rgba(4, 8, 20, 0.14);
+  --ng-shadow-elevated: 0 12px 30px rgba(4, 8, 20, 0.18), 0 0 18px rgba(125, 244, 255, 0.06);
+  --ng-glass-blur: 8px;
+  --ng-glass-blur-heavy: 14px;
   --ng-space-page-stack: 24px;
   --ng-space-page-stack-mobile: 20px;
   --ng-page-content-max: 72rem;
@@ -60,8 +63,8 @@
   .glass-panel {
     background: var(--ng-color-surface);
     box-shadow: var(--ng-shadow-surface);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(var(--ng-glass-blur));
+    -webkit-backdrop-filter: blur(var(--ng-glass-blur));
     border-top: 1px solid rgba(255, 255, 255, 0.2);
     border-left: 1px solid rgba(255, 255, 255, 0.1);
     border-bottom: 1px solid rgba(255, 255, 255, 0.05);
@@ -70,14 +73,14 @@
 
   .glass-panel-1 {
     background: var(--ng-color-surface-soft);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(var(--ng-glass-blur));
+    -webkit-backdrop-filter: blur(var(--ng-glass-blur));
   }
 
   .glass-panel-2 {
     background: var(--ng-color-surface-elevated);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
+    backdrop-filter: blur(var(--ng-glass-blur-heavy));
+    -webkit-backdrop-filter: blur(var(--ng-glass-blur-heavy));
     border-top: 1px solid rgba(255, 255, 255, 0.2);
     border-bottom: 1px solid rgba(255, 255, 255, 0.05);
     border-left: 1px solid rgba(255, 255, 255, 0.1);
@@ -87,8 +90,8 @@
   .glass-panel-heavy {
     background: var(--ng-color-surface-strong);
     box-shadow: var(--ng-shadow-elevated);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
+    backdrop-filter: blur(var(--ng-glass-blur-heavy));
+    -webkit-backdrop-filter: blur(var(--ng-glass-blur-heavy));
     border: 1px solid rgba(255, 255, 255, 0.2);
     border-top: 1px solid rgba(255, 255, 255, 0.3);
   }
@@ -96,6 +99,16 @@
   .glass-card {
     background: linear-gradient(145deg, var(--ng-color-surface) 0%, var(--ng-color-surface-soft) 100%);
     box-shadow: var(--ng-shadow-surface);
+  }
+
+  /* Mobile devices have less rendering headroom; preserve the look with cheaper effects. */
+  @media (max-width: 640px) {
+    :root {
+      --ng-glass-blur: 4px;
+      --ng-glass-blur-heavy: 8px;
+      --ng-shadow-surface: 0 6px 18px rgba(4, 8, 20, 0.12);
+      --ng-shadow-elevated: 0 8px 22px rgba(4, 8, 20, 0.15), 0 0 12px rgba(125, 244, 255, 0.05);
+    }
   }
 
   .neon-border {
