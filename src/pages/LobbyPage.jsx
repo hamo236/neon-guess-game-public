@@ -427,8 +427,60 @@ const LobbyPage = () => {
           </section>
           ) : null}
 
-          {/* Create / Join Toggle + Mode Selector */}
-          <section className={`ng-home-route-card glass-panel-2 premium-command-card rounded-xl p-stack-lg flex flex-col gap-stack-md border border-primary-fixed/15 ${isOneVOneLobby ? 'ng-1v1-reference-lobby p-3 sm:p-5 gap-stack-sm border-primary-fixed/30 bg-gradient-to-br from-white/[0.06] via-primary-fixed/[0.03] to-transparent' : ''}`}>
+          {/* Shared room-entry composition for 1v1: presentation-only alignment with 2v2/Four. */}
+          {isOneVOneLobby && !roomCreated && (
+            <section className="ng-home-route-card glass-panel-heavy rounded-xl p-5 sm:p-8 space-y-5 border border-primary-fixed/20" aria-labelledby="one-v-one-room-entry-title">
+              <div className="flex flex-wrap items-start justify-between gap-4">
+                <div>
+                  <p className="font-label-caps text-label-caps text-primary-fixed">ROOM MODE</p>
+                  <h2 id="one-v-one-room-entry-title" className="font-display-lg text-display-lg text-white">PLAY WITH FRIENDS</h2>
+                  <p className="text-on-surface-variant mt-2">Create or join a private 1v1 Guess Who room.</p>
+                </div>
+                <span className="inline-flex items-center gap-2 rounded-full border border-secondary-fixed/25 bg-secondary-fixed/5 px-3 py-1.5 font-label-caps text-[10px] tracking-[0.12em] text-secondary-fixed">
+                  <span className="material-symbols-outlined text-[16px]" aria-hidden="true">swords</span>
+                  1V1 DUEL
+                </span>
+              </div>
+
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+                <label className="ng-room-name-field rounded-lg border border-secondary-fixed/20 bg-secondary-fixed/[0.035] px-3 py-2.5">
+                  <span className="block font-label-caps text-[9px] tracking-[0.14em] text-secondary-fixed">PLAYER NAME</span>
+                  <input value={hostName || joinName} onChange={(e) => { setHostName(e.target.value); setJoinName(e.target.value); }} placeholder="Your name" aria-label="Your name" className="mt-1 min-h-8 w-full bg-transparent text-white placeholder:text-on-surface-variant/70 focus-visible:outline-none" />
+                </label>
+                <label className="ng-room-category-field rounded-lg border border-primary-fixed/20 bg-primary-fixed/[0.035] px-3 py-2.5">
+                  <span className="block font-label-caps text-[9px] tracking-[0.14em] text-primary-fixed">PLAY TYPE</span>
+                  <select value={category} onChange={(e) => setCategory(e.target.value)} aria-label="Game category" className="mt-1 min-h-8 w-full bg-transparent text-white focus-visible:outline-none">
+                    {Object.values(CATEGORY_META).map((cat) => <option key={cat.id} value={cat.id} className="bg-surface-dim text-white">{cat.label}</option>)}
+                  </select>
+                </label>
+                <label className="ng-room-join-field rounded-lg border border-secondary-fixed/20 bg-secondary-fixed/[0.035] px-3 py-2.5">
+                  <span className="block font-label-caps text-[9px] tracking-[0.14em] text-secondary-fixed">ROOM JOIN ID</span>
+                  <span className="mt-1 flex items-center gap-2">
+                    <span className="material-symbols-outlined text-[18px] text-primary-fixed/80" aria-hidden="true">key</span>
+                    <input value={joinCode} onChange={(e) => setJoinCode(e.target.value.toUpperCase())} placeholder="Paste room code" aria-label="Room ID to join" className="min-h-8 min-w-0 flex-1 bg-transparent text-white placeholder:text-on-surface-variant/70 focus-visible:outline-none" />
+                  </span>
+                </label>
+              </div>
+
+              <div className="ng-room-entry-actions flex flex-col gap-3 sm:flex-row" role="group" aria-label="Room actions">
+                <button type="button" onClick={handleCreateRoom} disabled={fbStatus === 'initializing' || isCreating || isJoining} aria-busy={isCreating} className="ng-create-room-action touch-feedback min-h-11 flex-1 rounded-lg bg-primary-fixed px-4 py-3 font-headline-sm text-on-primary-fixed disabled:opacity-40 active:scale-95">
+                  <span className="ng-room-entry-action__index" aria-hidden="true">01</span>
+                  <span className="ng-room-entry-action__meta" aria-hidden="true">NEW ROOM</span>
+                  <span className="material-symbols-outlined align-middle text-[18px]" aria-hidden="true">add_box</span>
+                  <span className="ng-room-entry-action__text">{isCreating ? 'Creating…' : 'Create Room'}</span>
+                </button>
+                <button type="button" onClick={handleJoinRoom} disabled={!isFirebaseConfigured || fbStatus !== 'ready' || !joinCode.trim() || isCreating || isJoining} aria-busy={isJoining} className="ng-join-room-action touch-feedback min-h-11 flex-1 rounded-lg border border-primary-fixed/50 px-4 py-3 font-headline-sm text-primary-fixed disabled:opacity-40 active:scale-95">
+                  <span className="ng-room-entry-action__index" aria-hidden="true">02</span>
+                  <span className="ng-room-entry-action__meta" aria-hidden="true">PASTE CODE</span>
+                  <span className="material-symbols-outlined align-middle text-[18px]" aria-hidden="true">login</span>
+                  <span className="ng-room-entry-action__text">{isJoining ? 'Joining…' : 'Join Room'}</span>
+                </button>
+              </div>
+            </section>
+          )}
+
+          {/* Create / Join Toggle + Mode Selector for existing 1v1 room state and legacy-compatible flow. */}
+          {(!isOneVOneLobby || roomCreated) && <section className={`ng-home-route-card glass-panel-2 premium-command-card rounded-xl p-stack-lg flex flex-col gap-stack-md border border-primary-fixed/15 ${isOneVOneLobby ? 'ng-1v1-reference-lobby p-3 sm:p-5 gap-stack-sm border-primary-fixed/30 bg-gradient-to-br from-white/[0.06] via-primary-fixed/[0.03] to-transparent' : ''}`}>
             {/* Create / Join tab switcher */}
             <div role="group" aria-label="Lobby setup" className={`ng-lobby-setup-switch ng-segment-control relative flex p-1 glass-panel-1 rounded-lg border border-white/10 w-full sm:max-w-xs mb-2 ${''}`}>
               <div className={`absolute inset-y-1 w-[calc(50%-4px)] bg-primary-fixed/20 backdrop-blur-md rounded-md border border-primary-fixed/50 shadow-[0_0_15px_rgba(125,244,255,0.2)] transition-transform duration-300 ease-out z-0 ${lobbyMode === 'create' ? 'translate-x-0 left-1' : 'translate-x-[calc(100%+4px)] left-1'}`} />
@@ -616,7 +668,7 @@ const LobbyPage = () => {
               </div>
               </>
             )}
-          </section>
+          </section>}
 
           {error && (
             <div
