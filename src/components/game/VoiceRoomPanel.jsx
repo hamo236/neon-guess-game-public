@@ -4,6 +4,7 @@ const statusCopy = {
   'requesting-microphone': 'Requesting microphone…',
   waiting: 'Voice call is open',
   joining: 'Joining voice call…',
+  reconnecting: 'Reconnecting voice call…',
   connected: 'Voice call connected',
   error: 'Voice call needs attention',
 };
@@ -43,7 +44,7 @@ export default function VoiceRoomPanel({ roomType, roomId, scopeId = 'room', pla
   const participantCount = Object.keys(voice.participants || {}).length;
   const hasCall = Boolean(voice.currentCall);
   const currentStatus = voice.error ? 'error' : voice.status;
-  const connectionLabel = voice.error || (voice.status !== 'idle' ? (statusCopy[voice.status] || 'Voice room ready') : hasCall ? `Call available · ${participantCount} joined` : 'Optional audio call');
+  const connectionLabel = voice.error || (voice.audioPlaybackBlocked ? 'Tap the page to hear the voice call' : voice.status !== 'idle' ? (statusCopy[voice.status] || 'Voice room ready') : hasCall ? `Call available · ${participantCount} joined` : 'Optional audio call');
   const statusGlyph = statusIcon[currentStatus] || (voice.joined ? 'phone_in_talk' : 'phone');
 
   if (!roomId || !playerId) return null;

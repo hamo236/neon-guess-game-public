@@ -103,6 +103,15 @@ function serializeSessionDescription(description) {
   return { type: String(json.type), sdp: json.sdp };
 }
 
+export async function removeVoiceSignal({ roomType, roomId, callId, senderId, receiverId, signalId }) {
+  if (!db || !roomType || !roomId || !callId || !senderId || !receiverId || !signalId) return;
+  const signalRef = ref(
+    db,
+    `${voiceCallsPath(roomType, roomId)}/${callId}/signals/${senderId}/${receiverId}/${signalId}`,
+  );
+  await remove(signalRef);
+}
+
 export async function writeVoiceSignal({ roomType, roomId, callId, senderId, receiverId, signal }) {
   if (!db || !roomType || !roomId || !callId || !senderId || !receiverId || !signal) return;
   const payload = { ...signal };
@@ -113,5 +122,6 @@ export async function writeVoiceSignal({ roomType, roomId, callId, senderId, rec
   const signalRef = push(
     ref(db, `${voiceCallsPath(roomType, roomId)}/${callId}/signals/${senderId}/${receiverId}`),
   );
+  await onDisconnect(signalRef).remove();
   await set(signalRef, { ...payload, createdAt: serverTimestamp() });
 }

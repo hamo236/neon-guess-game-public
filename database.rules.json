@@ -10,7 +10,7 @@
             ".write": "auth != null && root.child('tournamentRooms').child($roomId).child('players').child(auth.uid).exists() && (!data.exists() || data.child('eligible').child(auth.uid).val() === true)",
             "eligible": { "$eligibleId": { ".validate": "newData.val() === true && root.child('tournamentRooms').child($roomId).child('players').child($eligibleId).exists()" } },
             "participants": { "$uid": { ".write": "auth != null && auth.uid === $uid && data.parent().parent().child('eligible').child(auth.uid).val() === true" } },
-            "signals": { "$senderId": { "$receiverId": { ".read": "auth != null && auth.uid === $receiverId && root.child('tournamentRooms').child($roomId).child('players').child(auth.uid).exists()", "$signalId": { ".write": "auth != null && auth.uid === $senderId && data.parent().parent().parent().parent().child('eligible').child($receiverId).val() === true" } } } }
+            "signals": { "$senderId": { "$receiverId": { ".read": "auth != null && auth.uid === $receiverId && root.child('tournamentRooms').child($roomId).child('players').child(auth.uid).exists()", "$signalId": { ".write": "auth != null && (auth.uid === $senderId || (auth.uid === $receiverId && !newData.exists())) && data.parent().parent().parent().parent().child('eligible').child($receiverId).val() === true" } } } }
           }
         },
         "players": {
@@ -45,7 +45,7 @@
             ".write": "auth != null && root.child('teamRooms').child($roomId).child('players').child(auth.uid).exists() && (!data.exists() || data.child('eligible').child(auth.uid).val() === true)",
             "eligible": { "$eligibleId": { ".validate": "newData.val() === true && root.child('teamRooms').child($roomId).child('players').child($eligibleId).exists()" } },
             "participants": { "$uid": { ".write": "auth != null && auth.uid === $uid && data.parent().parent().child('eligible').child(auth.uid).val() === true" } },
-            "signals": { "$senderId": { "$receiverId": { ".read": "auth != null && auth.uid === $receiverId && root.child('teamRooms').child($roomId).child('players').child(auth.uid).exists()", "$signalId": { ".write": "auth != null && auth.uid === $senderId && data.parent().parent().parent().parent().child('eligible').child($receiverId).val() === true" } } } }
+            "signals": { "$senderId": { "$receiverId": { ".read": "auth != null && auth.uid === $receiverId && root.child('teamRooms').child($roomId).child('players').child(auth.uid).exists()", "$signalId": { ".write": "auth != null && (auth.uid === $senderId || (auth.uid === $receiverId && !newData.exists())) && data.parent().parent().parent().parent().child('eligible').child($receiverId).val() === true" } } } }
           }
         },
         "players": {
@@ -92,7 +92,7 @@
             ".write": "auth != null && root.child('rooms').child($roomCode).child('players').child(auth.uid).exists() && (!data.exists() || data.child('eligible').child(auth.uid).val() === true)",
             "eligible": { "$eligibleId": { ".validate": "newData.val() === true && root.child('rooms').child($roomCode).child('players').child($eligibleId).exists()" } },
             "participants": { "$uid": { ".write": "auth != null && auth.uid === $uid && data.parent().parent().child('eligible').child(auth.uid).val() === true" } },
-            "signals": { "$senderId": { "$receiverId": { ".read": "auth != null && auth.uid === $receiverId && root.child('rooms').child($roomCode).child('players').child(auth.uid).exists()", "$signalId": { ".write": "auth != null && auth.uid === $senderId && data.parent().parent().parent().parent().child('eligible').child($receiverId).val() === true" } } } }
+            "signals": { "$senderId": { "$receiverId": { ".read": "auth != null && auth.uid === $receiverId && root.child('rooms').child($roomCode).child('players').child(auth.uid).exists()", "$signalId": { ".write": "auth != null && (auth.uid === $senderId || (auth.uid === $receiverId && !newData.exists())) && data.parent().parent().parent().parent().child('eligible').child($receiverId).val() === true" } } } }
           }
         },
 

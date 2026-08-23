@@ -5,6 +5,7 @@ import {
   leaveVoiceCall,
   subscribeVoiceCalls,
   subscribeVoiceSignals,
+  removeVoiceSignal,
   writeVoiceSignal,
 } from '../firebase/voiceRoom.js';
 
@@ -41,6 +42,7 @@ export function useVoiceRoom({ roomType, roomId, scopeId = 'room', playerId, dis
   const [error, setError] = useState('');
   const [isMuted, setIsMuted] = useState(false);
   const [isOutputMuted, setIsOutputMuted] = useState(false);
+  const [audioPlaybackBlocked, setAudioPlaybackBlocked] = useState(false);
   const localStreamRef = useRef(null);
   const peersRef = useRef(new Map());
   const audioElementsRef = useRef(new Map());
@@ -48,6 +50,10 @@ export function useVoiceRoom({ roomType, roomId, scopeId = 'room', playerId, dis
   const seenSignalsRef = useRef(new Set());
   const pendingCandidatesRef = useRef(new Map());
   const cleanupParticipantRef = useRef(null);
+  const makingOfferRef = useRef(new Map());
+  const ignoredOffersRef = useRef(new Set());
+  const recoveryAttemptsRef = useRef(new Map());
+  const recoveryTimersRef = useRef(new Map());
 
   const eligibleIds = useMemo(
     () => [...new Set([playerId, ...eligibleParticipantIds].filter(Boolean))],
@@ -57,6 +63,12 @@ export function useVoiceRoom({ roomType, roomId, scopeId = 'room', playerId, dis
   const joined = Boolean(callId && currentCall?.id === callId && participants[playerId]);
 
   const stopPeer = useCallback((remoteId) => {
+    const recoveryTimer = recoveryTimersRef.current.get(remoteId);
+    if (recoveryTimer) clearTimeout(recoveryTimer);
+    recoveryTimersRef.current.delete(remoteId);
+    recoveryAttemptsRef.current.delete(remoteId);
+    makingOfferRef.current.delete(remoteId);
+    ignoredOffersRef.current.delete(remoteId);
     const peer = peersRef.current.get(remoteId);
     if (peer) peer.close();
     peersRef.current.delete(remoteId);
@@ -99,7 +111,7 @@ export function useVoiceRoom({ roomType, roomId, scopeId = 'room', playerId, dis
     }
     audio.muted = isOutputMuted;
     audio.srcObject = stream;
-    audio.play().catch(() => {});
+    audio.play().then(() => setAudioPlaybackBlocked(false)).catch(() => setAudioPlaybackBlocked(true));
   }, [isOutputMuted]);
 
   const createPeer = useCallback(async (remoteId, shouldOffer) => {
@@ -112,17 +124,52 @@ export function useVoiceRoom({ roomType, roomId, scopeId = 'room', playerId, dis
       if (event.candidate) sendSignal(remoteId, { type: 'candidate', candidate: event.candidate.toJSON() }).catch(() => {});
     };
     peer.onconnectionstatechange = () => {
+      if (peer.connectionState === 'connected') {
+        recoveryAttemptsRef.current.delete(remoteId);
+        setStatus('connected');
+        return;
+      }
+      if (peer.connectionState === 'disconnected') {
+        setStatus('reconnecting');
+        if (!recoveryTimersRef.current.has(remoteId)) {
+          const timer = setTimeout(async () => {
+            recoveryTimersRef.current.delete(remoteId);
+            if (peer.connectionState !== 'disconnected' || peer.signalingState === 'closed') return;
+            const attempts = recoveryAttemptsRef.current.get(remoteId) || 0;
+            if (attempts >= 2) {
+              setError('Voice connection was lost. Please leave and join the call again.');
+              setStatus('error');
+              return;
+            }
+            recoveryAttemptsRef.current.set(remoteId, attempts + 1);
+            try {
+              peer.restartIce?.();
+              const offer = await peer.createOffer({ iceRestart: true });
+              await peer.setLocalDescription(offer);
+              await sendSignal(remoteId, { type: 'offer', description: offer.toJSON ? offer.toJSON() : { type: offer.type, sdp: offer.sdp } });
+            } catch (err) {
+              setError(err?.message || 'Voice reconnection failed.');
+              setStatus('error');
+            }
+          }, 4000);
+          recoveryTimersRef.current.set(remoteId, timer);
+        }
+      }
       if (['failed', 'closed'].includes(peer.connectionState)) stopPeer(remoteId);
-      if (peer.connectionState === 'connected') setStatus('connected');
     };
     peersRef.current.set(remoteId, peer);
     if (shouldOffer) {
-      const offer = await peer.createOffer();
-      await peer.setLocalDescription(offer);
-      await sendSignal(remoteId, {
-        type: 'offer',
-        description: offer.toJSON ? offer.toJSON() : { type: offer.type, sdp: offer.sdp },
-      });
+      makingOfferRef.current.set(remoteId, true);
+      try {
+        const offer = await peer.createOffer();
+        await peer.setLocalDescription(offer);
+        await sendSignal(remoteId, {
+          type: 'offer',
+          description: offer.toJSON ? offer.toJSON() : { type: offer.type, sdp: offer.sdp },
+        });
+      } finally {
+        makingOfferRef.current.set(remoteId, false);
+      }
     }
     return peer;
   }, [attachRemoteAudio, ensureLocalStream, playerId, sendSignal, stopPeer]);
@@ -134,9 +181,16 @@ export function useVoiceRoom({ roomType, roomId, scopeId = 'room', playerId, dis
       let peer = peersRef.current.get(senderId);
       if (signal.type === 'offer') {
         peer = peer || await createPeer(senderId, false);
-        if (peer.signalingState !== 'stable') return;
+        const polite = String(playerId) > String(senderId);
+        const offerCollision = peer.signalingState !== 'stable' || makingOfferRef.current.get(senderId) === true;
+        if (offerCollision && !polite) {
+          ignoredOffersRef.current.add(senderId);
+          return;
+        }
+        if (offerCollision) await peer.setLocalDescription({ type: 'rollback' });
         const description = normalizeSessionDescription(signal.description);
         if (!description) return;
+        ignoredOffersRef.current.delete(senderId);
         await peer.setRemoteDescription(description);
         const pendingCandidates = pendingCandidatesRef.current.get(senderId) || [];
         for (const candidate of pendingCandidates) await peer.addIceCandidate(candidate);
@@ -156,8 +210,9 @@ export function useVoiceRoom({ roomType, roomId, scopeId = 'room', playerId, dis
         for (const candidate of pendingCandidates) await peer.addIceCandidate(candidate);
         pendingCandidatesRef.current.delete(senderId);
       } else if (signal.type === 'candidate') {
+        if (ignoredOffersRef.current.has(senderId)) return;
         peer = peer || await createPeer(senderId, false);
-        if (peer.remoteDescription) {
+        if (peer.remoteDescription?.type) {
           await peer.addIceCandidate(signal.candidate);
         } else {
           const pending = pendingCandidatesRef.current.get(senderId) || [];
@@ -168,8 +223,17 @@ export function useVoiceRoom({ roomType, roomId, scopeId = 'room', playerId, dis
     } catch (err) {
       setError(err?.message || 'Voice connection negotiation failed.');
       setStatus('error');
+    } finally {
+      removeVoiceSignal({
+        roomType,
+        roomId,
+        callId,
+        senderId,
+        receiverId: playerId,
+        signalId: signalId.includes(':') ? signalId.split(':').pop() : signalId,
+      }).catch(() => {});
     }
-  }, [createPeer, sendSignal]);
+  }, [callId, createPeer, playerId, roomId, roomType, sendSignal]);
 
   useEffect(() => {
     if (!enabled || !roomType || !roomId || !playerId) return () => {};
@@ -227,6 +291,7 @@ export function useVoiceRoom({ roomType, roomId, scopeId = 'room', playerId, dis
 
   const startCall = useCallback(async () => {
     setError('');
+    setAudioPlaybackBlocked(false);
     setStatus('requesting-microphone');
     try {
       await ensureLocalStream();
@@ -243,6 +308,7 @@ export function useVoiceRoom({ roomType, roomId, scopeId = 'room', playerId, dis
   const joinCall = useCallback(async () => {
     if (!currentCall) return;
     setError('');
+    setAudioPlaybackBlocked(false);
     setStatus('requesting-microphone');
     try {
       await ensureLocalStream();
@@ -265,6 +331,7 @@ export function useVoiceRoom({ roomType, roomId, scopeId = 'room', playerId, dis
     if (leavingCallId) await leaveVoiceCall({ roomType, roomId, callId: leavingCallId, participantId: playerId });
     setCallId(null);
     setParticipants({});
+    setAudioPlaybackBlocked(false);
     setStatus('idle');
   }, [callId, playerId, roomId, roomType, stopAllPeers]);
 
@@ -289,6 +356,7 @@ export function useVoiceRoom({ roomType, roomId, scopeId = 'room', playerId, dis
     error,
     isMuted,
     isOutputMuted,
+    audioPlaybackBlocked,
     startCall,
     joinCall,
     leaveCall,
