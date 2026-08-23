@@ -34,7 +34,7 @@ function getActiveMatch(state, playerId) { return Object.values(state.matches ||
 function getTargetSpec(state, mode, playerId) {
   if (!state) return null;
   if (mode === COMPETITIVE_MODES.TOURNAMENT) {
-    const match = getActiveMatch(state, playerId);
+    const match = Object.values(state.matches || {}).find((candidate) => ['playing', 'round_result'].includes(candidate.status) && candidate.playerIds?.includes(playerId));
     return match ? { matchId: match.matchId, roundNumber: match.roundNumber } : null;
   }
   const match = state.match?.status === 'playing' ? state.match : null;
@@ -49,7 +49,10 @@ async function writePrivateTargets(mode, roomId, state) {
         return;
       }
       const opponentId = match.playerIds.find((id) => id !== playerId);
-      const opponentTarget = opponentId ? match.targets?.[opponentId] : null;
+      const baseOffset = match.matchId === TOURNAMENT_MATCH_IDS.SEMI_B ? 3 : match.matchId === TOURNAMENT_MATCH_IDS.FINAL ? 6 : match.matchId === TOURNAMENT_MATCH_IDS.CONSOLATION ? 9 : 0;
+      const roundOffset = baseOffset + Math.max(0, (Number(match.roundNumber) - 1) * 2);
+      const deterministicTargets = match.targets && Object.keys(match.targets).length === 2 ? match.targets : targetMapForPlayers(state.category, match.playerIds, roundOffset);
+      const opponentTarget = opponentId ? deterministicTargets?.[opponentId] : null;
       if (opponentTarget) writes.push(writeCompetitiveTarget({ mode, roomId, matchId: match.matchId, playerId, target: { ...opponentTarget, playerId, targetOwnerId: opponentId, roundNumber: match.roundNumber } }));
     }));
   } else if (state.match?.status === 'playing') {
