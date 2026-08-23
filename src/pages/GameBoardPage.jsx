@@ -429,23 +429,6 @@ const GameBoardPage = () => {
                 </div>
               </div>
 
-              <section className="w-full rounded-2xl border border-white/10 bg-white/[0.035] px-3 py-2.5 sm:px-4" aria-label="Round target guide">
-                <div className="flex flex-wrap items-center justify-between gap-2">
-                  <span className="font-label-caps text-[10px] tracking-[0.12em] text-secondary-fixed">ROUND TARGET GUIDE</span>
-                  <span className="text-[10px] text-on-surface-variant">Visual labels only</span>
-                </div>
-                <div className="mt-2 grid grid-cols-2 gap-2 text-center">
-                  <div className="rounded-lg border border-secondary-fixed/25 bg-secondary-fixed/5 px-2 py-2">
-                    <span className="block font-label-caps text-[9px] text-secondary-fixed">YOUR TARGET</span>
-                    <span className="mt-1 block text-[10px] text-on-surface-variant">Private / team-safe</span>
-                  </div>
-                  <div className="rounded-lg border border-primary-fixed/25 bg-primary-fixed/5 px-2 py-2">
-                    <span className="block font-label-caps text-[9px] text-primary-fixed">OPPONENT TARGET</span>
-                    <span className="mt-1 block text-[10px] text-on-surface-variant">Visible only when allowed</span>
-                  </div>
-                </div>
-              </section>
-
               {isFourPlayerSocial ? (
                 opponentTarget ? (
                   <figure className="w-full max-w-[320px] flex items-center gap-3 rounded-2xl border border-white/10 bg-white/[0.035] p-3" aria-label={`Opponent target: ${opponentTarget.name}`}>
@@ -464,29 +447,6 @@ const GameBoardPage = () => {
                 <OpponentTargetCard target={opponentTarget} />
               )}
 
-              {isFourPlayerSocial && (
-<section className="w-full glass-panel rounded-2xl p-3 sm:p-4 border border-white/10" aria-label="Four-player roster">
-                  <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
-                    <div>
-                      <span className="block font-label-caps text-[10px] text-on-surface-variant uppercase tracking-widest">Four-player roster</span>
-                      <span className="mt-1 block text-[10px] text-on-surface-variant">Your lane · assigned opponent · room players</span>
-                    </div>
-                    <span className="font-label-caps text-[10px] text-primary-fixed">{players.length} online slots</span>
-                  </div>
-                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-                    {players.map((player) => {
-                      const isSelf = player.id === myPlayerId;
-                      const isAssignedOpponent = player.id === primaryOpponent?.id;
-                      return <div key={player.id} className={`min-w-0 rounded-xl border px-2 py-2.5 text-center ${isSelf ? 'border-secondary-fixed/60 bg-secondary-fixed/10' : isAssignedOpponent ? 'border-primary-fixed/60 bg-primary-fixed/10' : 'border-white/10 bg-white/5'}`}>
-                        <span className={`block truncate font-label-caps text-[9px] ${isSelf ? 'text-secondary-fixed' : isAssignedOpponent ? 'text-primary-fixed' : 'text-on-surface'}`}>{isSelf ? 'YOU' : isAssignedOpponent ? 'OPPONENT' : 'PLAYER'}</span>
-                        <span className="mt-1 block truncate text-[11px] text-white" title={player.name}>{player.name}</span>
-                        <span className="mt-1 block font-stats-num text-[12px] text-primary-fixed">{scores[player.id] ?? 0}</span>
-                      </div>;
-                    })}
-                  </div>
-                </section>
-              )}
-
               {primaryOpponent && (
                 <button
                   onClick={handleConfirmOpponentGuess}
@@ -494,7 +454,7 @@ const GameBoardPage = () => {
                   className="w-full max-w-xs bg-secondary text-on-secondary font-headline-sm text-headline-sm px-4 py-4 rounded-lg shadow-[0_0_20px_rgba(233,179,255,0.4)] hover:shadow-[0_0_30px_rgba(233,179,255,0.6)] transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none flex items-center justify-center gap-2 uppercase tracking-wider min-h-[52px] text-center leading-tight"
                 >
                   <span className="material-symbols-outlined shrink-0" style={{ fontVariationSettings: "'FILL' 1" }}>emoji_events</span>
-                  {primaryOpponent.name} Guessed Correctly!
+                  {primaryOpponent.name} · GUESS CORRECT
                 </button>
               )}
 
