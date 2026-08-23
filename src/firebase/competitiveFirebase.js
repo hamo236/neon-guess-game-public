@@ -156,17 +156,36 @@ export async function removeCompetitivePlayer({ mode, roomId, playerId }) {
 export async function leaveCompetitiveRoom({ mode, roomId, playerId, isHost }) {
   const target = roomRef(mode, roomId);
   if (!target) return;
-  if (isHost) { await remove(target); if (db) await remove(ref(db, `${PRIVATE_ROOTS[mode]}/${roomId}`)); }
-  else if (mode === 'team_battle') {
-    await update(target, { [`players/${playerId}`]: null, [`leftPlayers/${playerId}`]: true });
-    if (db) await remove(ref(db, `${PRIVATE_ROOTS[mode]}/${roomId}/${playerId}`));
-  } else { await update(target, { [`players/${playerId}`]: null, [`leftPlayers/${playerId}`]: true }); if (db) await remove(ref(db, `${PRIVATE_ROOTS[mode]}/${roomId}/${playerId}`)); }
+  if (isHost) {
+    await remove(target);
+    if (db) await remove(ref(db, `${PRIVATE_ROOTS[mode]}/${roomId}`));
+    return;
+  }
+  const result = await runTransaction(target, (current) => {
+    if (!current || !current.players?.[playerId]) return current;
+    return { ...current, players: { ...current.players, [playerId]: null }, leftPlayers: { ...(current.leftPlayers || {}), [playerId]: true }, updatedAt: Date.now() };
+  });
+  const next = result.snapshot.val();
+  if (!result.committed || next?.players?.[playerId]) throw new Error('Leaving the lobby was rejected because the match changed. Refresh and try again.');
+  if (db) await remove(ref(db, `${PRIVATE_ROOTS[mode]}/${roomId}/${playerId}`));
 }
 
 export function sanitizePublicState(state) {
   const safe = clone(state);
   // Legacy tournament rooms stored private targets under the public room node; never write that payload again.
   delete safe.private;
+  if (safe?.matches) {
+    safe.matches = Object.fromEntries(Object.entries(safe.matches).map(([matchId, match]) => {
+      const safeMatch = { ...match };
+      delete safeMatch.targets;
+      if (safeMatch.guesses) safeMatch.guesses = Object.fromEntries(Object.entries(safeMatch.guesses).map(([playerId, guess]) => { const { targetId: _targetId, ...safeGuess } = guess || {}; return [playerId, safeGuess]; }));
+      if (safeMatch.result) { const { targets: _targets, revealSnapshot: _revealSnapshot, ...safeResult } = safeMatch.result; safeMatch.result = safeResult; }
+      return [matchId, safeMatch];
+    }));
+  }
+  if (safe?.playerStats) {
+    safe.playerStats = Object.fromEntries(Object.entries(safe.playerStats).map(([playerId, stats]) => [playerId, { ...stats, roundHistory: Array.isArray(stats?.roundHistory) ? stats.roundHistory.map((entry) => { const { target: _target, guess: rawGuess, ...safeEntry } = entry || {}; const { targetId: _targetId, ...guess } = rawGuess || {}; return { ...safeEntry, ...(rawGuess ? { guess } : {}) }; }) : stats?.roundHistory }]));
+  }
   if (safe?.match) {
     delete safe.match.targets;
     delete safe.match.teamTargets;

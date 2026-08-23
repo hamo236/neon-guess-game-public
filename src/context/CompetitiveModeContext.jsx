@@ -4,7 +4,7 @@ import { initAuth } from '../firebase/auth.js';
 import { isFirebaseConfigured } from '../firebase/config.js';
 import { createCompetitiveRoom, joinCompetitiveRoom, leaveCompetitiveRoom, mutateCompetitiveState, removeCompetitivePlayer, setCompetitiveTeam, subscribeCompetitiveConnection, subscribeCompetitiveRoom, subscribeCompetitiveTarget, writeCompetitiveState, writeCompetitiveTarget } from '../firebase/competitiveFirebase.js';
 import { COMPETITIVE_MODES, MODE_PHASES, createModePlayer, createStableId, clone } from '../modes/modeTypes.js';
-import { createTournamentState, finishMatch, recordMatchGuess, startMatch, startNextTournamentMatches, TOURNAMENT_MATCH_IDS } from '../modes/tournamentEngine.js';
+import { createTournamentState, finishMatch, recordMatchGuess, completeTournamentRound, advanceTournamentRound as advanceTournamentRoundState, startMatch, startNextTournamentMatches, TOURNAMENT_MATCH_IDS } from '../modes/tournamentEngine.js';
 import { assignTeamTargets, createTeamBattleState, finishTeamRound, advanceTeamRound, confirmTeamRound, areAllRequiredTeamConfirmationsComplete, getRequiredConfirmationTeams, validateTeamAssignments, TEAM_IDS } from '../modes/teamBattleEngine.js';
 import { targetMapForTeams } from '../modes/teamBattleTargetPlan.js';
 import { generateRoomCode, normalizeRoomCode } from '../game/roomManager.js';
@@ -43,7 +43,11 @@ function getTargetSpec(state, mode, playerId) {
 async function writePrivateTargets(mode, roomId, state) {
   const writes = [];
   if (mode === COMPETITIVE_MODES.TOURNAMENT) {
-    Object.values(state.matches || {}).filter((match) => match.status === 'playing').forEach((match) => match.playerIds.forEach((playerId) => {
+    Object.values(state.matches || {}).filter((match) => ['playing', 'round_result'].includes(match.status)).forEach((match) => match.playerIds.forEach((playerId) => {
+      if (match.status === 'round_result') {
+        writes.push(writeCompetitiveTarget({ mode, roomId, matchId: match.matchId, playerId, target: { matchId: match.matchId, roundNumber: match.roundNumber, targetReady: true, revealSnapshot: clone(match.result?.revealSnapshot || []) } }));
+        return;
+      }
       const opponentId = match.playerIds.find((id) => id !== playerId);
       const opponentTarget = opponentId ? match.targets?.[opponentId] : null;
       if (opponentTarget) writes.push(writeCompetitiveTarget({ mode, roomId, matchId: match.matchId, playerId, target: { ...opponentTarget, playerId, targetOwnerId: opponentId, roundNumber: match.roundNumber } }));
@@ -79,6 +83,9 @@ export function CompetitiveModeProvider({ mode, children }) {
   const teamResolutionInFlightRef = useRef(false);
   const teamAdvanceInFlightRef = useRef(false);
   const teamStartInFlightRef = useRef(false);
+  const tournamentResolutionInFlightRef = useRef(new Set());
+  const tournamentAdvanceInFlightRef = useRef(new Set());
+  const tournamentBracketAdvanceInFlightRef = useRef(false);
 
   useEffect(() => {
     let active = true;
@@ -217,7 +224,7 @@ export function CompetitiveModeProvider({ mode, children }) {
   const recordGuess = useCallback(async (targetId) => {
     if (!state) return;
     await mutateCompetitiveState({ mode, roomId, mutate: (current) => {
-      if (mode === COMPETITIVE_MODES.TOURNAMENT) { const active = getActiveMatch(current, playerId); return active ? recordMatchGuess(current, active.matchId, playerId, targetId) : current; }
+      if (mode === COMPETITIVE_MODES.TOURNAMENT) { const active = getActiveMatch(current, playerId); if (!active) return current; const guessed = recordMatchGuess(current, active.matchId, playerId, targetId); const updated = guessed.matches?.[active.matchId]; return updated?.playerIds?.every((id) => updated.guesses?.[id]) ? completeTournamentRound(guessed, active.matchId) : guessed; }
       const team = getPlayerTeam(current, playerId); const opponentTeam = Object.values(current.teams || {}).find((candidate) => candidate.teamId !== team?.teamId);
       if (!team || !opponentTeam || current.match?.status !== 'playing' || current.match.guesses?.[playerId]) return current;
       const currentRoundNumber = Number(current.match.roundNumber || current.roundNumber);
@@ -231,19 +238,44 @@ export function CompetitiveModeProvider({ mode, children }) {
   }, [mode, playerId, roomId, state, privateTarget]);
 
   const resolveTournamentMatch = useCallback(async (matchId) => {
-    if (!state || state.hostId !== playerId) throw new Error('Only the host can resolve a match.');
-    await mutateCompetitiveState({ mode, roomId, mutate: (current) => { const match = current.matches?.[matchId]; if (!match || match.status !== 'playing') return current; const [first, second] = match.playerIds; const firstScore = match.scores?.[first] || 0; const secondScore = match.scores?.[second] || 0; return finishMatch(current, matchId, firstScore >= secondScore ? first : second, { message: `${current.players[firstScore >= secondScore ? first : second]?.name || 'Player'} advances.` }); } });
-  }, [mode, playerId, roomId, state]);
+    if (!state || !canMutateCompetitive) return null;
+    const next = await mutateCompetitiveState({ mode, roomId, mutate: (current) => {
+      const match = current.matches?.[matchId];
+      if (!match || match.status !== 'playing') return current;
+      let resolved = current;
+      match.playerIds.filter((id) => !match.guesses?.[id]).forEach((id) => { resolved = recordMatchGuess(resolved, matchId, id, '__timeout__'); });
+      return completeTournamentRound(resolved, matchId);
+    } });
+    return next;
+  }, [mode, playerId, roomId, state, canMutateCompetitive]);
+
+  const advanceTournamentRound = useCallback(async (matchId) => {
+    if (!state || !canMutateCompetitive) return null;
+    const next = await mutateCompetitiveState({ mode, roomId, mutate: (current) => {
+      const match = current.matches?.[matchId];
+      if (!match || match.status !== 'round_result') return current;
+      if (match.roundNumber < 3) {
+        const targets = targetMapForPlayers(current.category, match.playerIds, match.roundNumber * 2);
+        return advanceTournamentRoundState(current, matchId, targets);
+      }
+      const [first, second] = match.playerIds;
+      const firstScore = match.scores?.[first] || 0;
+      const secondScore = match.scores?.[second] || 0;
+      const playingState = { ...current, matches: { ...current.matches, [matchId]: { ...match, status: 'playing', phase: MODE_PHASES.PLAYING } } };
+      return finishMatch(playingState, matchId, firstScore >= secondScore ? first : second, { message: `${current.players[firstScore >= secondScore ? first : second]?.name || 'Player'} advances.` });
+    } });
+    if (next) await writePrivateTargets(mode, roomId, next);
+  }, [mode, playerId, roomId, state, canMutateCompetitive]);
 
   const advanceTournament = useCallback(async () => {
-    if (!state || state.hostId !== playerId || state.phase !== MODE_PHASES.TRANSITION) return;
+    if (!state || state.phase !== MODE_PHASES.TRANSITION || !canMutateCompetitive) return null;
     const next = await mutateCompetitiveState({ mode, roomId, mutate: (current) => {
-      if (current.hostId !== playerId || current.phase !== MODE_PHASES.TRANSITION) return current;
+      if (current.phase !== MODE_PHASES.TRANSITION) return current;
       const finalIds = current.matches[TOURNAMENT_MATCH_IDS.FINAL].playerIds; const consolationIds = current.matches[TOURNAMENT_MATCH_IDS.CONSOLATION].playerIds;
       return startNextTournamentMatches(current, { [TOURNAMENT_MATCH_IDS.FINAL]: targetMapForPlayers(current.category, finalIds, current.roundNumber + 5), [TOURNAMENT_MATCH_IDS.CONSOLATION]: targetMapForPlayers(current.category, consolationIds, current.roundNumber + 8) });
     }});
     if (next) await writePrivateTargets(mode, roomId, next);
-  }, [mode, playerId, roomId, state]);
+  }, [mode, playerId, roomId, state, canMutateCompetitive]);
 
   const confirmTeamGuess = useCallback(async () => {
     if (!state || mode !== COMPETITIVE_MODES.TEAM_BATTLE || state.match?.status !== 'playing' || !state.match?.matchId) return;
@@ -316,12 +348,62 @@ export function CompetitiveModeProvider({ mode, children }) {
     return undefined;
   }, [mode, playerId, state, advanceTeam]);
 
+  useEffect(() => {
+    if (mode !== COMPETITIVE_MODES.TOURNAMENT || !state || !canMutateCompetitive) return undefined;
+    const playingMatches = Object.values(state.matches || {}).filter((match) => match.status === 'playing' && match.playerIds?.length === 2);
+    const dueMatches = playingMatches.filter((match) => {
+      const hasBothGuesses = match.playerIds.every((id) => Boolean(match.guesses?.[id]));
+      const timedOut = Number.isFinite(Number(match.roundEndTimestamp)) && Number(match.roundEndTimestamp) <= Date.now();
+      return hasBothGuesses || timedOut;
+    });
+    dueMatches.forEach((match) => {
+      if (tournamentResolutionInFlightRef.current.has(match.matchId)) return;
+      tournamentResolutionInFlightRef.current.add(match.matchId);
+      resolveTournamentMatch(match.matchId).catch((resolutionError) => setError(resolutionError?.message || 'Tournament round resolution failed.')).finally(() => tournamentResolutionInFlightRef.current.delete(match.matchId));
+    });
+    const nextDeadline = playingMatches.map((match) => Number(match.roundEndTimestamp)).filter((timestamp) => Number.isFinite(timestamp) && timestamp > Date.now()).sort((a, b) => a - b)[0];
+    if (!nextDeadline) return undefined;
+    const timerId = window.setTimeout(() => setState((current) => current ? { ...current } : current), Math.max(0, nextDeadline - Date.now()) + 10);
+    return () => window.clearTimeout(timerId);
+  }, [mode, state, canMutateCompetitive, resolveTournamentMatch]);
+
+  useEffect(() => {
+    if (mode !== COMPETITIVE_MODES.TOURNAMENT || !state || !canMutateCompetitive) return undefined;
+    const revealMatches = Object.values(state.matches || {}).filter((match) => match.status === 'round_result' && Number.isFinite(Number(match.revealEndTimestamp)));
+    const dueMatches = revealMatches.filter((match) => Number(match.revealEndTimestamp) <= Date.now());
+    dueMatches.forEach((match) => {
+      if (tournamentAdvanceInFlightRef.current.has(match.matchId)) return;
+      tournamentAdvanceInFlightRef.current.add(match.matchId);
+      advanceTournamentRound(match.matchId).catch((advanceError) => setError(advanceError?.message || 'Tournament round advance failed.')).finally(() => tournamentAdvanceInFlightRef.current.delete(match.matchId));
+    });
+    const nextDeadline = revealMatches.map((match) => Number(match.revealEndTimestamp)).filter((timestamp) => timestamp > Date.now()).sort((a, b) => a - b)[0];
+    if (!nextDeadline) return undefined;
+    const timerId = window.setTimeout(() => setState((current) => current ? { ...current } : current), Math.max(0, nextDeadline - Date.now()) + 10);
+    return () => window.clearTimeout(timerId);
+  }, [mode, state, canMutateCompetitive, advanceTournamentRound]);
+
+  useEffect(() => {
+    if (mode !== COMPETITIVE_MODES.TOURNAMENT || !state || !canMutateCompetitive || state.phase !== MODE_PHASES.TRANSITION || !state.transitionEndTimestamp || tournamentBracketAdvanceInFlightRef.current) return undefined;
+    const remaining = Number(state.transitionEndTimestamp) - Date.now();
+    const runAdvance = () => {
+      if (tournamentBracketAdvanceInFlightRef.current) return;
+      tournamentBracketAdvanceInFlightRef.current = true;
+      advanceTournament().catch((advanceError) => setError(advanceError?.message || 'Tournament bracket advance failed.')).finally(() => { tournamentBracketAdvanceInFlightRef.current = false; });
+    };
+    if (remaining > 0) {
+      const timerId = window.setTimeout(runAdvance, remaining + 10);
+      return () => window.clearTimeout(timerId);
+    }
+    runAdvance();
+    return undefined;
+  }, [mode, state, canMutateCompetitive, advanceTournament]);
+
   const changeTeam = useCallback(async (teamId) => { if (!state || mode !== COMPETITIVE_MODES.TEAM_BATTLE || state.phase !== 'lobby') return; await setCompetitiveTeam({ mode, roomId, playerId, teamId }); }, [mode, roomId, playerId, state]);
 
   const removePlayer = useCallback(async (targetPlayerId) => { if (!state || state.hostId !== playerId || targetPlayerId === playerId) throw new Error('Only the host can remove another player.'); await removeCompetitivePlayer({ mode, roomId, playerId: targetPlayerId }); }, [mode, playerId, roomId, state]);
   const leave = useCallback(async () => { const current = state; try { if (current && roomId) await leaveCompetitiveRoom({ mode, roomId, playerId, isHost: current.hostId === playerId }); } finally { clearSession(mode); setRoomId(''); setState(null); setPrivateTarget(null); setTargetReady(false); setRecovery({ status: 'idle', roomId: '', message: '' }); awaitingFreshSnapshotRef.current = Boolean(isFirebaseConfigured); setConnectionState(isFirebaseConfigured ? 'connecting' : 'offline-local'); recoveryAttemptedRef.current = false; } }, [mode, playerId, roomId, state]);
   const clearSessionRecovery = useCallback(() => { clearSession(mode); setRecovery({ status: 'idle', roomId: '', message: '' }); recoveryAttemptedRef.current = false; }, [mode]);
-  const value = useMemo(() => ({ mode, state, roomId, playerId, playerName, setPlayerName, status, error, recovery, connectionState, canMutateCompetitive, retrySessionRecovery, clearSessionRecovery, privateTarget, targetReady, createRoom, joinRoom, startMode, recordGuess, resolveTournamentMatch, advanceTournament, resolveTeamRound, advanceTeam, confirmTeamGuess, changeTeam, removePlayer, leave, CATEGORY_META, MODE_PHASES, TEAM_IDS, TOURNAMENT_MATCH_IDS }), [mode, state, roomId, playerId, playerName, status, error, recovery, connectionState, canMutateCompetitive, retrySessionRecovery, clearSessionRecovery, privateTarget, targetReady, createRoom, joinRoom, startMode, recordGuess, resolveTournamentMatch, advanceTournament, resolveTeamRound, advanceTeam, confirmTeamGuess, changeTeam, removePlayer, leave]);
+  const value = useMemo(() => ({ mode, state, roomId, playerId, playerName, setPlayerName, status, error, recovery, connectionState, canMutateCompetitive, retrySessionRecovery, clearSessionRecovery, privateTarget, targetReady, createRoom, joinRoom, startMode, recordGuess, resolveTournamentMatch, advanceTournament, advanceTournamentRound, resolveTeamRound, advanceTeam, confirmTeamGuess, changeTeam, removePlayer, leave, CATEGORY_META, MODE_PHASES, TEAM_IDS, TOURNAMENT_MATCH_IDS }), [mode, state, roomId, playerId, playerName, status, error, recovery, connectionState, canMutateCompetitive, retrySessionRecovery, clearSessionRecovery, privateTarget, targetReady, createRoom, joinRoom, startMode, recordGuess, resolveTournamentMatch, advanceTournament, advanceTournamentRound, resolveTeamRound, advanceTeam, confirmTeamGuess, changeTeam, removePlayer, leave]);
   return <CompetitiveModeContext.Provider value={value}>{children}</CompetitiveModeContext.Provider>;
 }
 

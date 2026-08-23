@@ -43,7 +43,7 @@ if (!context.includes('mutateCompetitiveState({ mode, roomId, mutate: (current) 
 if (!context.includes('privateTargetMatchesRound') || !context.includes('if (!targetReady || !privateTarget || !privateTargetMatchesRound) return current;') || !context.includes('targetMatchesCurrentRound') || !context.includes('!team?.teamId || !targetReady || !ownedTarget?.id || !targetMatchesCurrentRound')) throw new Error('Team Battle actions must wait for the current round private target to synchronize.');
 if (adapter.includes('writeTeamBattleConfirmation')) throw new Error('Deprecated direct Team Battle confirmation writer must remain removed.');
 if (!adapter.includes('delete safe.match.targets') || !adapter.includes('delete safe.match.teamTargets') || !adapter.includes('safe.roundHistory = safe.roundHistory.map')) throw new Error('Public state must sanitize private target payloads and round history.');
-if (!adapter.includes('players/${playerId}`]: null') || !adapter.includes('leftPlayers/${playerId}`]: true')) throw new Error('Team Battle Leave must remove only the current player and mark the departure.');
+if (!adapter.includes('players: { ...current.players, [playerId]: null }') || !adapter.includes('leftPlayers: { ...(current.leftPlayers || {}), [playerId]: true }')) throw new Error('Team Battle Leave must remove only the current player and mark the departure.');
 
 if (!page.includes('TEAM ASSIGNMENT PREVIEW') || !page.includes('Keep both teams balanced.')) throw new Error('2v2 lobby must explain balanced team assignment.');
 if (!page.includes('min-h-10 min-w-10') || !page.includes('min-h-12 flex-1 sm:flex-none')) throw new Error('2v2 lobby actions must preserve comfortable touch targets.');

@@ -1,6 +1,8 @@
 import { clone, COMPETITIVE_MODES, MODE_PHASES } from './modeTypes.js';
 
 export const TOURNAMENT_MATCH_IDS = { SEMI_A: 'semi_a', SEMI_B: 'semi_b', FINAL: 'final', CONSOLATION: 'consolation' };
+export const TOURNAMENT_ROUND_COUNT = 3;
+export const TOURNAMENT_REVEAL_MS = 5000;
 
 const createPlayerStats = (player) => ({
   playerId: player.id,
@@ -74,6 +76,43 @@ export function recordMatchGuess(state, matchId, playerId, targetId) {
   };
 }
 
+export function completeTournamentRound(state, matchId) {
+  const current = state.matches[matchId];
+  if (!current || current.status !== 'playing' || current.playerIds.length !== 2) return state;
+  if (current.playerIds.some((playerId) => !current.guesses?.[playerId])) return state;
+  const roundResult = {
+    roundNumber: current.roundNumber,
+    guesses: clone(current.guesses),
+    targets: clone(current.targets),
+    scores: clone(current.scores),
+    revealSnapshot: current.playerIds.map((playerId) => ({ playerId, target: clone(current.targets?.[playerId] || null), guess: clone(current.guesses?.[playerId] || null) })),
+    completedAt: Date.now(),
+  };
+  const playerStats = { ...state.playerStats };
+  current.playerIds.forEach((id) => {
+    const existing = playerStats[id] || createPlayerStats(state.players[id] || { id });
+    playerStats[id] = { ...existing, roundHistory: [...(existing.roundHistory || []), { roundNumber: current.roundNumber, matchId, target: clone(current.targets?.[id] || null), guess: clone(current.guesses?.[id] || null) }] };
+  });
+  return {
+    ...state,
+    playerStats,
+    matches: { ...state.matches, [matchId]: { ...current, status: 'round_result', phase: MODE_PHASES.ROUND_RESULT, result: roundResult, roundEndTimestamp: null, revealEndTimestamp: Date.now() + TOURNAMENT_REVEAL_MS } },
+    updatedAt: Date.now(),
+  };
+}
+
+export function advanceTournamentRound(state, matchId, targets) {
+  const current = state.matches[matchId];
+  if (!current || current.status !== 'round_result' || current.roundNumber >= TOURNAMENT_ROUND_COUNT) return state;
+  return {
+    ...state,
+    matches: { ...state.matches, [matchId]: { ...current, status: 'playing', phase: MODE_PHASES.PLAYING, roundNumber: current.roundNumber + 1, targets: clone(targets), guesses: {}, result: null, roundEndTimestamp: Date.now() + 60000, revealEndTimestamp: null } },
+    phase: matchId.startsWith('semi_') ? MODE_PHASES.SEMI_FINALS : MODE_PHASES.PLAYING,
+    roundNumber: current.roundNumber + 1,
+    updatedAt: Date.now(),
+  };
+}
+
 function rewardForPlacement(place) {
   return { placement: place, points: Math.max(1, 5 - place), awardedAt: Date.now() };
 }
@@ -93,16 +132,17 @@ export function finishMatch(state, matchId, winnerId, result = {}) {
   current.playerIds.forEach((id) => {
     const guess = current.guesses?.[id] || null;
     const existing = playerStats[id] || createPlayerStats(state.players[id] || { id });
-    playerStats[id] = { ...existing, roundHistory: [...(existing.roundHistory || []), { roundNumber: current.roundNumber, matchId, target: clone(current.targets?.[id] || null), guess: clone(guess) }] };
+    const alreadyRecorded = (existing.roundHistory || []).some((entry) => entry.matchId === matchId && entry.roundNumber === current.roundNumber);
+    playerStats[id] = alreadyRecorded ? existing : { ...existing, roundHistory: [...(existing.roundHistory || []), { roundNumber: current.roundNumber, matchId, target: clone(current.targets?.[id] || null), guess: clone(guess) }] };
   });
-  const finished = { ...current, status: 'finished', phase: MODE_PHASES.RESULTS, result: { ...result, winnerId, loserId, matchId, scores: clone(current.scores), guesses: clone(current.guesses), targets: clone(current.targets), playerIds: [...current.playerIds] }, roundEndTimestamp: null, revealEndTimestamp: Date.now() + 4000 };
+  const finished = { ...current, status: 'finished', phase: MODE_PHASES.RESULTS, result: { ...result, winnerId, loserId, matchId, scores: clone(current.scores), guesses: clone(current.guesses), targets: clone(current.targets), playerIds: [...current.playerIds] }, roundEndTimestamp: null, revealEndTimestamp: null };
   const matches = { ...state.matches, [matchId]: finished };
   const semiA = matches[TOURNAMENT_MATCH_IDS.SEMI_A];
   const semiB = matches[TOURNAMENT_MATCH_IDS.SEMI_B];
   if (matchId.startsWith('semi_') && semiA.status === 'finished' && semiB.status === 'finished') {
     const winnerA = semiA.result.winnerId; const winnerB = semiB.result.winnerId; const loserA = semiA.result.loserId; const loserB = semiB.result.loserId;
-    matches[TOURNAMENT_MATCH_IDS.FINAL] = { ...matches[TOURNAMENT_MATCH_IDS.FINAL], playerIds: [winnerA, winnerB], scores: { [winnerA]: 0, [winnerB]: 0 } };
-    matches[TOURNAMENT_MATCH_IDS.CONSOLATION] = { ...matches[TOURNAMENT_MATCH_IDS.CONSOLATION], playerIds: [loserA, loserB], scores: { [loserA]: 0, [loserB]: 0 } };
+    matches[TOURNAMENT_MATCH_IDS.FINAL] = { ...matches[TOURNAMENT_MATCH_IDS.FINAL], playerIds: [winnerA, winnerB], scores: { [winnerA]: 0, [winnerB]: 0 }, roundNumber: 1 };
+    matches[TOURNAMENT_MATCH_IDS.CONSOLATION] = { ...matches[TOURNAMENT_MATCH_IDS.CONSOLATION], playerIds: [loserA, loserB], scores: { [loserA]: 0, [loserB]: 0 }, roundNumber: 1 };
     return { ...state, playerStats, phase: MODE_PHASES.TRANSITION, transitionEndTimestamp: Date.now() + 5000, matches, updatedAt: Date.now() };
   }
   if (matchId === TOURNAMENT_MATCH_IDS.FINAL) {
@@ -125,7 +165,7 @@ export function finishMatch(state, matchId, winnerId, result = {}) {
 
 export function startNextTournamentMatches(state, targetsByMatch) {
   if (state.phase !== MODE_PHASES.TRANSITION) return state;
-  let next = { ...state, roundNumber: state.roundNumber + 1, phase: MODE_PHASES.PLAYING, transitionEndTimestamp: null, updatedAt: Date.now() };
+  let next = { ...state, roundNumber: 1, phase: MODE_PHASES.PLAYING, transitionEndTimestamp: null, updatedAt: Date.now() };
   for (const matchId of [TOURNAMENT_MATCH_IDS.FINAL, TOURNAMENT_MATCH_IDS.CONSOLATION]) next = startMatch(next, matchId, targetsByMatch[matchId] || {});
   return next;
 }
