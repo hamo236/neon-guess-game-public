@@ -164,10 +164,12 @@ export function CompetitiveModeProvider({ mode, children }) {
   }, [mode, roomId, playerId, targetSpec?.matchId, targetSpec?.roundNumber]);
 
   useEffect(() => {
-    if (mode !== COMPETITIVE_MODES.TOURNAMENT || !roomId || !state || !canMutateCompetitive || state.hostId !== playerId) return undefined;
-    const hasTargetLifecycle = Object.values(state.matches || {}).some((match) => ['playing', 'round_result'].includes(match.status));
+    if (![COMPETITIVE_MODES.TOURNAMENT, COMPETITIVE_MODES.TEAM_BATTLE].includes(mode) || !roomId || !state || !canMutateCompetitive || state.hostId !== playerId) return undefined;
+    const hasTargetLifecycle = mode === COMPETITIVE_MODES.TOURNAMENT
+      ? Object.values(state.matches || {}).some((match) => ['playing', 'round_result'].includes(match.status))
+      : state.match?.status === 'playing';
     if (!hasTargetLifecycle) return undefined;
-    writePrivateTargets(mode, roomId, state).catch((targetError) => setError(targetError?.message || 'Tournament target synchronization error.'));
+    writePrivateTargets(mode, roomId, state).catch((targetError) => setError(targetError?.message || 'Competitive target synchronization error.'));
     return undefined;
   }, [mode, roomId, playerId, state, canMutateCompetitive]);
 
@@ -316,9 +318,10 @@ export function CompetitiveModeProvider({ mode, children }) {
     if (!state || mode !== COMPETITIVE_MODES.TEAM_BATTLE || state.match?.status !== 'playing' || !state.match?.matchId) return;
     const team = getPlayerTeam(state, playerId);
     const currentRoundNumber = Number(state.match.roundNumber || state.roundNumber);
-    const ownedTarget = privateTarget?.ownedTarget;
+    const ownedTarget = privateTarget?.ownedTarget || state.match?.targets?.[playerId] || null;
     const targetMatchesCurrentRound = privateTarget?.matchId === state.match.matchId && Number(privateTarget?.roundNumber) === currentRoundNumber;
-    if (!team?.teamId || !targetReady || !ownedTarget?.id || !targetMatchesCurrentRound) return;
+    const fallbackTargetMatchesCurrentRound = !privateTarget?.ownedTarget && Number(state.match?.roundNumber || state.roundNumber) === currentRoundNumber;
+    if (!team?.teamId || !targetReady || !ownedTarget?.id || (!targetMatchesCurrentRound && !fallbackTargetMatchesCurrentRound)) return;
     const targetSnapshot = { id: ownedTarget.id, targetId: ownedTarget.targetId || ownedTarget.id, name: ownedTarget.name, image: ownedTarget.image, teamId: team.teamId };
     await mutateCompetitiveState({ mode, roomId, mutate: (current) => confirmTeamRound(current, playerId, Date.now(), { targetSnapshot }) });
   }, [mode, playerId, roomId, state, privateTarget, targetReady]);
