@@ -251,6 +251,11 @@ export function CompetitiveModeProvider({ mode, children }) {
       const match = current.matches?.[matchId];
       if (!match || match.status !== 'playing') return current;
       let resolved = current;
+      const currentMatch = resolved.matches?.[matchId];
+      const protectedTargets = currentMatch?.targets && Object.keys(currentMatch.targets).length === 2
+        ? currentMatch.targets
+        : targetMapForPlayers(resolved.category, currentMatch.playerIds, Math.max(0, (Number(currentMatch.roundNumber) - 1) * 2));
+      resolved = { ...resolved, matches: { ...resolved.matches, [matchId]: { ...currentMatch, targets: protectedTargets } } };
       match.playerIds.filter((id) => !match.guesses?.[id]).forEach((id) => { resolved = recordMatchGuess(resolved, matchId, id, '__timeout__'); });
       const completedMatch = resolved.matches?.[matchId];
       const scores = { ...(completedMatch?.scores || {}) };
@@ -371,9 +376,9 @@ export function CompetitiveModeProvider({ mode, children }) {
     if (mode !== COMPETITIVE_MODES.TOURNAMENT || !state || !canMutateCompetitive || state.hostId !== playerId) return undefined;
     const playingMatches = Object.values(state.matches || {}).filter((match) => match.status === 'playing' && match.playerIds?.length === 2);
     const dueMatches = playingMatches.filter((match) => {
-      const hasBothGuesses = match.playerIds.every((id) => Boolean(match.guesses?.[id]));
+      const hasConfirmation = match.playerIds.some((id) => Boolean(match.guesses?.[id]));
       const timedOut = Number.isFinite(Number(match.roundEndTimestamp)) && Number(match.roundEndTimestamp) <= Date.now();
-      return hasBothGuesses || timedOut;
+      return hasConfirmation || timedOut;
     });
     dueMatches.forEach((match) => {
       if (tournamentResolutionInFlightRef.current.has(match.matchId)) return;
