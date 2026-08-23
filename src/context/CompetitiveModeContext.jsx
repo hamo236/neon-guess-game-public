@@ -42,8 +42,9 @@ async function writePrivateTargets(mode, roomId, state) {
   const writes = [];
   if (mode === COMPETITIVE_MODES.TOURNAMENT) {
     Object.values(state.matches || {}).filter((match) => match.status === 'playing').forEach((match) => match.playerIds.forEach((playerId) => {
-      const target = match.targets?.[playerId];
-      if (target) writes.push(writeCompetitiveTarget({ mode, roomId, matchId: match.matchId, playerId, target: { ...target, roundNumber: match.roundNumber } }));
+      const opponentId = match.playerIds.find((id) => id !== playerId);
+      const opponentTarget = opponentId ? match.targets?.[opponentId] : null;
+      if (opponentTarget) writes.push(writeCompetitiveTarget({ mode, roomId, matchId: match.matchId, playerId, target: { ...opponentTarget, playerId, targetOwnerId: opponentId, roundNumber: match.roundNumber } }));
     }));
   } else if (state.match?.status === 'playing') {
     state.playerIds.forEach((playerId) => {
