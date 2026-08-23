@@ -318,9 +318,10 @@ export function CompetitiveModeProvider({ mode, children }) {
     if (!state || mode !== COMPETITIVE_MODES.TEAM_BATTLE || state.match?.status !== 'playing' || !state.match?.matchId) return;
     const team = getPlayerTeam(state, playerId);
     const currentRoundNumber = Number(state.match.roundNumber || state.roundNumber);
-    const ownedTarget = privateTarget?.ownedTarget || state.match?.targets?.[playerId] || null;
+    const deterministicTargets = targetMapForTeams(state.category, state.teams, { roomSeed: `${state.teamRoomId}:${state.createdAt}`, roundNumber: currentRoundNumber });
+    const ownedTarget = privateTarget?.ownedTarget || state.match?.targets?.[playerId] || deterministicTargets?.[playerId] || null;
     const targetMatchesCurrentRound = privateTarget?.matchId === state.match.matchId && Number(privateTarget?.roundNumber) === currentRoundNumber;
-    const fallbackTargetMatchesCurrentRound = !privateTarget?.ownedTarget && Number(state.match?.roundNumber || state.roundNumber) === currentRoundNumber;
+    const fallbackTargetMatchesCurrentRound = !privateTarget?.ownedTarget && Number(state.match?.roundNumber || state.roundNumber) === currentRoundNumber && Boolean(ownedTarget?.id);
     if (!team?.teamId || !canMutateCompetitive) return;
     const targetSnapshot = ownedTarget?.id && (targetMatchesCurrentRound || fallbackTargetMatchesCurrentRound)
       ? { id: ownedTarget.id, targetId: ownedTarget.targetId || ownedTarget.id, name: ownedTarget.name, image: ownedTarget.image, teamId: team.teamId }
