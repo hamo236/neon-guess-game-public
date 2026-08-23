@@ -4,6 +4,15 @@
       "$roomId": {
         ".read": "auth != null",
         ".write": "auth != null && (!data.exists() || data.child('hostId').val() === auth.uid || (data.child('status').val() === 'lobby' && data.child('phase').val() === 'lobby' && ((!data.child('players').child(auth.uid).exists() && newData.child('players').child(auth.uid).exists()) || data.child('players').child(auth.uid).exists())))",
+        "voiceCalls": {
+          "$callId": {
+            ".read": "auth != null && root.child('tournamentRooms').child($roomId).child('players').child(auth.uid).exists()",
+            ".write": "auth != null && root.child('tournamentRooms').child($roomId).child('players').child(auth.uid).exists() && (!data.exists() || data.child('eligible').child(auth.uid).val() === true)",
+            "eligible": { "$eligibleId": { ".validate": "newData.val() === true && root.child('tournamentRooms').child($roomId).child('players').child($eligibleId).exists()" } },
+            "participants": { "$uid": { ".write": "auth != null && auth.uid === $uid && data.parent().parent().child('eligible').child(auth.uid).val() === true" } },
+            "signals": { "$senderId": { "$receiverId": { ".read": "auth != null && auth.uid === $receiverId && root.child('tournamentRooms').child($roomId).child('players').child(auth.uid).exists()", "$signalId": { ".write": "auth != null && auth.uid === $senderId && data.parent().parent().parent().parent().child('eligible').child($receiverId).val() === true" } } } }
+          }
+        },
         "players": {
           "$uid": {
             ".write": "auth != null && auth.uid === $uid && data.parent().parent().child('status').val() !== 'finished'"
@@ -30,6 +39,15 @@
       "$roomId": {
         ".read": "auth != null",
         ".write": "auth != null && (!data.exists() || data.child('hostId').val() === auth.uid || (data.child('status').val() === 'lobby' && data.child('phase').val() === 'lobby' && ((!data.child('players').child(auth.uid).exists() && newData.child('players').child(auth.uid).exists()) || data.child('players').child(auth.uid).exists())))",
+        "voiceCalls": {
+          "$callId": {
+            ".read": "auth != null && root.child('teamRooms').child($roomId).child('players').child(auth.uid).exists()",
+            ".write": "auth != null && root.child('teamRooms').child($roomId).child('players').child(auth.uid).exists() && (!data.exists() || data.child('eligible').child(auth.uid).val() === true)",
+            "eligible": { "$eligibleId": { ".validate": "newData.val() === true && root.child('teamRooms').child($roomId).child('players').child($eligibleId).exists()" } },
+            "participants": { "$uid": { ".write": "auth != null && auth.uid === $uid && data.parent().parent().child('eligible').child(auth.uid).val() === true" } },
+            "signals": { "$senderId": { "$receiverId": { ".read": "auth != null && auth.uid === $receiverId && root.child('teamRooms').child($roomId).child('players').child(auth.uid).exists()", "$signalId": { ".write": "auth != null && auth.uid === $senderId && data.parent().parent().parent().parent().child('eligible').child($receiverId).val() === true" } } } }
+          }
+        },
         "players": {
           "$uid": {
             ".write": "auth != null && auth.uid === $uid && data.parent().parent().child('status').val() !== 'finished'"
@@ -67,6 +85,16 @@
       "$roomCode": {
         ".read": "auth != null && (data.child('players').child(auth.uid).exists() || !data.exists())",
         ".write": "auth != null && !data.exists()",
+
+        "voiceCalls": {
+          "$callId": {
+            ".read": "auth != null && root.child('rooms').child($roomCode).child('players').child(auth.uid).exists()",
+            ".write": "auth != null && root.child('rooms').child($roomCode).child('players').child(auth.uid).exists() && (!data.exists() || data.child('eligible').child(auth.uid).val() === true)",
+            "eligible": { "$eligibleId": { ".validate": "newData.val() === true && root.child('rooms').child($roomCode).child('players').child($eligibleId).exists()" } },
+            "participants": { "$uid": { ".write": "auth != null && auth.uid === $uid && data.parent().parent().child('eligible').child(auth.uid).val() === true" } },
+            "signals": { "$senderId": { "$receiverId": { ".read": "auth != null && auth.uid === $receiverId && root.child('rooms').child($roomCode).child('players').child(auth.uid).exists()", "$signalId": { ".write": "auth != null && auth.uid === $senderId && data.parent().parent().parent().parent().child('eligible').child($receiverId).val() === true" } } } }
+          }
+        },
 
         "private": {
           "$uid": {

@@ -7,6 +7,7 @@ import OpponentTargetCard from '../components/game/OpponentTargetCard';
 import RoundRevealPanel from '../components/game/RoundRevealPanel';
 import MatchTimeline from '../components/game/MatchTimeline';
 import RoomLeaveDialog from '../components/RoomLeaveDialog';
+import VoiceRoomPanel from '../components/game/VoiceRoomPanel.jsx';
 
 function formatChatTime(timestamp) {
   if (!timestamp) return '';
@@ -61,6 +62,8 @@ const GameBoardPage = () => {
   const primaryOpponent = players.find((p) => p.id === assignedOpponentId)
     ?? (oppPlayers[0] ?? null);
   const activeMatchPlayers = activeMatch ? [players.find((p) => p.id === activeMatch.playerA), players.find((p) => p.id === activeMatch.playerB)].filter(Boolean) : [];
+  const voiceRoomId = isFourPlayerSocial && activeMatchId ? `${state.roomCode}:${activeMatchId}` : state.roomCode;
+  const voiceEligibleParticipantIds = isFourPlayerSocial ? activeMatchPlayers.map((player) => player.id) : players.map((player) => player.id);
   const matchResult = activeMatchId ? state.matchResults?.[activeMatchId] : null;
   const activeMatchRoundResult = isFourPlayerSocial ? (activeMatch?.roundResult ?? null) : null;
   const [matchRevealSeconds, setMatchRevealSeconds] = useState(null);
@@ -376,7 +379,20 @@ const GameBoardPage = () => {
                 ))}
               </div>
 
+              <div className="mt-2 w-full">
+                <VoiceRoomPanel
+                  roomType="classic"
+                  roomId={state.roomCode}
+                  scopeId={isFourPlayerSocial ? (activeMatchId || 'room') : 'room'}
+                  playerId={myPlayerId}
+                  displayName={myPlayer?.name || 'Player'}
+                  eligibleParticipantIds={voiceEligibleParticipantIds}
+                  label={isFourPlayerSocial ? 'MATCH VOICE' : 'VOICE ROOM'}
+                />
+              </div>
+
               <div className="sticky bottom-0 pt-stack-sm pb-safe flex flex-col items-center gap-3 bg-gradient-to-t from-surface/95 via-surface/80 to-transparent">
+
                 {canBeginRound ? (
                   <button
                     onClick={handleBeginRound}
@@ -516,6 +532,18 @@ const GameBoardPage = () => {
               <span className="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-widest text-[10px]">Chat</span>
             </div>
             <span className="shrink-0 text-[10px] text-on-surface-variant">ROUND CHANNEL</span>
+          </div>
+
+          <div className="px-container-margin pb-2">
+            <VoiceRoomPanel
+              roomType="classic"
+              roomId={state.roomCode}
+              scopeId={isFourPlayerSocial ? (activeMatchId || 'room') : 'room'}
+              playerId={myPlayerId}
+              displayName={myPlayer?.name || 'Player'}
+              eligibleParticipantIds={voiceEligibleParticipantIds}
+              label={isFourPlayerSocial ? 'MATCH VOICE' : 'VOICE ROOM'}
+            />
           </div>
 
           <div className="flex-1 overflow-y-auto px-container-margin pb-stack-sm flex flex-col gap-2 no-scrollbar">

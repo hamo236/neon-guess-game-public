@@ -292,7 +292,7 @@ const LobbyPage = () => {
                 <span className="premium-pill">Host starts</span>
               </div>
             </div>
-            <button type="button" onClick={() => navigate('/one-v-one')} className="premium-cta touch-feedback min-h-12 w-full lg:w-auto shrink-0 bg-primary-fixed/15 border border-primary-fixed/50 text-primary-fixed hover:bg-primary-fixed/25 transition-colors" aria-label="Open 1v1 Guess Who">
+            <button type="button" onClick={() => navigate('/one-v-one')} className="premium-cta touch-feedback min-h-12 w-full lg:w-auto shrink-0 bg-primary-fixed/15 border border-primary-fixed/50 text-primary-fixed hover:bg-primary-fixed/25 transition-colors" aria-label="Open 1v1 Guess Who" aria-pressed={mode === GAME_MODES.ONE_V_ONE}>
               ENTER 1V1
             </button>
           </div>
