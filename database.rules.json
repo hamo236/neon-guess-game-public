@@ -2,7 +2,7 @@
   "rules": {
     "tournamentRooms": {
       "$roomId": {
-        ".read": "auth != null",
+        ".read": "auth != null && (data.child('players').child(auth.uid).exists() || (data.child('status').val() === 'lobby' && data.child('phase').val() === 'lobby'))",
         ".write": "auth != null && (!data.exists() || data.child('hostId').val() === auth.uid || (data.child('status').val() === 'lobby' && data.child('phase').val() === 'lobby' && ((!data.child('players').child(auth.uid).exists() && newData.child('players').child(auth.uid).exists()) || data.child('players').child(auth.uid).exists())))",
         "voiceCalls": {
           "$callId": {
@@ -22,14 +22,18 @@
           "$uid": {
             ".write": "auth != null && auth.uid === $uid"
           }
-        },
-        "private": {
-          "$uid": {
-            "$matchId": {
-              "target": {
-                ".read": "auth != null && auth.uid === $uid",
-                ".write": "auth != null && (auth.uid === $uid || data.parent().parent().parent().parent().child('hostId').val() === auth.uid)"
-              }
+        }
+      }
+    },
+    "tournamentPrivateTargets": {
+      "$roomId": {
+        "$uid": {
+          ".read": "auth != null && auth.uid === $uid && root.child('tournamentRooms').child($roomId).child('players').child(auth.uid).exists()",
+          ".write": "auth != null && (auth.uid === $uid || root.child('tournamentRooms').child($roomId).child('hostId').val() === auth.uid) && root.child('tournamentRooms').child($roomId).child('players').child($uid).exists()",
+          "$matchId": {
+            "target": {
+              ".read": "auth != null && auth.uid === $uid && root.child('tournamentRooms').child($roomId).child('players').child(auth.uid).exists()",
+              ".write": "auth != null && (auth.uid === $uid || root.child('tournamentRooms').child($roomId).child('hostId').val() === auth.uid) && root.child('tournamentRooms').child($roomId).child('players').child($uid).exists() && (!newData.exists() || (newData.child('playerId').val() === $uid && newData.child('matchId').val() === $matchId && newData.child('targetId').exists() && newData.child('targetReady').val() === true))"
             }
           }
         }
@@ -37,7 +41,7 @@
     },
     "teamRooms": {
       "$roomId": {
-        ".read": "auth != null",
+        ".read": "auth != null && (data.child('players').child(auth.uid).exists() || (data.child('status').val() === 'lobby' && data.child('phase').val() === 'lobby'))",
         ".write": "auth != null && (!data.exists() || data.child('hostId').val() === auth.uid || (data.child('status').val() === 'lobby' && data.child('phase').val() === 'lobby' && ((!data.child('players').child(auth.uid).exists() && newData.child('players').child(auth.uid).exists()) || data.child('players').child(auth.uid).exists())))",
         "voiceCalls": {
           "$callId": {
@@ -72,6 +76,7 @@
     "teamBattlePrivateTargets": {
       "$roomId": {
         "$uid": {
+          ".write": "auth != null && (auth.uid === $uid || root.child('teamRooms').child($roomId).child('hostId').val() === auth.uid) && root.child('teamRooms').child($roomId).child('players').child($uid).exists()",
           "$matchId": {
             "target": {
               ".read": "auth != null && auth.uid === $uid",
@@ -174,7 +179,8 @@
         "messages": {
           ".read": "auth != null && data.parent().child('players').child(auth.uid).exists()",
           "$msgId": {
-            ".write": "auth != null && data.parent().parent().child('players').child(auth.uid).exists()"
+            ".write": "auth != null && data.parent().parent().child('players').child(auth.uid).exists()",
+            ".validate": "newData.hasChildren(['playerId', 'playerName', 'message', 'timestamp']) && newData.child('playerId').val() === auth.uid && newData.child('playerName').isString() && newData.child('message').isString() && newData.child('message').val().length > 0 && newData.child('message').val().length <= 500 && newData.child('timestamp').isNumber()"
           }
         },
         "votes": {

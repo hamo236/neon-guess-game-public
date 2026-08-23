@@ -16,8 +16,7 @@ function roomRef(mode, roomId) {
 function privateTargetRef(mode, roomId, matchId, playerId) {
   if (!db) return null;
   if (mode === 'team_battle') return ref(db, `${PRIVATE_ROOTS.team_battle}/${roomId}/${playerId}/${matchId}/target`);
-  const target = roomRef(mode, roomId);
-  return target ? child(target, `private/${playerId}/${matchId}/target`) : null;
+  return ref(db, `${PRIVATE_ROOTS.tournament}/${roomId}/${playerId}/${matchId}/target`);
 }
 
 export function getCompetitiveNamespace(mode) {
@@ -151,21 +150,23 @@ export async function removeCompetitivePlayer({ mode, roomId, playerId }) {
   } else {
     await update(target, { [`players/${playerId}`]: null, [`removedPlayers/${playerId}`]: true });
   }
-  if (db) await remove(mode === 'team_battle' ? ref(db, `${PRIVATE_ROOTS.team_battle}/${roomId}/${playerId}`) : child(target, `private/${playerId}`));
+  if (db) await remove(ref(db, `${PRIVATE_ROOTS[mode]}/${roomId}/${playerId}`));
 }
 
 export async function leaveCompetitiveRoom({ mode, roomId, playerId, isHost }) {
   const target = roomRef(mode, roomId);
   if (!target) return;
-  if (isHost) { await remove(target); if (db && mode === 'team_battle') await remove(ref(db, `${PRIVATE_ROOTS.team_battle}/${roomId}`)); }
+  if (isHost) { await remove(target); if (db) await remove(ref(db, `${PRIVATE_ROOTS[mode]}/${roomId}`)); }
   else if (mode === 'team_battle') {
     await update(target, { [`players/${playerId}`]: null, [`leftPlayers/${playerId}`]: true });
-    if (db) await remove(ref(db, `${PRIVATE_ROOTS.team_battle}/${roomId}/${playerId}`));
-  } else { await update(target, { [`players/${playerId}`]: null, [`leftPlayers/${playerId}`]: true }); if (db) await remove(child(target, `private/${playerId}`)); }
+    if (db) await remove(ref(db, `${PRIVATE_ROOTS[mode]}/${roomId}/${playerId}`));
+  } else { await update(target, { [`players/${playerId}`]: null, [`leftPlayers/${playerId}`]: true }); if (db) await remove(ref(db, `${PRIVATE_ROOTS[mode]}/${roomId}/${playerId}`)); }
 }
 
 export function sanitizePublicState(state) {
   const safe = clone(state);
+  // Legacy tournament rooms stored private targets under the public room node; never write that payload again.
+  delete safe.private;
   if (safe?.match) {
     delete safe.match.targets;
     delete safe.match.teamTargets;

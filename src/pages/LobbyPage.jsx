@@ -446,7 +446,7 @@ const LobbyPage = () => {
               <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
                 <label className="ng-room-name-field rounded-lg border border-secondary-fixed/20 bg-secondary-fixed/[0.035] px-3 py-2.5">
                   <span className="block font-label-caps text-[9px] tracking-[0.14em] text-secondary-fixed">PLAYER NAME</span>
-                  <input value={hostName || joinName} onChange={(e) => { setHostName(e.target.value); setJoinName(e.target.value); }} placeholder="Your name" aria-label="Your name" className="mt-1 min-h-8 w-full bg-transparent text-white placeholder:text-on-surface-variant/70 focus-visible:outline-none" />
+                  <input value={hostName || joinName} onChange={(e) => { setHostName(e.target.value); setJoinName(e.target.value); }} placeholder="Your name" aria-label="Your name" required maxLength={32} autoComplete="nickname" className="mt-1 min-h-8 w-full bg-transparent text-white placeholder:text-on-surface-variant/70 focus-visible:outline-none" />
                 </label>
                 <label className="ng-room-category-field rounded-lg border border-primary-fixed/20 bg-primary-fixed/[0.035] px-3 py-2.5">
                   <span className="block font-label-caps text-[9px] tracking-[0.14em] text-primary-fixed">PLAY TYPE</span>
@@ -458,7 +458,7 @@ const LobbyPage = () => {
                   <span className="block font-label-caps text-[9px] tracking-[0.14em] text-secondary-fixed">ROOM JOIN ID</span>
                   <span className="mt-1 flex items-center gap-2">
                     <span className="material-symbols-outlined text-[18px] text-primary-fixed/80" aria-hidden="true">key</span>
-                    <input value={joinCode} onChange={(e) => setJoinCode(e.target.value.toUpperCase())} placeholder="Paste room code" aria-label="Room ID to join" className="min-h-8 min-w-0 flex-1 bg-transparent text-white placeholder:text-on-surface-variant/70 focus-visible:outline-none" />
+                    <input value={joinCode} onChange={(e) => setJoinCode(e.target.value.toUpperCase())} placeholder="Paste room code" aria-label="Room ID to join" inputMode="numeric" pattern="[0-9]{3}" maxLength={3} autoComplete="one-time-code" className="min-h-8 min-w-0 flex-1 bg-transparent text-white placeholder:text-on-surface-variant/70 focus-visible:outline-none" />
                   </span>
                 </label>
               </div>
