@@ -94,10 +94,24 @@ export function subscribeVoiceSignals({ roomType, roomId, callId, receiverId, se
   return onValue(signalRef, (snapshot) => callback(snapshot.val() || {}));
 }
 
+function serializeSessionDescription(description) {
+  if (!description) return null;
+  const json = typeof description.toJSON === 'function'
+    ? description.toJSON()
+    : { type: description.type, sdp: description.sdp };
+  if (!json?.type || typeof json.sdp !== 'string' || !json.sdp.trim()) return null;
+  return { type: String(json.type), sdp: json.sdp };
+}
+
 export async function writeVoiceSignal({ roomType, roomId, callId, senderId, receiverId, signal }) {
   if (!db || !roomType || !roomId || !callId || !senderId || !receiverId || !signal) return;
+  const payload = { ...signal };
+  if (payload.type === 'offer' || payload.type === 'answer') {
+    payload.description = serializeSessionDescription(payload.description);
+    if (!payload.description) return;
+  }
   const signalRef = push(
     ref(db, `${voiceCallsPath(roomType, roomId)}/${callId}/signals/${senderId}/${receiverId}`),
   );
-  await set(signalRef, { ...signal, createdAt: serverTimestamp() });
+  await set(signalRef, { ...payload, createdAt: serverTimestamp() });
 }

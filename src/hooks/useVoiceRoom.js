@@ -11,6 +11,15 @@ import {
 const OPEN_CALL_MAX_AGE = 30 * 60 * 1000;
 const rtcConfig = { iceServers: [{ urls: 'stun:stun.l.google.com:19302' }] };
 
+function normalizeSessionDescription(description) {
+  if (!description) return null;
+  const parsed = typeof description === 'string'
+    ? (() => { try { return JSON.parse(description); } catch { return null; } })()
+    : description;
+  if (!parsed?.type || typeof parsed.sdp !== 'string' || !parsed.sdp.trim()) return null;
+  return { type: String(parsed.type), sdp: parsed.sdp };
+}
+
 function getCurrentCall(calls, playerId, eligibleIds, scopeId) {
   const now = Date.now();
   const allowed = new Set(eligibleIds);
@@ -110,7 +119,10 @@ export function useVoiceRoom({ roomType, roomId, scopeId = 'room', playerId, dis
     if (shouldOffer) {
       const offer = await peer.createOffer();
       await peer.setLocalDescription(offer);
-      await sendSignal(remoteId, { type: 'offer', description: offer });
+      await sendSignal(remoteId, {
+        type: 'offer',
+        description: offer.toJSON ? offer.toJSON() : { type: offer.type, sdp: offer.sdp },
+      });
     }
     return peer;
   }, [attachRemoteAudio, ensureLocalStream, playerId, sendSignal, stopPeer]);
@@ -123,16 +135,23 @@ export function useVoiceRoom({ roomType, roomId, scopeId = 'room', playerId, dis
       if (signal.type === 'offer') {
         peer = peer || await createPeer(senderId, false);
         if (peer.signalingState !== 'stable') return;
-        await peer.setRemoteDescription(signal.description);
+        const description = normalizeSessionDescription(signal.description);
+        if (!description) return;
+        await peer.setRemoteDescription(description);
         const pendingCandidates = pendingCandidatesRef.current.get(senderId) || [];
         for (const candidate of pendingCandidates) await peer.addIceCandidate(candidate);
         pendingCandidatesRef.current.delete(senderId);
         const answer = await peer.createAnswer();
         await peer.setLocalDescription(answer);
-        await sendSignal(senderId, { type: 'answer', description: answer });
+        await sendSignal(senderId, {
+          type: 'answer',
+          description: answer.toJSON ? answer.toJSON() : { type: answer.type, sdp: answer.sdp },
+        });
       } else if (signal.type === 'answer') {
         if (!peer) return;
-        await peer.setRemoteDescription(signal.description);
+        const description = normalizeSessionDescription(signal.description);
+        if (!description) return;
+        await peer.setRemoteDescription(description);
         const pendingCandidates = pendingCandidatesRef.current.get(senderId) || [];
         for (const candidate of pendingCandidates) await peer.addIceCandidate(candidate);
         pendingCandidatesRef.current.delete(senderId);
