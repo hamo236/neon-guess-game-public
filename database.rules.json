@@ -22,6 +22,15 @@
           "$uid": {
             ".write": "auth != null && auth.uid === $uid"
           }
+        },
+        "matches": {
+          "$matchId": {
+            "guesses": {
+              "$uid": {
+                ".write": "auth != null && auth.uid === $uid && data.parent().parent().child('playerMap').child(auth.uid).val() === true && data.parent().parent().child('status').val() === 'playing' && !data.exists() && newData.child('playerId').val() === auth.uid && newData.child('roundNumber').val() === data.parent().parent().child('roundNumber').val() && newData.child('confirmed').val() === true"
+              }
+            }
+          }
         }
       }
     },

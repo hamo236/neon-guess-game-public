@@ -16,6 +16,7 @@ const createPlayerStats = (player) => ({
 const createMatch = (id, playerIds, status = 'pending') => ({
   matchId: id,
   playerIds,
+  playerMap: Object.fromEntries(playerIds.map((id) => [id, true])),
   status,
   roundNumber: 1,
   phase: status === 'playing' ? MODE_PHASES.PLAYING : MODE_PHASES.LOBBY,
@@ -141,8 +142,8 @@ export function finishMatch(state, matchId, winnerId, result = {}) {
   const semiB = matches[TOURNAMENT_MATCH_IDS.SEMI_B];
   if (matchId.startsWith('semi_') && semiA.status === 'finished' && semiB.status === 'finished') {
     const winnerA = semiA.result.winnerId; const winnerB = semiB.result.winnerId; const loserA = semiA.result.loserId; const loserB = semiB.result.loserId;
-    matches[TOURNAMENT_MATCH_IDS.FINAL] = { ...matches[TOURNAMENT_MATCH_IDS.FINAL], playerIds: [winnerA, winnerB], scores: { [winnerA]: 0, [winnerB]: 0 }, roundNumber: 1 };
-    matches[TOURNAMENT_MATCH_IDS.CONSOLATION] = { ...matches[TOURNAMENT_MATCH_IDS.CONSOLATION], playerIds: [loserA, loserB], scores: { [loserA]: 0, [loserB]: 0 }, roundNumber: 1 };
+    matches[TOURNAMENT_MATCH_IDS.FINAL] = { ...matches[TOURNAMENT_MATCH_IDS.FINAL], playerIds: [winnerA, winnerB], playerMap: { [winnerA]: true, [winnerB]: true }, scores: { [winnerA]: 0, [winnerB]: 0 }, roundNumber: 1 };
+    matches[TOURNAMENT_MATCH_IDS.CONSOLATION] = { ...matches[TOURNAMENT_MATCH_IDS.CONSOLATION], playerIds: [loserA, loserB], playerMap: { [loserA]: true, [loserB]: true }, scores: { [loserA]: 0, [loserB]: 0 }, roundNumber: 1 };
     return { ...state, playerStats, phase: MODE_PHASES.TRANSITION, transitionEndTimestamp: Date.now() + 5000, matches, updatedAt: Date.now() };
   }
   if (matchId === TOURNAMENT_MATCH_IDS.FINAL) {

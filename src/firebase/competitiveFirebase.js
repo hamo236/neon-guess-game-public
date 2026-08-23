@@ -197,6 +197,21 @@ export function sanitizePublicState(state) {
   return safe;
 }
 
+export async function submitTournamentGuess({ roomId, matchId, playerId, roundNumber }) {
+  const target = roomRef('tournament', roomId);
+  if (!target) throw new Error('Firebase not configured');
+  const guessRef = child(target, `matches/${matchId}/guesses/${playerId}`);
+  const result = await runTransaction(guessRef, (current) => current || {
+    playerId,
+    roundNumber: Number(roundNumber),
+    confirmed: true,
+    correct: true,
+    timestamp: Date.now(),
+  });
+  if (!result.committed) throw new Error('Guess confirmation was rejected because the round changed.');
+  return result.snapshot.val();
+}
+
 export async function mutateCompetitiveState({ mode, roomId, mutate }) {
   const target = roomRef(mode, roomId);
   if (!target) throw new Error('Firebase not configured');

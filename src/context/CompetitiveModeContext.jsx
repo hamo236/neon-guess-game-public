@@ -2,7 +2,7 @@ import React, { createContext, useCallback, useContext, useEffect, useMemo, useR
 import { CATEGORY_META, getItemsByCategory } from '../data/gameData.js';
 import { initAuth } from '../firebase/auth.js';
 import { isFirebaseConfigured } from '../firebase/config.js';
-import { createCompetitiveRoom, joinCompetitiveRoom, leaveCompetitiveRoom, mutateCompetitiveState, removeCompetitivePlayer, setCompetitiveTeam, subscribeCompetitiveConnection, subscribeCompetitiveRoom, subscribeCompetitiveTarget, writeCompetitiveState, writeCompetitiveTarget } from '../firebase/competitiveFirebase.js';
+import { createCompetitiveRoom, joinCompetitiveRoom, leaveCompetitiveRoom, mutateCompetitiveState, submitTournamentGuess, removeCompetitivePlayer, setCompetitiveTeam, subscribeCompetitiveConnection, subscribeCompetitiveRoom, subscribeCompetitiveTarget, writeCompetitiveState, writeCompetitiveTarget } from '../firebase/competitiveFirebase.js';
 import { COMPETITIVE_MODES, MODE_PHASES, createModePlayer, createStableId, clone } from '../modes/modeTypes.js';
 import { createTournamentState, finishMatch, recordMatchGuess, completeTournamentRound, advanceTournamentRound as advanceTournamentRoundState, startMatch, startNextTournamentMatches, TOURNAMENT_MATCH_IDS } from '../modes/tournamentEngine.js';
 import { assignTeamTargets, createTeamBattleState, finishTeamRound, advanceTeamRound, confirmTeamRound, areAllRequiredTeamConfirmationsComplete, getRequiredConfirmationTeams, validateTeamAssignments, TEAM_IDS } from '../modes/teamBattleEngine.js';
@@ -223,6 +223,14 @@ export function CompetitiveModeProvider({ mode, children }) {
 
   const recordGuess = useCallback(async (targetId) => {
     if (!state) return;
+    if (mode === COMPETITIVE_MODES.TOURNAMENT) {
+      const active = getActiveMatch(state, playerId);
+      if (!active || !targetId || !targetReady || !canMutateCompetitive) return;
+      if (isFirebaseConfigured) {
+        await submitTournamentGuess({ roomId, matchId: active.matchId, playerId, roundNumber: active.roundNumber });
+        return;
+      }
+    }
     await mutateCompetitiveState({ mode, roomId, mutate: (current) => {
       if (mode === COMPETITIVE_MODES.TOURNAMENT) { const active = getActiveMatch(current, playerId); if (!active) return current; const guessed = recordMatchGuess(current, active.matchId, playerId, targetId); const updated = guessed.matches?.[active.matchId]; return updated?.playerIds?.every((id) => updated.guesses?.[id]) ? completeTournamentRound(guessed, active.matchId) : guessed; }
       const team = getPlayerTeam(current, playerId); const opponentTeam = Object.values(current.teams || {}).find((candidate) => candidate.teamId !== team?.teamId);
@@ -244,6 +252,17 @@ export function CompetitiveModeProvider({ mode, children }) {
       if (!match || match.status !== 'playing') return current;
       let resolved = current;
       match.playerIds.filter((id) => !match.guesses?.[id]).forEach((id) => { resolved = recordMatchGuess(resolved, matchId, id, '__timeout__'); });
+      const completedMatch = resolved.matches?.[matchId];
+      const scores = { ...(completedMatch?.scores || {}) };
+      const playerStats = { ...(resolved.playerStats || {}) };
+      completedMatch.playerIds.forEach((id) => {
+        const guess = completedMatch.guesses?.[id];
+        if (!guess?.correct) return;
+        scores[id] = (scores[id] || 0) + 1;
+        const existing = playerStats[id] || { playerId: id, score: 0, guesses: 0, correctGuesses: 0, roundHistory: [], reward: null };
+        playerStats[id] = { ...existing, score: (existing.score || 0) + 1, guesses: existing.guesses || 0, correctGuesses: (existing.correctGuesses || 0) + 1 };
+      });
+      resolved = { ...resolved, playerStats, matches: { ...resolved.matches, [matchId]: { ...completedMatch, scores } } };
       return completeTournamentRound(resolved, matchId);
     } });
     return next;
@@ -349,7 +368,7 @@ export function CompetitiveModeProvider({ mode, children }) {
   }, [mode, playerId, state, advanceTeam]);
 
   useEffect(() => {
-    if (mode !== COMPETITIVE_MODES.TOURNAMENT || !state || !canMutateCompetitive) return undefined;
+    if (mode !== COMPETITIVE_MODES.TOURNAMENT || !state || !canMutateCompetitive || state.hostId !== playerId) return undefined;
     const playingMatches = Object.values(state.matches || {}).filter((match) => match.status === 'playing' && match.playerIds?.length === 2);
     const dueMatches = playingMatches.filter((match) => {
       const hasBothGuesses = match.playerIds.every((id) => Boolean(match.guesses?.[id]));
@@ -368,7 +387,7 @@ export function CompetitiveModeProvider({ mode, children }) {
   }, [mode, state, canMutateCompetitive, resolveTournamentMatch]);
 
   useEffect(() => {
-    if (mode !== COMPETITIVE_MODES.TOURNAMENT || !state || !canMutateCompetitive) return undefined;
+    if (mode !== COMPETITIVE_MODES.TOURNAMENT || !state || !canMutateCompetitive || state.hostId !== playerId) return undefined;
     const revealMatches = Object.values(state.matches || {}).filter((match) => match.status === 'round_result' && Number.isFinite(Number(match.revealEndTimestamp)));
     const dueMatches = revealMatches.filter((match) => Number(match.revealEndTimestamp) <= Date.now());
     dueMatches.forEach((match) => {
