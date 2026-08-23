@@ -6,6 +6,8 @@ import NavigationDrawer from './components/layout/NavigationDrawer';
 import BottomNavBar from './components/layout/BottomNavBar';
 import SessionRouteRestore from './components/SessionRouteRestore';
 import ConnectionRecoveryBanner from './components/ConnectionRecoveryBanner';
+import VoiceRoomPanel from './components/game/VoiceRoomPanel.jsx';
+import { useGameContext } from './context/GameStateContext';
 
 const GameBoardPage = lazy(() => import('./pages/GameBoardPage'));
 const GameResultsPage = lazy(() => import('./pages/GameResultsPage'));
@@ -74,6 +76,43 @@ class RouteErrorBoundary extends React.Component {
   }
 }
 
+function PersistentClassicVoiceRoom() {
+  const { state, myPlayerId, myPlayer, GAME_MODES } = useGameContext();
+  const mode = state?.mode;
+  const isClassic = mode === GAME_MODES.ONE_V_ONE || mode === GAME_MODES.SOCIAL;
+  const isFourPlayerSocial = mode === GAME_MODES.SOCIAL && (state?.players?.length || 0) > 2;
+  if (!isClassic || !state?.roomCode || !myPlayerId || !state.players?.length) return null;
+
+  const activeMatchId = isFourPlayerSocial ? state.playerAssignments?.[myPlayerId]?.matchId : null;
+  const voiceScopeId = isFourPlayerSocial ? (activeMatchId || state.matchId || 'room') : 'room';
+  const voiceRoomId = isFourPlayerSocial && voiceScopeId !== 'room'
+    ? `${state.roomCode}:${voiceScopeId}`
+    : state.roomCode;
+  const eligibleParticipantIds = isFourPlayerSocial
+    ? (activeMatchId
+      ? [state.playerAssignments?.[myPlayerId]?.opponentPlayerId, myPlayerId].filter(Boolean)
+      : state.players.map((player) => player.id))
+    : state.players.map((player) => player.id);
+
+  return (
+    <div className="pointer-events-none fixed inset-x-3 top-16 z-40 sm:inset-x-auto sm:right-5 sm:top-20 sm:w-[min(430px,calc(100vw-2rem))]">
+      <div className="pointer-events-auto">
+        <VoiceRoomPanel
+          key={`${voiceRoomId}:${voiceScopeId}`}
+          roomType="classic"
+          roomId={voiceRoomId}
+          scopeId={voiceScopeId}
+          playerId={myPlayerId}
+          displayName={myPlayer?.name || 'Player'}
+          eligibleParticipantIds={eligibleParticipantIds}
+          label={isFourPlayerSocial ? 'MATCH VOICE' : 'VOICE ROOM'}
+          compact
+        />
+      </div>
+    </div>
+  );
+}
+
 function App() {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const location = useLocation();
@@ -111,6 +150,7 @@ function App() {
       <div className="flex-1 overflow-x-hidden flex flex-col h-full w-full">
         {!isCompetitive && <SessionRouteRestore />}
         <ConnectionRecoveryBanner />
+        <PersistentClassicVoiceRoom />
         <RouteErrorBoundary resetKey={location.pathname}>
           <Suspense fallback={<RouteLoadingFallback />}>
             <Routes>

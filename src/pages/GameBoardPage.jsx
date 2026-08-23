@@ -7,7 +7,6 @@ import OpponentTargetCard from '../components/game/OpponentTargetCard';
 import RoundRevealPanel from '../components/game/RoundRevealPanel';
 import MatchTimeline from '../components/game/MatchTimeline';
 import RoomLeaveDialog from '../components/RoomLeaveDialog';
-import VoiceRoomPanel from '../components/game/VoiceRoomPanel.jsx';
 
 function formatChatTime(timestamp) {
   if (!timestamp) return '';
@@ -379,17 +378,6 @@ const GameBoardPage = () => {
                 ))}
               </div>
 
-              <div className="mt-2 w-full">
-                <VoiceRoomPanel
-                  roomType="classic"
-                  roomId={state.roomCode}
-                  scopeId={isFourPlayerSocial ? (activeMatchId || 'room') : 'room'}
-                  playerId={myPlayerId}
-                  displayName={myPlayer?.name || 'Player'}
-                  eligibleParticipantIds={voiceEligibleParticipantIds}
-                  label={isFourPlayerSocial ? 'MATCH VOICE' : 'VOICE ROOM'}
-                />
-              </div>
 
               <div className="sticky bottom-0 pt-stack-sm pb-safe flex flex-col items-center gap-3 bg-gradient-to-t from-surface/95 via-surface/80 to-transparent">
 
@@ -534,17 +522,6 @@ const GameBoardPage = () => {
             <span className="shrink-0 text-[10px] text-on-surface-variant">ROUND CHANNEL</span>
           </div>
 
-          <div className="px-container-margin pb-2">
-            <VoiceRoomPanel
-              roomType="classic"
-              roomId={state.roomCode}
-              scopeId={isFourPlayerSocial ? (activeMatchId || 'room') : 'room'}
-              playerId={myPlayerId}
-              displayName={myPlayer?.name || 'Player'}
-              eligibleParticipantIds={voiceEligibleParticipantIds}
-              label={isFourPlayerSocial ? 'MATCH VOICE' : 'VOICE ROOM'}
-            />
-          </div>
 
           <div className="flex-1 overflow-y-auto px-container-margin pb-stack-sm flex flex-col gap-2 no-scrollbar">
             {chatMessages.length === 0 && (
