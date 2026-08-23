@@ -4,12 +4,13 @@
  */
 
 import { getRoomRef, set, get, update, onDisconnect, runTransaction } from './database.js';
+import { normalizeRoomCode } from '../game/roomManager.js';
 
 export const MAX_PLAYERS = 4;
 export const MIN_PLAYERS = 2;
 
 function normalizedCodeForMatch(code) {
-  return String(code || '').toUpperCase();
+  return normalizeRoomCode(code);
 }
 
 /**
@@ -21,7 +22,8 @@ function normalizedCodeForMatch(code) {
  * @param {string} params.category
  */
 export async function createFirebaseRoom({ code, hostPlayer, mode, category }) {
-  const roomRef = getRoomRef(code);
+  const normalizedCode = normalizeRoomCode(code);
+  const roomRef = getRoomRef(normalizedCode);
   if (!roomRef) throw new Error('Firebase not configured');
 
   const roomData = {
@@ -73,7 +75,8 @@ export async function createFirebaseRoom({ code, hostPlayer, mode, category }) {
  * @returns {{ room: object, isReconnect: boolean }}
  */
 export async function reconnectOrJoinFirebaseRoom({ code, player }) {
-  const roomRef = getRoomRef(code);
+  const normalizedCode = normalizeRoomCode(code);
+  const roomRef = getRoomRef(normalizedCode);
   if (!roomRef) throw new Error('Firebase not configured');
 
   const snapshot = await get(roomRef);
@@ -81,7 +84,6 @@ export async function reconnectOrJoinFirebaseRoom({ code, player }) {
     throw new Error('Room not found. Check the code.');
   }
 
-  const normalizedCode = code.toUpperCase();
   const initialRoom = snapshot.val();
   const initialPlayers = initialRoom.players || {};
   if (initialRoom.removedPlayers?.[player.id]) {

@@ -19,7 +19,7 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import { createPlayer } from '../game/roomManager.js';
+import { createPlayer, normalizeRoomCode } from '../game/roomManager.js';
 import {
   buildInitialState,
   initRoom,
@@ -627,7 +627,7 @@ const attachToRoom = useCallback((roomCode, playerId, roomPhase, roundId = null)
       const uid = getCurrentUserId();
       if (!uid) throw new Error('Not authenticated');
 
-      const normalizedCode = code.trim().toUpperCase();
+      const normalizedCode = normalizeRoomCode(code);
       const player = createPlayer({ id: uid, name: name || 'Player', isHost: false });
       const { room, isReconnect } = await reconnectOrJoinFirebaseRoom({ code: normalizedCode, player });
 

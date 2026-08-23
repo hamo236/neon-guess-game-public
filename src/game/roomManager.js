@@ -8,15 +8,23 @@ export const MAX_PLAYERS = 4;
 export const MIN_PLAYERS = 2;
 
 /**
- * Generate a short 4-character alphanumeric room code.
+ * Generate a short numeric room code.
+ * The range starts at 100 so every newly-created room code has exactly 3 digits.
  */
 export function generateRoomCode() {
-  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
-  let code = '';
-  for (let i = 0; i < 4; i++) {
-    code += chars[Math.floor(Math.random() * chars.length)];
+  return String(Math.floor(100 + Math.random() * 900));
+}
+
+/**
+ * Normalize and validate the public room-code contract.
+ * Room codes are intentionally numeric and exactly three digits.
+ */
+export function normalizeRoomCode(value) {
+  const normalized = String(value ?? '').trim();
+  if (!/^\d{3}$/.test(normalized)) {
+    throw new Error('Room code must be exactly 3 digits.');
   }
-  return code;
+  return normalized;
 }
 
 /**

@@ -7,6 +7,7 @@ import { COMPETITIVE_MODES, MODE_PHASES, createModePlayer, createStableId, clone
 import { createTournamentState, finishMatch, recordMatchGuess, startMatch, startNextTournamentMatches, TOURNAMENT_MATCH_IDS } from '../modes/tournamentEngine.js';
 import { assignTeamTargets, createTeamBattleState, finishTeamRound, advanceTeamRound, confirmTeamRound, areAllRequiredTeamConfirmationsComplete, getRequiredConfirmationTeams, validateTeamAssignments, TEAM_IDS } from '../modes/teamBattleEngine.js';
 import { targetMapForTeams } from '../modes/teamBattleTargetPlan.js';
+import { generateRoomCode, normalizeRoomCode } from '../game/roomManager.js';
 
 const CompetitiveModeContext = createContext(null);
 const sessionKey = (mode) => `neon_guess_${mode}_session`;
@@ -14,7 +15,7 @@ const sessionKey = (mode) => `neon_guess_${mode}_session`;
 function readSession(mode) { try { return JSON.parse(localStorage.getItem(sessionKey(mode)) || 'null'); } catch { return null; } }
 function saveSession(mode, value) { try { localStorage.setItem(sessionKey(mode), JSON.stringify(value)); } catch { /* local-only fallback */ } }
 function clearSession(mode) { try { localStorage.removeItem(sessionKey(mode)); } catch { /* no-op */ } }
-function makeRoomId(mode) { return `${mode === COMPETITIVE_MODES.TOURNAMENT ? 'T' : 'B'}-${Math.random().toString(36).slice(2, 7).toUpperCase()}`; }
+function makeRoomId() { return generateRoomCode(); }
 function targetMapForPlayers(category, playerIds, offset = 0) {
   const items = getItemsByCategory(category) || [];
   if (items.length < playerIds.length) throw new Error('Selected category does not have enough targets.');
@@ -175,7 +176,7 @@ export function CompetitiveModeProvider({ mode, children }) {
     if (!roomId && recovery.status === 'pending' && session?.resumeAfterRefresh === true && !recoveryAttemptedRef.current) retrySessionRecovery();
   }, [roomId, recovery.status, retrySessionRecovery]);
   const createRoom = useCallback(async (category) => { if (!playerId) throw new Error('Authenticating player identity. Please try again in a moment.'); setError(''); const player = createModePlayer({ id: playerId, name: playerName, isHost: true }); const id = makeRoomId(mode); await createCompetitiveRoom({ mode, roomId: id, player, category }); saveSession(mode, { roomId: id, playerId, playerName, resumeAfterRefresh: false }); setRecovery({ status: 'idle', roomId: '', message: '' }); setRoomId(id); }, [mode, playerId, playerName]);
-  const joinRoom = useCallback(async (requestedId) => { if (!playerId) throw new Error('Authenticating player identity. Please try again in a moment.'); setError(''); const normalized = requestedId.trim().toUpperCase(); const player = createModePlayer({ id: playerId, name: playerName }); await joinCompetitiveRoom({ mode, roomId: normalized, player }); saveSession(mode, { roomId: normalized, playerId, playerName, resumeAfterRefresh: false }); setRecovery({ status: 'idle', roomId: '', message: '' }); setRoomId(normalized); }, [mode, playerId, playerName]);
+  const joinRoom = useCallback(async (requestedId) => { if (!playerId) throw new Error('Authenticating player identity. Please try again in a moment.'); setError(''); const normalized = normalizeRoomCode(requestedId); const player = createModePlayer({ id: playerId, name: playerName }); await joinCompetitiveRoom({ mode, roomId: normalized, player }); saveSession(mode, { roomId: normalized, playerId, playerName, resumeAfterRefresh: false }); setRecovery({ status: 'idle', roomId: '', message: '' }); setRoomId(normalized); }, [mode, playerId, playerName]);
 
   const startMode = useCallback(async (category) => {
     if (!state || state.hostId !== playerId) throw new Error('Only the host can start this mode.');

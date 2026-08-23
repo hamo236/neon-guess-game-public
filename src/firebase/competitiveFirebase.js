@@ -1,6 +1,7 @@
 import { child, get, onDisconnect, onValue, ref, remove, runTransaction, set, update } from 'firebase/database';
 import { db } from './config.js';
 import { clone } from '../modes/modeTypes.js';
+import { normalizeRoomCode } from '../game/roomManager.js';
 
 const ROOTS = { tournament: 'tournamentRooms', team_battle: 'teamRooms' };
 const PRIVATE_ROOTS = { tournament: 'tournamentPrivateTargets', team_battle: 'teamBattlePrivateTargets' };
@@ -41,11 +42,12 @@ function setupPresence(mode, roomId, playerId) {
 }
 
 export async function createCompetitiveRoom({ mode, roomId, player, category }) {
-  const target = roomRef(mode, roomId);
+  const normalizedRoomId = normalizeRoomCode(roomId);
+  const target = roomRef(mode, normalizedRoomId);
   if (!target) throw new Error('Firebase not configured');
   const playerRecord = { ...clone(player), isHost: true, connected: true, joinOrder: 1, teamId: mode === 'team_battle' ? 'team_a' : null };
   const result = await runTransaction(target, (current) => current || {
-    roomId,
+    roomId: normalizedRoomId,
     mode,
     status: 'lobby',
     phase: 'lobby',
@@ -57,13 +59,12 @@ export async function createCompetitiveRoom({ mode, roomId, player, category }) 
     updatedAt: Date.now(),
   });
   if (!result.committed) throw new Error('Room already exists.');
-  setupPresence(mode, roomId, player.id);
+  setupPresence(mode, normalizedRoomId, player.id);
   return result.snapshot.val();
 }
 
 export async function joinCompetitiveRoom({ mode, roomId, player }) {
-  const normalizedRoomId = String(roomId || '').trim().toUpperCase();
-  if (!normalizedRoomId) throw new Error('Enter a room code first.');
+  const normalizedRoomId = normalizeRoomCode(roomId);
   const target = roomRef(mode, normalizedRoomId);
   if (!target) throw new Error('Firebase not configured');
 

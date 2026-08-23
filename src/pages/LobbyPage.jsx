@@ -147,12 +147,12 @@ const LobbyPage = () => {
 
   const handleJoinRoom = async () => {
     if (isCreating || isJoining) return;
-    if (!joinCode.trim()) { setError('Enter a room code.'); return; }
+    if (!/^\d{3}$/.test(joinCode.trim())) { setError('Enter the 3-digit room code.'); return; }
     if (!joinName.trim()) { setError('Enter your name.'); return; }
     setError('');
     setIsJoining(true);
     try {
-      const result = await actions.joinRoom({ code: joinCode.trim().toUpperCase(), name: joinName.trim() });
+      const result = await actions.joinRoom({ code: joinCode.trim(), name: joinName.trim() });
       setRoomCreated(true);
       if (result?.phase === GAME_PHASES.PREVIEW || result?.phase === GAME_PHASES.PLAYING) {
         navigate('/game');
@@ -581,17 +581,19 @@ const LobbyPage = () => {
                   />
                 </div>
                 <div className="ng-lobby-input-guidance flex-1 flex flex-col gap-2">
-                  <label htmlFor="join-code" className="ng-join-code-label font-label-caps text-label-caps text-primary-fixed">Room Code <span className="text-on-surface-variant">· 4 characters</span></label>
+                  <label htmlFor="join-code" className="ng-join-code-label font-label-caps text-label-caps text-primary-fixed">Room Code <span className="text-on-surface-variant">· 3 digits</span></label>
                   <input
                     id="join-code"
                     value={joinCode}
-                    onChange={(e) => setJoinCode(e.target.value.toUpperCase())}
-                    placeholder="e.g. X7J2"
-                    maxLength={4}
-                    className="ng-join-code-input w-full bg-white/5 border border-primary-fixed/20 rounded-lg py-3 px-4 font-stats-num text-stats-num text-primary-fixed tracking-widest focus:outline-none focus:border-primary-fixed/50 focus-visible:ring-2 focus-visible:ring-primary-fixed/60 focus-visible:ring-offset-2 focus-visible:ring-offset-surface-dim placeholder-on-surface-variant/30 uppercase"
+                    onChange={(e) => setJoinCode(e.target.value.replace(/\D/g, '').slice(0, 3))}
+                    placeholder="e.g. 781"
+                    maxLength={3}
+                    inputMode="numeric"
+                    pattern="[0-9]{3}"
+                    className="ng-join-code-input w-full bg-white/5 border border-primary-fixed/20 rounded-lg py-3 px-4 font-stats-num text-stats-num text-primary-fixed tracking-widest focus:outline-none focus:border-primary-fixed/50 focus-visible:ring-2 focus-visible:ring-primary-fixed/60 focus-visible:ring-offset-2 focus-visible:ring-offset-surface-dim placeholder-on-surface-variant/30"
                     aria-describedby="join-code-help"
                   />
-                  <p id="join-code-help" className="ng-join-code-help font-body-sm text-body-sm text-on-surface-variant text-xs">Enter the 4-character room code.</p>
+                  <p id="join-code-help" className="ng-join-code-help font-body-sm text-body-sm text-on-surface-variant text-xs">Enter the 3-digit room code.</p>
                 </div>
                 <button
                   type="button"
