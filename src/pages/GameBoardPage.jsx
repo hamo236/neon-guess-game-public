@@ -409,6 +409,7 @@ const GameBoardPage = () => {
                 </span>
               </div>
 
+              {!isFourPlayerSocial && (
               <div className="w-full glass-panel rounded-lg p-4 flex flex-col gap-2 border border-white/10">
                 <div className="flex items-center justify-between gap-3">
                   <div className="flex items-center gap-2 min-w-0">
@@ -428,6 +429,8 @@ const GameBoardPage = () => {
                   <span className="font-stats-num text-stats-num text-on-surface-variant shrink-0">{oppScore}</span>
                 </div>
               </div>
+
+              )}
 
               {isFourPlayerSocial ? (
                 opponentTarget ? (
