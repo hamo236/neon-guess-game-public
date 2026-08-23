@@ -521,7 +521,7 @@ const attachToRoom = useCallback((roomCode, playerId, roomPhase, roundId = null)
 
     const player = createPlayer({
       id: uid,
-      name: session.playerName || 'Player',
+      name: session.playerName || '',
       isHost: false,
     });
 
@@ -593,7 +593,9 @@ const attachToRoom = useCallback((roomCode, playerId, roomPhase, roundId = null)
           if (attempts > 10) throw new Error('Could not generate unique room code.');
         } while (false); // Uniqueness check could do a Firebase get() here but kept simple
 
-        const hostPlayer = createPlayer({ id: uid, name: name || 'Player', isHost: true });
+        const trimmedName = String(name || '').trim();
+        if (!trimmedName) throw new Error('Enter your name before creating a room.');
+        const hostPlayer = createPlayer({ id: uid, name: trimmedName, isHost: true });
         await createFirebaseRoom({ code, hostPlayer, mode: activeMode, category });
         dispatch({
           type: A.CREATE_ROOM,
@@ -608,9 +610,11 @@ const attachToRoom = useCallback((roomCode, playerId, roomPhase, roundId = null)
 
       // Local fallback
       const code = generateRoomCode();
+      const trimmedName = String(name || '').trim();
+      if (!trimmedName) throw new Error('Enter your name before creating a room.');
       const hostPlayer = createPlayer({
         id: `host_${Date.now()}`,
-        name: name || 'CyberPlayer_01',
+        name: trimmedName,
         isHost: true,
       });
       dispatch({
@@ -628,7 +632,9 @@ const attachToRoom = useCallback((roomCode, playerId, roomPhase, roundId = null)
       if (!uid) throw new Error('Not authenticated');
 
       const normalizedCode = normalizeRoomCode(code);
-      const player = createPlayer({ id: uid, name: name || 'Player', isHost: false });
+      const trimmedName = String(name || '').trim();
+      if (!trimmedName) throw new Error('Enter your name before joining a room.');
+      const player = createPlayer({ id: uid, name: trimmedName, isHost: false });
       const { room, isReconnect } = await reconnectOrJoinFirebaseRoom({ code: normalizedCode, player });
 
       dispatch({ type: A.SET_MY_PLAYER_ID, payload: uid });

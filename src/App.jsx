@@ -15,6 +15,7 @@ const AdminGateway = lazy(() => import('./pages/AdminGateway'));
 const TournamentPage = lazy(() => import('./pages/TournamentPage'));
 const TeamBattlePage = lazy(() => import('./pages/TeamBattlePage'));
 const DailyGuessPage = lazy(() => import('./pages/DailyGuessPage'));
+const HowToPlayPage = lazy(() => import('./pages/HowToPlayPage'));
 
 function RouteLoadingFallback() {
   return (
@@ -162,6 +163,7 @@ function App() {
             <Route path="/tournament" element={<TournamentPage />} />
             <Route path="/team-battle" element={<TeamBattlePage />} />
             <Route path="/daily" element={<DailyGuessPage />} />
+            <Route path="/how-to-play" element={<HowToPlayPage />} />
             </Routes>
           </Suspense>
         </RouteErrorBoundary>

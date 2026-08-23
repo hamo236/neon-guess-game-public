@@ -16,7 +16,7 @@ const LobbyPage = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  const [hostName, setHostName] = useState('CyberPlayer_01');
+  const [hostName, setHostName] = useState('');
   const [joinName, setJoinName] = useState('');
   const [joinCode, setJoinCode] = useState('');
   const [roomCreated, setRoomCreated] = useState(false);
@@ -301,6 +301,7 @@ const LobbyPage = () => {
       ) : null}
 
       {!isOneVOneLobby && (
+      <>
       <section className="ng-home-route-card glass-panel-2 premium-command-card rounded-xl p-stack-lg border border-secondary-fixed/25">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div>
@@ -317,6 +318,11 @@ const LobbyPage = () => {
           </button>
         </div>
       </section>
+      <button type="button" onClick={() => navigate('/how-to-play')} className="group mx-auto flex min-h-11 items-center gap-2 rounded-full border border-primary-fixed/25 bg-primary-fixed/5 px-4 py-2.5 text-primary-fixed shadow-[0_8px_24px_rgba(0,0,0,0.12)] transition-[transform,background-color,border-color,box-shadow] duration-200 hover:-translate-y-0.5 hover:border-primary-fixed/55 hover:bg-primary-fixed/10 hover:shadow-[0_12px_30px_rgba(0,0,0,0.18)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-fixed/70">
+        <span className="flex h-7 w-7 items-center justify-center rounded-full border border-primary-fixed/35 bg-primary-fixed/10" aria-hidden="true"><span className="material-symbols-outlined text-[16px]">help</span></span>
+        <span className="font-label-caps text-[10px] tracking-[0.16em]">HOW TO PLAY</span>
+      </button>
+      </>
       )}
 
       {!isHomeRoute && (
