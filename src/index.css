@@ -21,11 +21,9 @@
   --ng-motion-fast: 140ms;
   --ng-motion-standard: 180ms;
   --ng-focus-ring: 0 0 0 3px rgba(125, 244, 255, 0.22), 0 0 0 1px var(--ng-color-primary);
-  /* Keep the neon depth while limiting full-surface paint and blur work. */
-  --ng-shadow-surface: 0 8px 24px rgba(4, 8, 20, 0.14);
-  --ng-shadow-elevated: 0 12px 30px rgba(4, 8, 20, 0.18), 0 0 18px rgba(125, 244, 255, 0.06);
-  --ng-glass-blur: 8px;
-  --ng-glass-blur-heavy: 14px;
+  /* Preserve the approved neon depth and glass strength. */
+  --ng-shadow-surface: 0 10px 30px rgba(0, 0, 0, 0.16);
+  --ng-shadow-elevated: 0 16px 40px rgba(0, 0, 0, 0.22), 0 0 24px rgba(125, 244, 255, 0.08);
   --ng-space-page-stack: 24px;
   --ng-space-page-stack-mobile: 20px;
   --ng-page-content-max: 72rem;
@@ -63,8 +61,8 @@
   .glass-panel {
     background: var(--ng-color-surface);
     box-shadow: var(--ng-shadow-surface);
-    backdrop-filter: blur(var(--ng-glass-blur));
-    -webkit-backdrop-filter: blur(var(--ng-glass-blur));
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
     border-top: 1px solid rgba(255, 255, 255, 0.2);
     border-left: 1px solid rgba(255, 255, 255, 0.1);
     border-bottom: 1px solid rgba(255, 255, 255, 0.05);
@@ -73,14 +71,14 @@
 
   .glass-panel-1 {
     background: var(--ng-color-surface-soft);
-    backdrop-filter: blur(var(--ng-glass-blur));
-    -webkit-backdrop-filter: blur(var(--ng-glass-blur));
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
   }
 
   .glass-panel-2 {
     background: var(--ng-color-surface-elevated);
-    backdrop-filter: blur(var(--ng-glass-blur-heavy));
-    -webkit-backdrop-filter: blur(var(--ng-glass-blur-heavy));
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
     border-top: 1px solid rgba(255, 255, 255, 0.2);
     border-bottom: 1px solid rgba(255, 255, 255, 0.05);
     border-left: 1px solid rgba(255, 255, 255, 0.1);
@@ -90,8 +88,8 @@
   .glass-panel-heavy {
     background: var(--ng-color-surface-strong);
     box-shadow: var(--ng-shadow-elevated);
-    backdrop-filter: blur(var(--ng-glass-blur-heavy));
-    -webkit-backdrop-filter: blur(var(--ng-glass-blur-heavy));
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
     border: 1px solid rgba(255, 255, 255, 0.2);
     border-top: 1px solid rgba(255, 255, 255, 0.3);
   }
@@ -101,15 +99,6 @@
     box-shadow: var(--ng-shadow-surface);
   }
 
-  /* Mobile devices have less rendering headroom; preserve the look with cheaper effects. */
-  @media (max-width: 640px) {
-    :root {
-      --ng-glass-blur: 4px;
-      --ng-glass-blur-heavy: 8px;
-      --ng-shadow-surface: 0 6px 18px rgba(4, 8, 20, 0.12);
-      --ng-shadow-elevated: 0 8px 22px rgba(4, 8, 20, 0.15), 0 0 12px rgba(125, 244, 255, 0.05);
-    }
-  }
 
   .neon-border {
     box-shadow: inset 0 0 0 1px rgba(125, 244, 255, 0.5), var(--ng-shadow-surface), 0 0 10px rgba(125, 244, 255, 0.2);
@@ -189,7 +178,9 @@
     overflow: hidden;
     isolation: isolate;
     border-radius: var(--ng-radius-card);
-    transition: transform var(--ng-motion-standard) ease, border-color var(--ng-motion-standard) ease, box-shadow var(--ng-motion-standard) ease, background-color var(--ng-motion-standard) ease;
+    /* Keep the glow while avoiding animated full-surface shadow repaint on hover. */
+    contain: layout;
+    transition: transform var(--ng-motion-standard) ease, border-color var(--ng-motion-standard) ease, background-color var(--ng-motion-standard) ease;
   }
 
   .premium-command-card::before {
@@ -248,7 +239,7 @@
     padding-inline: 20px;
     border-radius: var(--ng-radius-control);
     box-shadow: 0 0 20px rgba(233, 179, 255, 0.16);
-    transition: transform var(--ng-motion-fast) ease, box-shadow var(--ng-motion-fast) ease, background-color var(--ng-motion-fast) ease, border-color var(--ng-motion-fast) ease;
+    transition: transform var(--ng-motion-fast) ease, background-color var(--ng-motion-fast) ease, border-color var(--ng-motion-fast) ease;
   }
 
   .premium-cta:hover:not(:disabled),
@@ -304,8 +295,9 @@
   .premium-cta {
     position: relative;
     isolation: isolate;
-    will-change: transform, box-shadow;
-    transition-property: transform, box-shadow, background-color, border-color, color, filter;
+    /* Avoid broad layer promotion; keep the visual response without GPU-specific hints. */
+    will-change: auto;
+    transition-property: transform, background-color, border-color, color;
     transition-duration: var(--ng-motion-fast);
     transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
   }
@@ -5618,3 +5610,41 @@
     transition: none;
   }
 }
+
+
+/* Performance guard: preserve final glow states while avoiding broad shadow/filter transitions and layer hints. */
+@layer utilities {
+  .premium-command-card,
+  .premium-cta,
+  .touch-feedback {
+    transition-property: transform, background-color, border-color, color !important;
+    will-change: auto !important;
+  }
+}
+
+/* Keep the visual response for the existing press-state glow; only its opacity/scale is animated. */
+.touch-feedback::after,
+.premium-cta::after {
+  transition-property: opacity, transform;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .touch-feedback::after,
+  .premium-cta::after {
+    transition: none;
+  }
+}
+
+/* End non-GPU performance pass. */
+
+
+/* Keep state changes responsive without animating blur, shadow, filter, or layout properties. */
+.glass-panel,
+.glass-panel-1,
+.glass-panel-2,
+.glass-panel-heavy,
+.ng-interactive {
+  transition-property: transform, opacity, background-color, border-color, color !important;
+}
+
+/* End transition-scope guard. */
