@@ -4,6 +4,7 @@ import { useGameContext } from '../context/GameStateContext';
 import RoundRevealPanel from '../components/game/RoundRevealPanel';
 import MatchTimeline from '../components/game/MatchTimeline';
 import RoomLeaveDialog from '../components/RoomLeaveDialog';
+import { getPlayerAvatar, getPlayerAvatarLabel, getRosterAvatarIndex } from '../ui/playerAvatars.js';
 
 const GameResultsPage = () => {
   const { state, actions, myPlayerId, GAME_PHASES, GAME_MODES, CATEGORIES, isHost, isFirebaseConfigured } = useGameContext();
@@ -188,7 +189,7 @@ const GameResultsPage = () => {
                       voted ? 'border-secondary/60 bg-secondary/10 neon-border' : 'border-white/10 hover:border-white/30 disabled:hover:border-white/10'
                     }`}
                   >
-                    <img src={player.avatar} alt="Avatar" className="w-12 h-12 rounded-full object-cover border-2 border-white/30" />
+                    <img src={getPlayerAvatar(player, getRosterAvatarIndex(players, player))} alt={getPlayerAvatarLabel(player, getRosterAvatarIndex(players, player))} className="w-12 h-12 rounded-full object-cover border-2 border-white/30" loading="lazy" />
                     <div className="flex-1 text-left">
                       <p className="font-headline-sm text-headline-sm text-on-surface">{player.name}</p>
                       <p className="font-body-sm text-body-sm text-on-surface-variant">
@@ -280,8 +281,8 @@ const GameResultsPage = () => {
           {(winner || visibleRoundResult) && (
             <div className="ng-winner-card w-full glass-panel rounded-xl p-3 sm:p-stack-md flex flex-col sm:flex-row items-center gap-3 sm:gap-gutter neon-glow z-10">
               <div className="relative w-24 h-24 shrink-0 rounded-full overflow-hidden border-2 border-primary-fixed shadow-[0_0_15px_rgba(125,244,255,0.4)]">
-                {winner?.avatar ? (
-                  <img src={winner.avatar} alt="Winner" className="w-full h-full object-cover" />
+                {winner ? (
+                  <img src={getPlayerAvatar(winner, getRosterAvatarIndex(players, winner))} alt={getPlayerAvatarLabel(winner, getRosterAvatarIndex(players, winner))} className="w-full h-full object-cover" loading="lazy" />
                 ) : (
                   <div className="w-full h-full bg-surface-container-high flex items-center justify-center">
                     <span className="material-symbols-outlined text-primary-fixed text-3xl">emoji_events</span>
@@ -401,8 +402,8 @@ const GameResultsPage = () => {
                     {idx + 1}
                   </span>
                   <div className={`w-8 h-8 rounded-full overflow-hidden bg-surface-container-high border ${idx === 0 ? 'border-primary-fixed/50' : 'border-white/20'}`}>
-                    {player.avatar ? (
-                      <img src={player.avatar} alt="Avatar" className="w-full h-full object-cover" />
+                    {player ? (
+                      <img src={getPlayerAvatar(player, getRosterAvatarIndex(players, player))} alt={getPlayerAvatarLabel(player, getRosterAvatarIndex(players, player))} className="w-full h-full object-cover" loading="lazy" />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center">
                         <span className="material-symbols-outlined text-on-surface-variant text-sm">person</span>

@@ -5648,3 +5648,49 @@
 }
 
 /* End transition-scope guard. */
+
+
+/* Visual Evolution Addition 256: compact 1v1 waiting room scale. Presentation-only. */
+@layer utilities {
+  .ng-1v1-waiting-column > section {
+    padding: clamp(0.9rem, 2vw, 1.25rem);
+  }
+
+  .ng-1v1-waiting-column .ng-presence-ledger {
+    gap: 0.5rem;
+    margin-bottom: 0.85rem;
+  }
+
+  .ng-1v1-waiting-column .ng-player-row,
+  .ng-1v1-waiting-column .ng-lobby-empty-slot {
+    padding: 0.6rem 0.7rem;
+    border-radius: 0.75rem;
+  }
+
+  .ng-1v1-waiting-column .ng-player-row img,
+  .ng-1v1-waiting-column .ng-lobby-empty-slot > div:first-child {
+    width: 2.25rem;
+    height: 2.25rem;
+  }
+
+  .ng-1v1-waiting-column .ng-player-row p:first-child {
+    font-size: 0.9rem;
+    line-height: 1.2;
+  }
+
+  .ng-1v1-waiting-column .ng-player-row p + p {
+    margin-top: 0.2rem;
+  }
+
+  .ng-1v1-waiting-column .ng-lobby-action-dock {
+    gap: 0.55rem;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .ng-1v1-waiting-column .ng-player-row,
+    .ng-1v1-waiting-column .ng-player-row:hover {
+      transition: none;
+      transform: none;
+    }
+  }
+}

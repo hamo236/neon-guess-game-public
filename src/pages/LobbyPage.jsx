@@ -3,6 +3,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { useGameContext } from '../context/GameStateContext';
 import { CATEGORY_META } from '../data/gameData';
 import { MAX_PLAYERS, MIN_PLAYERS, createPlayer, generateRoomCode } from '../game/roomManager';
+import { getPlayerAvatar, getPlayerAvatarLabel, getRosterAvatarIndex } from '../ui/playerAvatars.js';
 import { loadSession } from '../utils/sessionStorage';
 import ActiveMatchRecoveryCard from '../components/ActiveMatchRecoveryCard';
 
@@ -733,7 +734,7 @@ const LobbyPage = () => {
                     <span className="ng-roster-seat-badge shrink-0 font-stats-num text-stats-num" aria-label={`Roster seat ${index + 1}`}>{String(index + 1).padStart(2, '0')}</span>
                   )}
                   <div className="relative">
-                    <img src={player.avatar} alt="Avatar" className={`w-10 h-10 rounded-full object-cover border-2 ${player.isHost ? 'border-primary-fixed' : 'border-white/30'}`} />
+                    <img src={getPlayerAvatar(player, getRosterAvatarIndex(players, player))} alt={getPlayerAvatarLabel(player, getRosterAvatarIndex(players, player))} className={`w-10 h-10 rounded-full object-cover border-2 ${player.isHost ? 'border-primary-fixed' : 'border-white/30'}`} loading="lazy" />
                     {player.isHost && (
                       <div className="absolute -top-1 -right-1 bg-surface-dim rounded-full p-[2px]">
                         <span className="material-symbols-outlined text-[12px] text-secondary-fixed" style={{ fontVariationSettings: "'FILL' 1" }}>star</span>
