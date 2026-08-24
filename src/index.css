@@ -6357,3 +6357,107 @@
   .ng-tournament-final-results__placement,
   .ng-tournament-final-results__return { transition: none; }
 }
+
+/* Four-player visual evolution — Cycle 6: Recovery Signal Rail */
+.ng-tournament-shell > [role="dialog"],
+.ng-tournament-shell > [role="status"],
+.ng-tournament-shell > [role="alert"] {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  min-width: 0;
+  overflow-wrap: anywhere;
+  border-radius: 0.9rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.18);
+}
+
+.ng-tournament-shell > [role="dialog"] > span:first-child,
+.ng-tournament-shell > [role="status"] > strong,
+.ng-tournament-shell > [role="alert"] > span:first-child {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.ng-tournament-shell > [role="dialog"] > span:last-child,
+.ng-tournament-shell > [role="alert"] > span:last-child {
+  display: flex;
+  flex: 0 1 auto;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  margin-inline-start: auto;
+}
+
+.ng-tournament-shell > [role="dialog"] button,
+.ng-tournament-shell > [role="alert"] button {
+  min-height: 2.75rem;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  white-space: normal;
+}
+
+.ng-tournament-shell > [role="status"] {
+  border-color: rgba(125, 244, 255, 0.34);
+  background: linear-gradient(135deg, rgba(125, 244, 255, 0.1), rgba(7, 11, 18, 0.74));
+}
+
+.ng-tournament-shell > [role="dialog"] {
+  border-color: rgba(125, 244, 255, 0.34);
+  background: linear-gradient(135deg, rgba(125, 244, 255, 0.08), rgba(7, 11, 18, 0.82));
+}
+
+.ng-tournament-shell > [role="alert"] {
+  background: linear-gradient(135deg, rgba(255, 190, 92, 0.08), rgba(7, 11, 18, 0.8));
+}
+
+.ng-tournament-shell > [role="alert"][aria-live="assertive"] {
+  border-left-width: 3px;
+  border-left-color: rgba(255, 190, 92, 0.62);
+}
+
+@media (max-width: 640px) {
+  .ng-tournament-shell > [role="dialog"],
+  .ng-tournament-shell > [role="status"],
+  .ng-tournament-shell > [role="alert"] {
+    align-items: stretch;
+    flex-direction: column;
+    gap: 0.7rem;
+    padding: 0.9rem;
+  }
+
+  .ng-tournament-shell > [role="dialog"] > span:last-child,
+  .ng-tournament-shell > [role="alert"] > span:last-child {
+    width: 100%;
+    justify-content: stretch;
+    margin-inline-start: 0;
+  }
+
+  .ng-tournament-shell > [role="dialog"] button,
+  .ng-tournament-shell > [role="alert"] button {
+    flex: 1 1 9rem;
+  }
+}
+
+@media (max-height: 430px) and (orientation: landscape) {
+  .ng-tournament-shell > [role="dialog"],
+  .ng-tournament-shell > [role="status"],
+  .ng-tournament-shell > [role="alert"] {
+    gap: 0.45rem;
+    padding-block: 0.65rem;
+  }
+
+  .ng-tournament-shell > [role="dialog"] button,
+  .ng-tournament-shell > [role="alert"] button {
+    min-height: 2.4rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ng-tournament-shell > [role="dialog"],
+  .ng-tournament-shell > [role="status"],
+  .ng-tournament-shell > [role="alert"] {
+    scroll-behavior: auto;
+    transition: none;
+  }
+}
