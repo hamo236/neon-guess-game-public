@@ -6103,3 +6103,97 @@
     scroll-behavior: auto;
   }
 }
+
+/* Four-player visual cycle 3: mobile-first bracket signal rail. */
+.ng-tournament-bracket--semifinals,
+.ng-tournament-bracket--progression {
+  position: relative;
+}
+.ng-tournament-bracket--semifinals::before,
+.ng-tournament-bracket--progression::before {
+  display: block;
+  margin-bottom: 0.15rem;
+  color: var(--ng-color-on-surface-variant);
+  font-family: var(--ng-font-label);
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  line-height: 1.2;
+}
+.ng-tournament-bracket--semifinals::before { content: 'OPENING BRANCHES'; }
+.ng-tournament-bracket--progression::before { content: 'PLACEMENT + CHAMPIONSHIP'; }
+.ng-tournament-bracket-card {
+  min-width: 0;
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(145deg, rgba(14, 22, 32, 0.86), rgba(7, 11, 18, 0.72));
+  box-shadow: 0 16px 42px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+.ng-tournament-bracket-card::before {
+  content: '';
+  position: absolute;
+  inset: 0 0 auto;
+  height: 0.2rem;
+  background: linear-gradient(90deg, var(--ng-color-primary), var(--ng-color-secondary));
+  opacity: 0.72;
+}
+.ng-tournament-bracket-card--active {
+  background: linear-gradient(145deg, rgba(125, 244, 255, 0.14), rgba(7, 11, 18, 0.78));
+}
+.ng-tournament-bracket-card__header { min-height: 2.8rem; }
+.ng-tournament-bracket-card__stage,
+.ng-tournament-bracket-card__path { display: block; overflow-wrap: anywhere; }
+.ng-tournament-bracket-card__path { margin-top: 0.24rem; letter-spacing: 0.11em; line-height: 1.25; }
+.ng-tournament-bracket-card__status {
+  flex: 0 0 auto;
+  max-width: 42%;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 999px;
+  padding: 0.28rem 0.48rem;
+  text-align: center;
+  text-transform: uppercase;
+  overflow-wrap: anywhere;
+}
+.ng-tournament-bracket-card__status--playing { border-color: rgba(125, 244, 255, 0.5); background: rgba(125, 244, 255, 0.12); color: var(--ng-color-primary); }
+.ng-tournament-bracket-card__status--finished { border-color: rgba(233, 179, 255, 0.42); background: rgba(233, 179, 255, 0.1); color: var(--ng-color-secondary); }
+.ng-tournament-bracket-card__player {
+  min-width: 0;
+  gap: 0.65rem;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  line-height: 1.35;
+}
+.ng-tournament-bracket-card__player > span:first-child { min-width: 0; overflow-wrap: anywhere; }
+.ng-tournament-bracket-card__player--winner { border-color: rgba(125, 244, 255, 0.34); background: rgba(125, 244, 255, 0.1); }
+.ng-tournament-bracket-card__player--tbd { border-style: dashed; color: var(--ng-color-on-surface-variant); }
+.ng-tournament-bracket-card__score { flex: 0 0 auto; min-width: 1.5rem; text-align: right; font-family: var(--ng-font-stats); font-variant-numeric: tabular-nums; }
+.ng-tournament-flow-divider {
+  min-height: 2.75rem;
+  align-items: center;
+  gap: 0.75rem;
+  border-block: 1px solid rgba(233, 179, 255, 0.14);
+  padding: 0.55rem 0.75rem;
+  text-align: center;
+  line-height: 1.35;
+}
+.ng-tournament-flow-divider::before,
+.ng-tournament-flow-divider::after { content: ''; height: 1px; flex: 1 1 2rem; background: linear-gradient(90deg, transparent, rgba(233, 179, 255, 0.38)); }
+.ng-tournament-flow-divider::after { background: linear-gradient(90deg, rgba(233, 179, 255, 0.38), transparent); }
+@media (max-width: 640px) {
+  .ng-tournament-bracket--semifinals,
+  .ng-tournament-bracket--progression { gap: 0.7rem; }
+  .ng-tournament-bracket-card { padding: 0.85rem; border-radius: 1rem; }
+  .ng-tournament-bracket-card__header { align-items: flex-start; }
+  .ng-tournament-bracket-card__status { max-width: 46%; font-size: 0.55rem; }
+  .ng-tournament-bracket-card__player { padding: 0.65rem 0.7rem; }
+  .ng-tournament-flow-divider { font-size: 0.58rem; letter-spacing: 0.1em; }
+}
+@media (max-height: 430px) and (orientation: landscape) {
+  .ng-tournament-bracket-card { padding: 0.7rem; }
+  .ng-tournament-bracket-card__header { min-height: 2.25rem; }
+  .ng-tournament-flow-divider { min-height: 2.2rem; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ng-tournament-bracket-card,
+  .ng-tournament-bracket-card__player,
+  .ng-tournament-flow-divider { scroll-behavior: auto; transition: none; }
+}
