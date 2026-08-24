@@ -125,7 +125,7 @@ export async function setCompetitiveTeam({ mode, roomId, playerId, teamId }) {
     const currentTeamId = player.teamId || Object.keys(current.teams || {}).find((id) => (current.teams?.[id]?.playerIds || []).includes(playerId));
     if (currentTeamId === teamId) return current;
     const destination = current.teams?.[teamId]?.playerIds || [];
-    if (destination.length >= 2) return current;
+    if (destination.length >= 3) return current;
     const nextTeams = Object.fromEntries(['team_a', 'team_b'].map((id) => [id, { ...(current.teams?.[id] || { teamId: id, playerIds: [] }), playerIds: (current.teams?.[id]?.playerIds || []).filter((id) => id !== playerId).concat(id === teamId ? [playerId] : []) }]));
     return { ...current, players: { ...current.players, [playerId]: { ...player, teamId } }, teams: nextTeams, updatedAt: Date.now() };
   });
