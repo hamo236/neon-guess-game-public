@@ -1,6 +1,6 @@
 /**
  * NEON GUESS — Game Dataset
- * 93 verified items across 4 categories: 28 football, 19 sports, 21 cartoons, 25 animals. Ice Hockey is intentionally excluded.
+ * 132 verified items across 4 categories: 68 football, 19 sports, 21 cartoons, 24 animals. Ice Hockey is intentionally excluded.
  * Local images served from /public/images/.
  */
 
@@ -53,7 +53,7 @@ export const CATEGORY_META = resolveItemImages({
   },
 });
 
-/** All 93 verified game items — local JPG assets in /public/images/. */
+/** All 132 verified game items — local JPG assets in /public/images/. */
 export const ALL_ITEMS = resolveImages([
   // ── CARTOON CHARACTERS (15) ─────────────────────────────────────────────────
   { id: 'c01', name: 'Elsa', category: CATEGORIES.CARTOONS, image: '/images/cartoons/elsa.jpg' },
@@ -78,7 +78,7 @@ export const ALL_ITEMS = resolveImages([
   { id: 'c20', name: 'Darwin Watterson', category: CATEGORIES.CARTOONS, image: '/images/cartoons/darwin-watterson.jpg' },
   { id: 'c21', name: 'Robin', category: CATEGORIES.CARTOONS, image: '/images/cartoons/robin-teen-titans.jpg' },
 
-  // ── FOOTBALL PLAYERS (29) ────────────────────────────────────────────────────
+  // ── FOOTBALL PLAYERS (68) ────────────────────────────────────────────────────
   { id: 'f01', name: 'Antoine Griezmann', category: CATEGORIES.FOOTBALL, image: '/images/football/antoine-griezmann.jpg' },
   { id: 'f02', name: 'Bruno Fernandes', category: CATEGORIES.FOOTBALL, image: '/images/football/bruno-fernandes.jpg' },
   { id: 'f03', name: 'Bukayo Saka', category: CATEGORIES.FOOTBALL, image: '/images/football/bukayo-saka.jpg' },
@@ -107,6 +107,47 @@ export const ALL_ITEMS = resolveImages([
   { id: 'f26', name: 'Jeremie Frimpong', category: CATEGORIES.FOOTBALL, image: '/images/football/jeremie-frimpong.jpg' },
   { id: 'f28', name: 'Bryan Mbeumo', category: CATEGORIES.FOOTBALL, image: '/images/football/bryan-mbeumo.jpg' },
   { id: 'f29', name: 'Morgan Gibbs-White', category: CATEGORIES.FOOTBALL, image: '/images/football/morgan-gibbs-white.jpg' },
+
+  { id: 'f30', name: 'Alexis Sánchez', category: CATEGORIES.FOOTBALL, image: '/images/football/alexis-sanchez.jpg' },
+  { id: 'f31', name: 'Andrea Pirlo', category: CATEGORIES.FOOTBALL, image: '/images/football/andrea-pirlo.jpg' },
+  { id: 'f32', name: 'Andrés Iniesta', category: CATEGORIES.FOOTBALL, image: '/images/football/andres-iniesta.jpg' },
+  { id: 'f33', name: 'Ángel Di María', category: CATEGORIES.FOOTBALL, image: '/images/football/angel-di-maria.jpg' },
+  { id: 'f34', name: 'Arjen Robben', category: CATEGORIES.FOOTBALL, image: '/images/football/arjen-robben.jpg' },
+  { id: 'f35', name: 'Dani Alves', category: CATEGORIES.FOOTBALL, image: '/images/football/dani-alves.jpg' },
+  { id: 'f36', name: 'David Silva', category: CATEGORIES.FOOTBALL, image: '/images/football/david-silva.jpg' },
+  { id: 'f37', name: 'David Villa', category: CATEGORIES.FOOTBALL, image: '/images/football/david-villa.jpg' },
+  { id: 'f38', name: 'Eden Hazard', category: CATEGORIES.FOOTBALL, image: '/images/football/eden-hazard.jpg' },
+  { id: 'f39', name: 'Fernando Torres', category: CATEGORIES.FOOTBALL, image: '/images/football/fernando-torres.jpg' },
+  { id: 'f40', name: 'Franck Ribéry', category: CATEGORIES.FOOTBALL, image: '/images/football/franck-ribery.jpg' },
+  { id: 'f41', name: 'Gareth Bale', category: CATEGORIES.FOOTBALL, image: '/images/football/gareth-bale.jpg' },
+  { id: 'f42', name: 'Gerard Piqué', category: CATEGORIES.FOOTBALL, image: '/images/football/gerard-pique.jpg' },
+  { id: 'f43', name: 'Giorgio Chiellini', category: CATEGORIES.FOOTBALL, image: '/images/football/giorgio-chiellini.jpg' },
+  { id: 'f44', name: 'Hugo Lloris', category: CATEGORIES.FOOTBALL, image: '/images/football/hugo-lloris.jpg' },
+  { id: 'f45', name: 'Isco', category: CATEGORIES.FOOTBALL, image: '/images/football/isco.jpg' },
+  { id: 'f46', name: 'James Rodríguez', category: CATEGORIES.FOOTBALL, image: '/images/football/james-rodriguez.jpg' },
+  { id: 'f47', name: 'John Terry', category: CATEGORIES.FOOTBALL, image: '/images/football/john-terry.jpg' },
+  { id: 'f48', name: 'Kaká', category: CATEGORIES.FOOTBALL, image: '/images/football/kaka.jpg' },
+  { id: 'f49', name: 'Keylor Navas', category: CATEGORIES.FOOTBALL, image: '/images/football/keylor-navas.jpg' },
+  { id: 'f50', name: 'Luís Figo', category: CATEGORIES.FOOTBALL, image: '/images/football/luis-figo.jpg' },
+  { id: 'f51', name: 'Luis Suárez', category: CATEGORIES.FOOTBALL, image: '/images/football/luis-suarez.jpg' },
+  { id: 'f52', name: 'Marcelo', category: CATEGORIES.FOOTBALL, image: '/images/football/marcelo.jpg' },
+  { id: 'f53', name: 'Marco Reus', category: CATEGORIES.FOOTBALL, image: '/images/football/marco-reus.jpg' },
+  { id: 'f54', name: 'Mario Götze', category: CATEGORIES.FOOTBALL, image: '/images/football/mario-gotze.jpg' },
+  { id: 'f55', name: 'Mesut Özil', category: CATEGORIES.FOOTBALL, image: '/images/football/mesut-ozil.jpg' },
+  { id: 'f56', name: 'Philipp Lahm', category: CATEGORIES.FOOTBALL, image: '/images/football/philipp-lahm.jpg' },
+  { id: 'f57', name: 'Raphaël Varane', category: CATEGORIES.FOOTBALL, image: '/images/football/raphael-varane.jpg' },
+  { id: 'f58', name: 'Raphinha', category: CATEGORIES.FOOTBALL, image: '/images/football/raphinha.jpg' },
+  { id: 'f59', name: 'Rayan Cherki', category: CATEGORIES.FOOTBALL, image: '/images/football/rayan-cherki.jpg' },
+  { id: 'f60', name: 'Roberto Firmino', category: CATEGORIES.FOOTBALL, image: '/images/football/roberto-firmino.jpg' },
+  { id: 'f61', name: 'Sadio Mané', category: CATEGORIES.FOOTBALL, image: '/images/football/sadio-mane.jpg' },
+  { id: 'f62', name: 'Sergio Agüero', category: CATEGORIES.FOOTBALL, image: '/images/football/sergio-aguero.jpg' },
+  { id: 'f63', name: 'Sergio Ramos', category: CATEGORIES.FOOTBALL, image: '/images/football/sergio-ramos.jpg' },
+  { id: 'f64', name: 'Thiago Alcântara', category: CATEGORIES.FOOTBALL, image: '/images/football/thiago-alcantara.jpg' },
+  { id: 'f65', name: 'Toni Kroos', category: CATEGORIES.FOOTBALL, image: '/images/football/toni-kroos.jpg' },
+  { id: 'f66', name: 'Vincent Kompany', category: CATEGORIES.FOOTBALL, image: '/images/football/vincent-kompany.jpg' },
+  { id: 'f67', name: 'Xabi Alonso', category: CATEGORIES.FOOTBALL, image: '/images/football/xabi-alonso.jpg' },
+  { id: 'f68', name: 'Zlatan Ibrahimović', category: CATEGORIES.FOOTBALL, image: '/images/football/zlatan-ibrahimovic.jpg' },
+  { id: 'f69', name: 'Ademola Lookman', category: CATEGORIES.FOOTBALL, image: '/images/football/ademola-lookman.jpg' },
 
   // ── TYPES OF SPORTS (19) ─────────────────────────────────────────────────────
   { id: 's01', name: 'Handball', category: CATEGORIES.SPORTS, image: '/images/sports/handball.jpg' },
