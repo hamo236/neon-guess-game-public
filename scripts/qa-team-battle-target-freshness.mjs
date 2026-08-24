@@ -7,7 +7,7 @@ const expectedCategoryCounts = {
   [CATEGORIES.FOOTBALL]: 28,
   [CATEGORIES.SPORTS]: 19,
   [CATEGORIES.CARTOONS]: 21,
-  [CATEGORIES.ANIMALS]: 25,
+  [CATEGORIES.ANIMALS]: 24,
 };
 
 assert.equal(new Set(ALL_ITEMS.map((item) => item.id)).size, ALL_ITEMS.length, 'Catalog item IDs must be unique');

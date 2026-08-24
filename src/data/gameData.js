@@ -1,6 +1,6 @@
 /**
  * NEON GUESS — Game Dataset
- * 96 verified items across 4 categories: 28 football, 19 sports, 21 cartoons, 28 animals. Ice Hockey is intentionally excluded.
+ * 93 verified items across 4 categories: 28 football, 19 sports, 21 cartoons, 25 animals. Ice Hockey is intentionally excluded.
  * Local images served from /public/images/.
  */
 
@@ -53,7 +53,7 @@ export const CATEGORY_META = resolveItemImages({
   },
 });
 
-/** All 96 verified game items — local JPG assets in /public/images/. */
+/** All 93 verified game items — local JPG assets in /public/images/. */
 export const ALL_ITEMS = resolveImages([
   // ── CARTOON CHARACTERS (15) ─────────────────────────────────────────────────
   { id: 'c01', name: 'Elsa', category: CATEGORIES.CARTOONS, image: '/images/cartoons/elsa.jpg' },
@@ -129,7 +129,7 @@ export const ALL_ITEMS = resolveImages([
   { id: 's18', name: 'Water Polo', category: CATEGORIES.SPORTS, image: '/images/sports/water-polo.jpg' },
   { id: 's19', name: 'Karate', category: CATEGORIES.SPORTS, image: '/images/sports/karate.jpg' },
 
-  // ── ANIMALS (28) ─────────────────────────────────────────────────────────────
+  // ── ANIMALS (25) ─────────────────────────────────────────────────────────────
   { id: 'a01', name: 'Bear', category: CATEGORIES.ANIMALS, image: '/images/animals/bear.jpg' },
   { id: 'a02', name: 'Camel', category: CATEGORIES.ANIMALS, image: '/images/animals/camel-wild.jpg' },
   { id: 'a03', name: 'Cheetah', category: CATEGORIES.ANIMALS, image: '/images/animals/cheetah-meadow.jpg' },
@@ -145,7 +145,6 @@ export const ALL_ITEMS = resolveImages([
   { id: 'a14', name: 'Lioness', category: CATEGORIES.ANIMALS, image: '/images/animals/lioness.jpg' },
   { id: 'a15', name: 'Manatee', category: CATEGORIES.ANIMALS, image: '/images/animals/water-manatee.jpg' },
   { id: 'a16', name: 'Monkey', category: CATEGORIES.ANIMALS, image: '/images/animals/monkey.jpg' },
-  { id: 'a17', name: 'Moose', category: CATEGORIES.ANIMALS, image: '/images/animals/moose.jpg' },
   { id: 'a19', name: 'Parrot', category: CATEGORIES.ANIMALS, image: '/images/animals/parrot.jpg' },
   { id: 'a20', name: 'Penguin', category: CATEGORIES.ANIMALS, image: '/images/animals/penguin.jpg' },
   { id: 'a22', name: 'Seal', category: CATEGORIES.ANIMALS, image: '/images/animals/water-seal.jpg' },
