@@ -45,10 +45,10 @@ function getTargetSpec(state, mode, playerId) {
   const match = state.match?.status === 'playing' ? state.match : null;
   return match ? { matchId: match.matchId, roundNumber: match.roundNumber || state.roundNumber } : null;
 }
-async function writePrivateTargets(mode, roomId, state) {
+async function writePrivateTargets(mode, roomId, state, writerPlayerId = null) {
   const writes = [];
   if (mode === COMPETITIVE_MODES.TOURNAMENT) {
-    Object.values(state.matches || {}).filter((match) => ['playing', 'round_result'].includes(match.status)).forEach((match) => match.playerIds.forEach((playerId) => {
+    Object.values(state.matches || {}).filter((match) => ['playing', 'round_result'].includes(match.status)).forEach((match) => match.playerIds.filter((playerId) => !writerPlayerId || writerPlayerId === state.hostId || playerId === writerPlayerId).forEach((playerId) => {
       if (match.status === 'round_result') {
         writes.push(writeCompetitiveTarget({ mode, roomId, matchId: match.matchId, playerId, target: { id: `reveal-${match.matchId}-${match.roundNumber}`, targetId: `reveal-${match.matchId}-${match.roundNumber}`, matchId: match.matchId, roundNumber: match.roundNumber, targetReady: true, revealSnapshot: clone(match.result?.revealSnapshot || []) } }));
         return;
@@ -168,12 +168,12 @@ export function CompetitiveModeProvider({ mode, children }) {
   }, [mode, roomId, playerId, targetSpec?.matchId, targetSpec?.roundNumber]);
 
   useEffect(() => {
-    if (![COMPETITIVE_MODES.TOURNAMENT, COMPETITIVE_MODES.TEAM_BATTLE].includes(mode) || !roomId || !state || !canMutateCompetitive || state.hostId !== playerId) return undefined;
+    if (![COMPETITIVE_MODES.TOURNAMENT, COMPETITIVE_MODES.TEAM_BATTLE].includes(mode) || !roomId || !state || !canMutateCompetitive || (mode === COMPETITIVE_MODES.TEAM_BATTLE && state.hostId !== playerId)) return undefined;
     const hasTargetLifecycle = mode === COMPETITIVE_MODES.TOURNAMENT
       ? Object.values(state.matches || {}).some((match) => ['playing', 'round_result'].includes(match.status))
       : state.match?.status === 'playing';
     if (!hasTargetLifecycle) return undefined;
-    writePrivateTargets(mode, roomId, state).catch((targetError) => setError(targetError?.message || 'Competitive target synchronization error.'));
+    writePrivateTargets(mode, roomId, state, mode === COMPETITIVE_MODES.TOURNAMENT ? playerId : null).catch((targetError) => setError(targetError?.message || 'Competitive target synchronization error.'));
     return undefined;
   }, [mode, roomId, playerId, state, canMutateCompetitive]);
 
@@ -399,7 +399,7 @@ export function CompetitiveModeProvider({ mode, children }) {
   }, [mode, playerId, state, advanceTeam]);
 
   useEffect(() => {
-    if (mode !== COMPETITIVE_MODES.TOURNAMENT || !state || !canMutateCompetitive || state.hostId !== playerId) return undefined;
+    if (mode !== COMPETITIVE_MODES.TOURNAMENT || !state || !canMutateCompetitive) return undefined;
     const playingMatches = Object.values(state.matches || {}).filter((match) => match.status === 'playing' && match.playerIds?.length === 2);
     const dueMatches = playingMatches.filter((match) => {
       const hasConfirmation = match.playerIds.some((id) => Boolean(match.guesses?.[id]));
@@ -418,7 +418,7 @@ export function CompetitiveModeProvider({ mode, children }) {
   }, [mode, state, canMutateCompetitive, resolveTournamentMatch]);
 
   useEffect(() => {
-    if (mode !== COMPETITIVE_MODES.TOURNAMENT || !state || !canMutateCompetitive || state.hostId !== playerId) return undefined;
+    if (mode !== COMPETITIVE_MODES.TOURNAMENT || !state || !canMutateCompetitive) return undefined;
     const revealMatches = Object.values(state.matches || {}).filter((match) => match.status === 'round_result' && Number.isFinite(Number(match.revealEndTimestamp)));
     const dueMatches = revealMatches.filter((match) => Number(match.revealEndTimestamp) <= Date.now());
     dueMatches.forEach((match) => {

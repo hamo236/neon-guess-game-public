@@ -30,4 +30,8 @@ export const createStableId = (prefix = 'p') => {
   return `${prefix}_${suffix}`;
 };
 
-export const clone = (value) => JSON.parse(JSON.stringify(value));
+export const clone = (value) => {
+  if (value === undefined || value === null) return value;
+  const serialized = JSON.stringify(value);
+  return serialized === undefined ? value : JSON.parse(serialized);
+};
