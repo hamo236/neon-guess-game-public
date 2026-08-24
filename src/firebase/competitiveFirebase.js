@@ -258,3 +258,34 @@ export function subscribeCompetitiveRoom({ mode, roomId, onState, onError }) {
   if (!target) return () => {};
   return onValue(target, (snapshot) => onState(snapshot.exists() ? snapshot.val() : null), onError);
 }
+
+
+export function subscribeCompetitiveChat({ mode, roomId, onMessages, onError }) {
+  const target = roomRef(mode, roomId);
+  if (!target) { onMessages?.([]); return () => {}; }
+  const messagesTarget = child(target, 'messages');
+  return onValue(messagesTarget, (snapshot) => {
+    const messages = Object.values(snapshot.val() || {})
+      .filter((message) => message && message.type === 'chat' && typeof message.message === 'string')
+      .sort((a, b) => Number(a.timestamp || 0) - Number(b.timestamp || 0))
+      .slice(-100);
+    onMessages?.(messages);
+  }, onError);
+}
+
+export async function sendCompetitiveChatMessage({ mode, roomId, playerId, playerName, message }) {
+  const target = roomRef(mode, roomId);
+  const trimmed = String(message || '').trim();
+  if (!target) throw new Error('Firebase not configured');
+  if (!playerId || !trimmed) return;
+  if (trimmed.length > 500) throw new Error('Message is too long.');
+  const messageId = `msg_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
+  await set(child(target, `messages/${messageId}`), {
+    id: messageId,
+    playerId,
+    playerName: String(playerName || 'Player').slice(0, 40),
+    message: trimmed,
+    timestamp: Date.now(),
+    type: 'chat',
+  });
+}

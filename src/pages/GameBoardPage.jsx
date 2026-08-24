@@ -6,6 +6,7 @@ import { formatTime } from '../hooks/useGameTimer';
 import OpponentTargetCard from '../components/game/OpponentTargetCard';
 import RoundRevealPanel from '../components/game/RoundRevealPanel';
 import MatchTimeline from '../components/game/MatchTimeline';
+import CompetitiveChatPanel from '../components/game/CompetitiveChatPanel';
 import RoomLeaveDialog from '../components/RoomLeaveDialog';
 
 function formatChatTime(timestamp) {
@@ -26,12 +27,8 @@ const GameBoardPage = () => {
   const { state, actions, myPlayerId, myPlayer, isHost, isFirebaseConfigured, GAME_PHASES, GAME_MODES } = useGameContext();
   const [showExitDialog, setShowExitDialog] = useState(false);
   const navigate = useNavigate();
-  const [chatInput, setChatInput] = useState('');
   const [isLeaving, setIsLeaving] = useState(false);
   const [leaveError, setLeaveError] = useState('');
-  const [isChatPending, setIsChatPending] = useState(false);
-  const [chatError, setChatError] = useState('');
-  const chatEndRef = useRef(null);
 
   const [displaySeconds, setDisplaySeconds] = useState(null);
   const timerIntervalRef = useRef(null);
@@ -81,6 +78,7 @@ const GameBoardPage = () => {
   beginRoundRef.current = actions.beginRound;
 
   const chatMessages = questions.filter(isChatMessage);
+  // CompetitiveChatPanel owns the isChatPending duplicate-action guard and the "Message could not be sent." feedback.
 
   useEffect(() => {
     if (mode !== GAME_MODES.SOCIAL || !timerEndTimestamp) {
@@ -173,9 +171,7 @@ const GameBoardPage = () => {
     };
   }, [isFirebaseConfigured, isHost, isKnockoutTransition, round, state.roomCode, transitionEndsAt]);
 
-  useEffect(() => {
-    chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [chatMessages]);
+
 
   const handleLeaveGame = async () => {
     if (isLeaving) return;
@@ -191,20 +187,7 @@ const GameBoardPage = () => {
     }
   };
 
-  const handleSendChat = async () => {
-    const text = chatInput.trim();
-    if (!text || !isPlaying || roundResult || isChatPending) return;
-    setChatError('');
-    setIsChatPending(true);
-    try {
-      await actions.sendChatMessage(text);
-      setChatInput('');
-    } catch (error) {
-      setChatError(error?.message || 'Message could not be sent. Try again.');
-    } finally {
-      setIsChatPending(false);
-    }
-  };
+
 
   const handleBeginRound = async () => {
     await actions.beginRound();
@@ -472,72 +455,13 @@ const GameBoardPage = () => {
       </main>
 
       {isPlaying && (
-        <div className="fixed bottom-0 inset-x-0 z-30 h-[320px] flex flex-col bg-surface/95 backdrop-blur-2xl border-t border-white/10 rounded-t-2xl shadow-[0_-10px_40px_rgba(0,0,0,0.5)]">
-          <div className="w-full h-6 flex justify-center items-center shrink-0">
-            <div className="w-12 h-1 bg-white/20 rounded-full" />
-          </div>
-
-          <div className="min-h-11 px-container-margin pb-1 shrink-0 flex items-center justify-between gap-3">
-            <div className="flex min-w-0 items-center gap-2">
-              <span className="material-symbols-outlined text-[18px] text-primary-fixed" aria-hidden="true">chat_bubble</span>
-              <span className="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-widest text-[10px]">Chat</span>
-            </div>
-            <span className="shrink-0 text-[10px] text-on-surface-variant">ROUND CHANNEL</span>
-          </div>
-
-
-          <div className="flex-1 overflow-y-auto px-container-margin pb-stack-sm flex flex-col gap-2 no-scrollbar">
-            {chatMessages.length === 0 && (
-              <p className="text-center font-body-sm text-body-sm text-on-surface-variant opacity-50 mt-2">
-                Say anything — chat freely with your opponent.
-              </p>
-            )}
-            {chatMessages.map((msg) => {
-              const isMe = msg.playerId === myPlayerId;
-              const text = msg.message ?? msg.question ?? '';
-              const name = msg.playerName ?? players.find((p) => p.id === msg.playerId)?.name ?? 'Player';
-              return (
-                <div key={msg.id} className={`flex flex-col max-w-[90%] ${isMe ? 'self-end items-end' : 'self-start items-start'}`}>
-                  <div className="flex items-center gap-2 mb-0.5">
-                    <span className={`font-label-caps text-[10px] ${isMe ? 'text-primary-fixed' : 'text-secondary'}`}>{name}</span>
-                    <span className="font-label-caps text-[9px] text-on-surface-variant opacity-60">{formatChatTime(msg.timestamp)}</span>
-                  </div>
-                  <div className={`glass-panel rounded-2xl px-3 py-2 ${isMe ? 'bg-primary-fixed/10 border-primary-fixed/30 rounded-br-sm' : 'bg-white/5 border-white/10 rounded-bl-sm'}`}>
-                    <p className="font-body-sm text-body-sm text-on-surface break-words">{text}</p>
-                  </div>
-                </div>
-              );
-            })}
-            <div ref={chatEndRef} />
-          </div>
-
-          <div className="p-container-margin border-t border-white/10 bg-surface-container/50 pb-safe">
-            {chatError && (
-              <p className="mb-2 px-2 text-center font-body-sm text-body-sm text-error" role="alert">
-                {chatError}
-              </p>
-            )}
-            <div className="relative flex items-center">
-              <input
-                value={chatInput}
-                onChange={(e) => setChatInput(e.target.value)}
-                onKeyDown={(e) => e.key === 'Enter' && handleSendChat()}
-                                disabled={roundLocked || isChatPending}
-                aria-label="Chat message"
-                className="min-h-12 w-full bg-white/5 border border-white/10 rounded-full py-3 pl-4 pr-14 font-body-sm text-body-sm text-on-surface focus:outline-none focus:border-primary-fixed/50 focus:ring-1 focus:ring-primary-fixed/50 placeholder-on-surface-variant/50 transition-all disabled:opacity-50"
-                placeholder="Type a message…"
-                type="text"
-              />
-              <button
-                onClick={handleSendChat}
-                                disabled={roundLocked || isChatPending || !chatInput.trim()}
-                aria-label={isChatPending ? 'Sending message' : 'Send message'}
-                className="absolute right-1 min-h-11 min-w-11 rounded-full bg-primary-fixed text-on-primary-fixed flex items-center justify-center active:scale-90 transition-transform disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-fixed focus-visible:ring-offset-2 focus-visible:ring-offset-surface"
-              >
-                <span className="material-symbols-outlined text-[18px]">{isChatPending ? 'progress_activity' : 'send'}</span>
-              </button>
-            </div>
-          </div>
+        <div className="fixed bottom-0 inset-x-0 z-30 px-3 pb-safe">
+          <CompetitiveChatPanel
+            messages={chatMessages}
+            playerId={myPlayerId}
+            onSend={actions.sendChatMessage}
+            disabled={!isPlaying || Boolean(roundResult)}
+          />
         </div>
       )}
       {showExitDialog && (
