@@ -41,12 +41,13 @@ if (!page.includes("status === 'closed' && !state") || !page.includes('This Team
 if (page.includes('TEAM_IDS.A') || page.includes('TEAM_IDS.B')) throw new Error('Team roster UI must not depend on an unresolved TEAM_IDS identifier.');
 
 if (!adapter.includes("mode === 'team_battle'")) throw new Error('Team Battle adapter branch is missing.');
-if (!context.includes('mutateCompetitiveState({ mode, roomId, mutate: (current) => confirmTeamRound(current, playerId') || !context.includes('confirmTeamRound') || !context.includes('targetMatchesCurrentRound')) throw new Error('Team Battle confirmation must use the atomic authoritative public-state mutation path and current target guard.');
+if (!context.includes('submitTeamConfirmation') || !context.includes('confirmTeamRound') || !context.includes('targetMatchesCurrentRound')) throw new Error('Team Battle confirmation must use the scoped player confirmation path, engine cancellation path, and current target guard.');
 if (!context.includes('privateTargetMatchesRound') || !context.includes('if (!targetReady || !privateTarget || !privateTargetMatchesRound) return current;') || !context.includes('targetMatchesCurrentRound') || !context.includes('if (!team?.teamId || !canMutateCompetitive) return;')) throw new Error('Team Battle actions must validate team membership and mutation capability.');
 const confirmBlock = context.slice(context.indexOf('const confirmTeamGuess'), context.indexOf('const resolveTeamRound'));
 if (confirmBlock.includes('if (!targetReady') || confirmBlock.includes('if (!privateTarget')) throw new Error('Team Guess Correct must not require delayed private target readiness before submitting confirmation.');
 if (!confirmBlock.includes('targetMapForTeams(state.category, state.teams') || !confirmBlock.includes('deterministicTargets?.[playerId]')) throw new Error('Team Guess Correct must have a deterministic current-round target fallback when private target delivery is delayed.');
 if (adapter.includes('writeTeamBattleConfirmation')) throw new Error('Deprecated direct Team Battle confirmation writer must remain removed.');
+if (!adapter.includes('export async function submitTeamConfirmation') || !adapter.includes('match/confirmations/${teamId}/${playerId}')) throw new Error('Team Battle must persist each teammate confirmation through the scoped Firebase child path.');
 if (!adapter.includes('delete safe.match.targets') || !adapter.includes('delete safe.match.teamTargets') || !adapter.includes('safe.roundHistory = safe.roundHistory.map')) throw new Error('Public state must sanitize private target payloads and round history.');
 if (!adapter.includes('players: { ...current.players, [playerId]: null }') || !adapter.includes('leftPlayers: { ...(current.leftPlayers || {}), [playerId]: true }')) throw new Error('Team Battle Leave must remove only the current player and mark the departure.');
 
@@ -55,4 +56,4 @@ if (!page.includes('min-h-10 min-w-10') || !page.includes('min-h-12 flex-1 sm:fl
 if (!gameplay.includes('rounded-3xl border border-white/10 bg-gradient-to-r') || !gameplay.includes('2v2 TEAM BATTLE') || !gameplay.includes('ROUND {state.roundNumber} / 3')) throw new Error('2v2 gameplay must preserve the distinct round header.');
 if (!gameplay.includes('rounded-3xl p-4 sm:p-5') || !gameplay.includes('focus-visible:ring-2')) throw new Error('2v2 gameplay panels and controls must retain visual focus affordances.');
 
-console.log('Team Battle UI/adapter contract QA passed: opposing target projection, compact dual confirmation, atomic public-state mutation, removed timer/guess board, privacy sanitization, roster names, Leave control, hierarchy, and touch targets are present.');
+console.log('Team Battle UI/adapter contract QA passed: opposing target projection, scoped dual confirmation, authoritative resolution, removed timer/guess board, privacy sanitization, roster names, Leave control, hierarchy, and touch targets are present.');

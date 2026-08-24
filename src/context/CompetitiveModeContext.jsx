@@ -2,7 +2,7 @@ import React, { createContext, useCallback, useContext, useEffect, useMemo, useR
 import { CATEGORY_META, getItemsByCategory } from '../data/gameData.js';
 import { initAuth } from '../firebase/auth.js';
 import { isFirebaseConfigured } from '../firebase/config.js';
-import { createCompetitiveRoom, joinCompetitiveRoom, leaveCompetitiveRoom, mutateCompetitiveState, submitTournamentGuess, removeCompetitivePlayer, setCompetitiveTeam, subscribeCompetitiveConnection, subscribeCompetitiveRoom, subscribeCompetitiveTarget, writeCompetitiveState, writeCompetitiveTarget } from '../firebase/competitiveFirebase.js';
+import { createCompetitiveRoom, joinCompetitiveRoom, leaveCompetitiveRoom, mutateCompetitiveState, submitTournamentGuess, submitTeamConfirmation, removeCompetitivePlayer, setCompetitiveTeam, subscribeCompetitiveConnection, subscribeCompetitiveRoom, subscribeCompetitiveTarget, writeCompetitiveState, writeCompetitiveTarget } from '../firebase/competitiveFirebase.js';
 import { COMPETITIVE_MODES, MODE_PHASES, createModePlayer, createStableId, clone } from '../modes/modeTypes.js';
 import { createTournamentState, finishMatch, recordMatchGuess, completeTournamentRound, advanceTournamentRound as advanceTournamentRoundState, startMatch, startNextTournamentMatches, TOURNAMENT_MATCH_IDS } from '../modes/tournamentEngine.js';
 import { assignTeamTargets, createTeamBattleState, finishTeamRound, advanceTeamRound, confirmTeamRound, areAllRequiredTeamConfirmationsComplete, getRequiredConfirmationTeams, validateTeamAssignments, TEAM_IDS } from '../modes/teamBattleEngine.js';
@@ -326,6 +326,12 @@ export function CompetitiveModeProvider({ mode, children }) {
     const targetSnapshot = ownedTarget?.id && (targetMatchesCurrentRound || fallbackTargetMatchesCurrentRound)
       ? { id: ownedTarget.id, targetId: ownedTarget.targetId || ownedTarget.id, name: ownedTarget.name, image: ownedTarget.image, teamId: team.teamId }
       : null;
+    const existingConfirmation = state.match?.confirmations?.[team.teamId]?.[playerId];
+    const hasCurrentConfirmation = existingConfirmation?.roundNumber === currentRoundNumber && existingConfirmation?.matchId === state.match.matchId;
+    if (!hasCurrentConfirmation) {
+      await submitTeamConfirmation({ roomId, matchId: state.match.matchId, teamId: team.teamId, playerId, roundNumber: currentRoundNumber });
+      return;
+    }
     await mutateCompetitiveState({ mode, roomId, mutate: (current) => confirmTeamRound(current, playerId, Date.now(), { targetSnapshot }) });
   }, [mode, playerId, roomId, state, privateTarget, targetReady, canMutateCompetitive]);
   const resolveTeamRound = useCallback(async () => {

@@ -212,6 +212,21 @@ export async function submitTournamentGuess({ roomId, matchId, playerId, roundNu
   return result.snapshot.val();
 }
 
+export async function submitTeamConfirmation({ roomId, matchId, teamId, playerId, roundNumber }) {
+  const target = roomRef('team_battle', roomId);
+  if (!target) throw new Error('Firebase not configured');
+  const confirmationRef = child(target, `match/confirmations/${teamId}/${playerId}`);
+  const result = await runTransaction(confirmationRef, (current) => current || {
+    playerId,
+    teamId,
+    matchId,
+    roundNumber: Number(roundNumber),
+    confirmedAt: Date.now(),
+  });
+  if (!result.committed) throw new Error('Team confirmation was rejected because the round changed.');
+  return result.snapshot.val();
+}
+
 export async function mutateCompetitiveState({ mode, roomId, mutate }) {
   const target = roomRef(mode, roomId);
   if (!target) throw new Error('Firebase not configured');
