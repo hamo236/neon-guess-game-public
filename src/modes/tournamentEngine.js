@@ -147,7 +147,7 @@ export function finishMatch(state, matchId, winnerId, result = {}) {
     const alreadyRecorded = (existing.roundHistory || []).some((entry) => entry.matchId === matchId && entry.roundNumber === current.roundNumber);
     playerStats[id] = alreadyRecorded ? existing : { ...existing, roundHistory: [...(existing.roundHistory || []), { roundNumber: current.roundNumber, matchId, target: clone(current.targets?.[id] || null), guess: clone(guess) }] };
   });
-  const finished = { ...current, status: 'finished', phase: MODE_PHASES.RESULTS, result: { ...result, winnerId, loserId, matchId, scores: clone(current.scores), guesses: clone(current.guesses), targets: clone(current.targets), playerIds: [...current.playerIds] }, roundEndTimestamp: null, revealEndTimestamp: null };
+  const finished = { ...current, status: 'finished', phase: MODE_PHASES.RESULTS, result: { ...result, winnerId, loserId, matchId, scores: clone(current.scores || {}), guesses: clone(current.guesses || {}), targets: clone(current.targets || {}), playerIds: [...current.playerIds] }, roundEndTimestamp: null, revealEndTimestamp: null };
   const matches = { ...state.matches, [matchId]: finished };
   const semiA = matches[TOURNAMENT_MATCH_IDS.SEMI_A];
   const semiB = matches[TOURNAMENT_MATCH_IDS.SEMI_B];
@@ -164,7 +164,7 @@ export function finishMatch(state, matchId, winnerId, result = {}) {
     if (consolationWinner) placements[consolationWinner] = 3;
     if (consolationLoser) placements[consolationLoser] = 4;
     const rewardData = consolation.status === 'finished' ? applyRewards({ ...state, playerStats }, placements) : { rewards: state.rewards, playerStats };
-    return { ...state, playerStats: rewardData.playerStats, rewards: rewardData.rewards, phase: MODE_PHASES.RESULTS, winnerId, secondPlaceId: loserId, thirdPlaceId: consolationWinner || null, fourthPlaceId: consolationLoser || null, matches, status: consolation.status === 'finished' ? 'finished' : 'final_pending_consolation', updatedAt: Date.now() };
+    return { ...state, playerStats: rewardData.playerStats, rewards: rewardData.rewards, phase: consolation.status === 'finished' ? MODE_PHASES.RESULTS : MODE_PHASES.PLAYING, winnerId, secondPlaceId: loserId, thirdPlaceId: consolationWinner || null, fourthPlaceId: consolationLoser || null, matches, status: consolation.status === 'finished' ? 'finished' : 'final_pending_consolation', updatedAt: Date.now() };
   }
   if (matchId === TOURNAMENT_MATCH_IDS.CONSOLATION && matches[TOURNAMENT_MATCH_IDS.FINAL].status === 'finished') {
     const finalWinner = matches[TOURNAMENT_MATCH_IDS.FINAL].result.winnerId; const finalLoser = matches[TOURNAMENT_MATCH_IDS.FINAL].result.loserId;
