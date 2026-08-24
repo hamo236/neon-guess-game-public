@@ -258,6 +258,7 @@ const GameResultsPage = () => {
                   [CATEGORIES.CARTOONS, 'Cartoon Characters'],
                   [CATEGORIES.FOOTBALL, 'Football Players'],
                   [CATEGORIES.SPORTS, 'Sports'],
+                  [CATEGORIES.ANIMALS, 'Animals'],
                 ].map(([categoryId, label]) => (
                   <button
                     key={categoryId}

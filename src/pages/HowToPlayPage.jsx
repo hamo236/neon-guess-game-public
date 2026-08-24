@@ -67,6 +67,7 @@ const gameTypes = [
   ['⚽', 'Football Player', 'Guess famous football players.'],
   ['🎨', 'Cartoon Character', 'Guess well-known cartoon characters.'],
   ['🏀', 'Sports Type', 'Guess different sports and athletic disciplines.'],
+  ['🐾', 'Animals', 'Guess animals from around the world.'],
 ];
 
 function StepList({ items }) {

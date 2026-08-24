@@ -1,6 +1,6 @@
 /**
  * NEON GUESS — Game Dataset
- * 68 verified items across 3 categories: 28 football, 19 sports, 21 cartoons. Ice Hockey is intentionally excluded.
+ * 96 verified items across 4 categories: 28 football, 19 sports, 21 cartoons, 28 animals. Ice Hockey is intentionally excluded.
  * Local images served from /public/images/.
  */
 
@@ -8,6 +8,7 @@ export const CATEGORIES = {
   CARTOONS: 'cartoons',
   FOOTBALL: 'football',
   SPORTS: 'sports',
+  ANIMALS: 'animals',
 };
 
 // Public assets must include Vite's configured base path on GitHub Pages.
@@ -44,9 +45,15 @@ export const CATEGORY_META = resolveItemImages({
     icon: 'sports',
     image: '/images/sports/handball.jpg',
   },
+  [CATEGORIES.ANIMALS]: {
+    id: CATEGORIES.ANIMALS,
+    label: 'Animals',
+    icon: 'pets',
+    image: '/images/animals/bear.jpg',
+  },
 });
 
-/** All 69 verified game items — local JPG assets in /public/images/. */
+/** All 96 verified game items — local JPG assets in /public/images/. */
 export const ALL_ITEMS = resolveImages([
   // ── CARTOON CHARACTERS (15) ─────────────────────────────────────────────────
   { id: 'c01', name: 'Elsa', category: CATEGORIES.CARTOONS, image: '/images/cartoons/elsa.jpg' },
@@ -121,6 +128,36 @@ export const ALL_ITEMS = resolveImages([
   { id: 's17', name: 'Hockey', category: CATEGORIES.SPORTS, image: '/images/sports/hockey.jpg' },
   { id: 's18', name: 'Water Polo', category: CATEGORIES.SPORTS, image: '/images/sports/water-polo.jpg' },
   { id: 's19', name: 'Karate', category: CATEGORIES.SPORTS, image: '/images/sports/karate.jpg' },
+
+  // ── ANIMALS (28) ─────────────────────────────────────────────────────────────
+  { id: 'a01', name: 'Bear', category: CATEGORIES.ANIMALS, image: '/images/animals/bear.jpg' },
+  { id: 'a02', name: 'Camel', category: CATEGORIES.ANIMALS, image: '/images/animals/camel-wild.jpg' },
+  { id: 'a03', name: 'Cheetah', category: CATEGORIES.ANIMALS, image: '/images/animals/cheetah-meadow.jpg' },
+  { id: 'a04', name: 'Chimpanzee', category: CATEGORIES.ANIMALS, image: '/images/animals/chimpanzee.jpg' },
+  { id: 'a05', name: 'Dolphin', category: CATEGORIES.ANIMALS, image: '/images/animals/water-dolphin.jpg' },
+  { id: 'a06', name: 'Elephant', category: CATEGORIES.ANIMALS, image: '/images/animals/elephant.jpg' },
+  { id: 'a07', name: 'Fox', category: CATEGORIES.ANIMALS, image: '/images/animals/fox-snow.jpg' },
+  { id: 'a08', name: 'Giraffe', category: CATEGORIES.ANIMALS, image: '/images/animals/giraffe.jpg' },
+  { id: 'a09', name: 'Hummingbird', category: CATEGORIES.ANIMALS, image: '/images/animals/hummingbird.jpg' },
+  { id: 'a10', name: 'Horse', category: CATEGORIES.ANIMALS, image: '/images/animals/horse.jpg' },
+  { id: 'a11', name: 'Jellyfish', category: CATEGORIES.ANIMALS, image: '/images/animals/jellyfish.jpg' },
+  { id: 'a12', name: 'Kangaroo', category: CATEGORIES.ANIMALS, image: '/images/animals/kangaroo.jpg' },
+  { id: 'a13', name: 'Leopard', category: CATEGORIES.ANIMALS, image: '/images/animals/leopard.jpg' },
+  { id: 'a14', name: 'Lioness', category: CATEGORIES.ANIMALS, image: '/images/animals/lioness.jpg' },
+  { id: 'a15', name: 'Manatee', category: CATEGORIES.ANIMALS, image: '/images/animals/water-manatee.jpg' },
+  { id: 'a16', name: 'Monkey', category: CATEGORIES.ANIMALS, image: '/images/animals/monkey.jpg' },
+  { id: 'a17', name: 'Moose', category: CATEGORIES.ANIMALS, image: '/images/animals/moose.jpg' },
+  { id: 'a18', name: 'Ostrich', category: CATEGORIES.ANIMALS, image: '/images/animals/ostrich.jpg' },
+  { id: 'a19', name: 'Parrot', category: CATEGORIES.ANIMALS, image: '/images/animals/parrot.jpg' },
+  { id: 'a20', name: 'Penguin', category: CATEGORIES.ANIMALS, image: '/images/animals/penguin.jpg' },
+  { id: 'a21', name: 'Rhinoceros', category: CATEGORIES.ANIMALS, image: '/images/animals/rhino-wild.jpg' },
+  { id: 'a22', name: 'Seal', category: CATEGORIES.ANIMALS, image: '/images/animals/water-seal.jpg' },
+  { id: 'a23', name: 'Shark', category: CATEGORIES.ANIMALS, image: '/images/animals/water-shark.jpg' },
+  { id: 'a24', name: 'Tiger', category: CATEGORIES.ANIMALS, image: '/images/animals/tiger-wild.jpg' },
+  { id: 'a25', name: 'Turtle', category: CATEGORIES.ANIMALS, image: '/images/animals/water-turtle.jpg' },
+  { id: 'a26', name: 'Whale', category: CATEGORIES.ANIMALS, image: '/images/animals/water-whale.jpg' },
+  { id: 'a27', name: 'Wolf', category: CATEGORIES.ANIMALS, image: '/images/animals/wolf.jpg' },
+  { id: 'a28', name: 'Zebra', category: CATEGORIES.ANIMALS, image: '/images/animals/zebra.jpg' },
 ]);
 
 /** Get all items for a given category */
