@@ -5902,3 +5902,204 @@
     min-width: 0;
   }
 }
+
+
+/* Four-player visual cycle 2: mobile-first active round and reveal hierarchy. */
+.ng-tournament-status-rail {
+  position: relative;
+  padding: 0.35rem 0.1rem 0.75rem;
+  border-bottom: 1px solid rgba(125, 244, 255, 0.16);
+}
+
+.ng-tournament-status-rail::before {
+  content: '';
+  width: 0.35rem;
+  height: 2.4rem;
+  position: absolute;
+  inset: 0.35rem auto auto -0.55rem;
+  border-radius: 999px;
+  background: linear-gradient(180deg, var(--ng-color-primary), var(--ng-color-secondary));
+  opacity: 0.9;
+}
+
+.ng-tournament-status-rail h2 {
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+
+.ng-tournament-score-strip--active {
+  gap: 1rem;
+  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+.ng-tournament-score-strip--active > div:last-child {
+  flex: 0 0 auto;
+  padding-left: 0.75rem;
+  border-left: 1px solid rgba(233, 179, 255, 0.2);
+}
+
+.ng-tournament-target {
+  min-width: 0;
+}
+
+.ng-tournament-target .ng-target-context {
+  min-height: 3.25rem;
+}
+
+.ng-tournament-target .ng-target-context__badge {
+  white-space: nowrap;
+}
+
+.ng-tournament-target > .p-4 > div {
+  min-width: 0;
+}
+
+.ng-tournament-target > .p-4 .font-headline-sm {
+  overflow-wrap: anywhere;
+}
+
+.ng-tournament-confirmation {
+  box-shadow: 0 18px 60px rgba(0, 0, 0, 0.24), 0 0 28px rgba(233, 179, 255, 0.08);
+}
+
+.ng-tournament-confirmation button {
+  min-height: 3.75rem;
+  touch-action: manipulation;
+}
+
+.ng-tournament-confirmation button:disabled {
+  filter: saturate(0.78);
+}
+
+.ng-tournament-reveal {
+  border-color: rgba(233, 179, 255, 0.28);
+  background: radial-gradient(circle at 50% 0%, rgba(233, 179, 255, 0.12), transparent 38%), linear-gradient(145deg, rgba(12, 15, 26, 0.92), rgba(8, 13, 22, 0.82));
+}
+
+.ng-tournament-reveal__targets {
+  align-items: stretch;
+}
+
+.ng-tournament-reveal__target {
+  min-width: 0;
+  background: rgba(255, 255, 255, 0.035);
+}
+
+.ng-tournament-reveal__target span {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.ng-tournament-reveal__countdown {
+  padding: 0.8rem 0.75rem;
+  border-top: 1px solid rgba(233, 179, 255, 0.16);
+  letter-spacing: 0.08em;
+  text-wrap: balance;
+}
+
+@media (max-width: 640px) {
+  .ng-tournament-status-rail {
+    padding-inline: 0.4rem;
+  }
+
+  .ng-tournament-status-rail::before {
+    inset-inline-start: -0.15rem;
+  }
+
+  .ng-tournament-status-rail h2 {
+    font-size: clamp(1.45rem, 7.7vw, 2.1rem);
+  }
+
+  .ng-tournament-score-strip--active {
+    align-items: stretch;
+    padding: 0.85rem 0.9rem;
+  }
+
+  .ng-tournament-score-strip--active > div:first-child {
+    min-width: 0;
+    flex: 1 1 48%;
+  }
+
+  .ng-tournament-score-strip--active > div:last-child {
+    flex: 0 1 52%;
+    min-width: 0;
+  }
+
+  .ng-tournament-score-strip--active .text-stats-num {
+    white-space: nowrap;
+    font-size: clamp(1.35rem, 7vw, 2rem);
+  }
+
+  .ng-tournament-target > .p-4 {
+    padding: 0.9rem;
+  }
+
+  .ng-tournament-target .ng-target-context {
+    align-items: flex-start;
+    flex-wrap: wrap;
+  }
+
+  .ng-tournament-target .ng-target-context__badge {
+    width: 100%;
+    padding-left: 1.65rem;
+  }
+
+  .ng-tournament-confirmation {
+    padding: 1rem;
+  }
+
+  .ng-tournament-confirmation button {
+    min-height: 3.85rem;
+    line-height: 1.2;
+  }
+
+  .ng-tournament-reveal {
+    padding: 1rem;
+  }
+
+  .ng-tournament-reveal__targets {
+    gap: 0.65rem;
+  }
+
+  .ng-tournament-reveal__target img {
+    width: 4.25rem;
+    height: 4.25rem;
+  }
+
+  .ng-tournament-reveal__countdown {
+    font-size: clamp(1.1rem, 5.5vw, 1.55rem);
+  }
+}
+
+@media (max-height: 430px) and (orientation: landscape) {
+  .ng-tournament-gameplay {
+    gap: 0.75rem;
+  }
+
+  .ng-tournament-gameplay__header {
+    padding-bottom: 0.35rem;
+  }
+
+  .ng-tournament-target > .p-4 {
+    min-height: 6rem;
+    padding-block: 0.7rem;
+  }
+
+  .ng-tournament-target img {
+    width: 4.5rem;
+    height: 4.5rem;
+  }
+
+  .ng-tournament-confirmation {
+    padding-block: 0.8rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ng-tournament-confirmation,
+  .ng-tournament-reveal,
+  .ng-tournament-reveal__target,
+  .ng-tournament-score-strip--active {
+    scroll-behavior: auto;
+  }
+}
