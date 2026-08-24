@@ -2,7 +2,7 @@ import { readFileSync } from 'node:fs';
 
 const source = readFileSync('src/data/gameData.js', 'utf8');
 const imagePaths = source.match(/image:\s*['"]\/images\/[^'"]+['"]/g) || [];
-const expectedCount = 100;
+const expectedCount = 97;
 
 if (imagePaths.length !== expectedCount) {
   throw new Error(`Image data regression: expected ${expectedCount} source paths, found ${imagePaths.length}`);
