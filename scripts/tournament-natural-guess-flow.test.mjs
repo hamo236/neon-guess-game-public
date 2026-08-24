@@ -15,7 +15,7 @@ assert.match(gameplay, /const targetId = target\?\.targetId \|\| target\?\.id/, 
 assert.match(gameplay, /actions\.recordGuess\(targetId\)/, 'Guess Correct must submit the projected opponent target through the existing authoritative action');
 assert.match(gameplay, /Confirm that \{opponentName\} guessed your target correctly/, 'The action must communicate the defender-confirmation flow');
 assert.match(context, /const opponentId = match\.playerIds\.find\(\(id\) => id !== playerId\)/, 'Tournament private target projection must resolve the opponent');
-assert.match(context, /const deterministicTargets = match\.targets && Object\.keys\(match\.targets\)\.length === 2 \? match\.targets : targetMapForPlayers\(state\.category, match\.playerIds, roundOffset\)/, 'Tournament private target projection must restore deterministic targets after public sanitization');
+assert.match(context, /const deterministicTargets = match\.targets && Object\.keys\(match\.targets\)\.length === 2[\s\S]*targetMapForTournament\(state\.category, match\.playerIds, \{ roomSeed: getTournamentRoomSeed\(state, roomId\), offset: roundOffset \}\)/, 'Tournament private target projection must restore room-seeded targets after public sanitization');
 assert.match(context, /targetOwnerId: opponentId/, 'Private target must retain its owner for auditability');
 
 console.log('tournament-natural-guess-flow: PASS');

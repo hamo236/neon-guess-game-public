@@ -21,7 +21,6 @@ function playingMatch(matchId, playerIds) {
     targets: undefined,
     guesses: undefined,
     result: null,
-    roundEndTimestamp: null,
     revealEndTimestamp: null,
   };
 }

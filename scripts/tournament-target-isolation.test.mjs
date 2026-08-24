@@ -29,8 +29,8 @@ assert.notDeepEqual(nextA.matches.semi_a.targets, nextB.matches.semi_b.targets, 
 
 const provider = fs.readFileSync(new URL('../src/context/CompetitiveModeContext.jsx', import.meta.url), 'utf8');
 const page = fs.readFileSync(new URL('../src/pages/CompetitiveModePage.jsx', import.meta.url), 'utf8');
-assert.match(provider, /targetMapForPlayers\(resolved\.category, currentMatch\.playerIds, tournamentTargetOffset\(matchId, currentMatch\.roundNumber\) \?\? 0\)/);
-assert.match(provider, /targetMapForPlayers\(current\.category, match\.playerIds, tournamentTargetOffset\(matchId, Number\(match\.roundNumber\) \+ 1\) \?\? 0\)/);
+assert.match(provider, /targetMapForTournament\(resolved\.category, currentMatch\.playerIds, \{ roomSeed: getTournamentRoomSeed\(resolved, roomId\), offset: tournamentTargetOffset\(matchId, currentMatch\.roundNumber\) \?\? 0 \}\)/);
+assert.match(provider, /targetMapForTournament\(current\.category, match\.playerIds, \{ roomSeed: getTournamentRoomSeed\(current, roomId\), offset: tournamentTargetOffset\(matchId, Number\(match\.roundNumber\) \+ 1\) \?\? 0 \}\)/);
 assert.match(provider, /target: \{ \.\.\.opponentTarget, playerId, matchId: match\.matchId, targetOwnerId: opponentId/);
 assert.match(provider, /const matches = Object\.values\(state\.matches \|\| \{\}\)\.filter\(\(match\) => match\.status === 'playing'/);
 assert.match(provider, /return matches\.length === 1 \? matches\[0\] : null/);

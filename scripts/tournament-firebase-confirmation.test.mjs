@@ -8,7 +8,7 @@ const rules = fs.readFileSync(new URL('../database.rules.json', import.meta.url)
 
 assert.match(context, /submitTournamentGuess\(\{ roomId, matchId: active\.matchId, playerId, roundNumber: active\.roundNumber \}\)/, 'Tournament Guess Correct must use the scoped player confirmation writer');
 assert.match(context, /const hasConfirmation = match\.playerIds\.some\(\(id\) => Boolean\(match\.guesses\?\.\[id\]\)\)/, 'One valid opponent confirmation must be sufficient to trigger the Tournament round resolver, matching 1v1');
-assert.match(context, /const protectedTargets = currentMatch\?\.targets[\s\S]*targetMapForPlayers\(resolved\.category, currentMatch\.playerIds/, 'Host resolution must reconstruct protected targets inside the authoritative transaction when public state is sanitized');
+assert.match(context, /const protectedTargets = currentMatch\?\.targets[\s\S]*targetMapForTournament\(resolved\.category, currentMatch\.playerIds[\s\S]*getTournamentRoomSeed\(resolved, roomId\)/, 'Host resolution must reconstruct room-seeded protected targets inside the authoritative transaction when public state is sanitized');
 assert.match(firebase, /matches\/\$\{matchId\}\/guesses\/\$\{playerId\}/, 'Scoped Tournament guess writer must target only the submitting player');
 assert.match(engine, /playerMap: Object\.fromEntries\(playerIds\.map\(\(id\) => \[id, true\]\)\)/, 'Tournament matches must expose an explicit participant map for rules validation');
 assert.match(rules, /"matches": \{[\s\S]*"guesses": \{[\s\S]*data\.parent\(\)\.parent\(\)\.child\('playerMap'\)\.child\(auth\.uid\)\.val\(\) === true/, 'Tournament rules must permit only a participant to write their own active-match guess');

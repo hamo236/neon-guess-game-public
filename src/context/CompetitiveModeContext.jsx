@@ -1,5 +1,6 @@
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
-import { CATEGORY_META, getItemsByCategory } from '../data/gameData.js';
+import { CATEGORY_META } from '../data/gameData.js';
+import { targetMapForTournament } from '../modes/tournamentTargetPlan.js';
 import { initAuth } from '../firebase/auth.js';
 import { isFirebaseConfigured } from '../firebase/config.js';
 import { createCompetitiveRoom, joinCompetitiveRoom, leaveCompetitiveRoom, mutateCompetitiveState, submitTournamentGuess, submitTeamConfirmation, removeCompetitivePlayer, setCompetitiveTeam, subscribeCompetitiveConnection, subscribeCompetitiveRoom, subscribeCompetitiveTarget, writeCompetitiveState, writeCompetitiveTarget } from '../firebase/competitiveFirebase.js';
@@ -18,10 +19,8 @@ function manualPlayerName(value) { const name = String(value || '').trim(); retu
 function saveSession(mode, value) { try { localStorage.setItem(sessionKey(mode), JSON.stringify(value)); } catch { /* local-only fallback */ } }
 function clearSession(mode) { try { localStorage.removeItem(sessionKey(mode)); } catch { /* no-op */ } }
 function makeRoomId() { return generateRoomCode(); }
-function targetMapForPlayers(category, playerIds, offset = 0) {
-  const items = getItemsByCategory(category) || [];
-  if (items.length < playerIds.length) throw new Error('Selected category does not have enough targets.');
-  return Object.fromEntries(playerIds.map((id, index) => [id, { ...items[(index + offset) % items.length], playerId: id, targetId: items[(index + offset) % items.length].id }]));
+function getTournamentRoomSeed(state, fallbackRoomId = '') {
+  return `${state?.roomId || fallbackRoomId}:${state?.createdAt || 'legacy'}`;
 }
 function getPlayerTeam(state, playerId) { return Object.values(state.teams || {}).find((team) => team.playerIds.includes(playerId)); }
 function classifyRecoveryFailure(error) {
@@ -55,7 +54,9 @@ async function writePrivateTargets(mode, roomId, state, writerPlayerId = null) {
       }
       const opponentId = match.playerIds.find((id) => id !== playerId);
       const roundOffset = tournamentTargetOffset(match.matchId, match.roundNumber);
-      const deterministicTargets = match.targets && Object.keys(match.targets).length === 2 ? match.targets : targetMapForPlayers(state.category, match.playerIds, roundOffset);
+      const deterministicTargets = match.targets && Object.keys(match.targets).length === 2
+        ? match.targets
+        : targetMapForTournament(state.category, match.playerIds, { roomSeed: getTournamentRoomSeed(state, roomId), offset: roundOffset });
       const opponentTarget = opponentId ? deterministicTargets?.[opponentId] : null;
       if (opponentTarget) writes.push(writeCompetitiveTarget({ mode, roomId, matchId: match.matchId, playerId, target: { ...opponentTarget, playerId, matchId: match.matchId, targetOwnerId: opponentId, roundNumber: match.roundNumber } }));
     }));
@@ -223,8 +224,8 @@ export function CompetitiveModeProvider({ mode, children }) {
     let next;
     if (mode === COMPETITIVE_MODES.TOURNAMENT) {
       next = createTournamentState({ tournamentId: roomId, roomId, players, category, hostId: playerId });
-      next = startMatch(next, TOURNAMENT_MATCH_IDS.SEMI_A, targetMapForPlayers(category, next.matches[TOURNAMENT_MATCH_IDS.SEMI_A].playerIds, tournamentTargetOffset(TOURNAMENT_MATCH_IDS.SEMI_A, 1) ?? 0));
-      next = startMatch(next, TOURNAMENT_MATCH_IDS.SEMI_B, targetMapForPlayers(category, next.matches[TOURNAMENT_MATCH_IDS.SEMI_B].playerIds, tournamentTargetOffset(TOURNAMENT_MATCH_IDS.SEMI_B, 1) ?? 0));
+      next = startMatch(next, TOURNAMENT_MATCH_IDS.SEMI_A, targetMapForTournament(category, next.matches[TOURNAMENT_MATCH_IDS.SEMI_A].playerIds, { roomSeed: getTournamentRoomSeed(next, roomId), offset: tournamentTargetOffset(TOURNAMENT_MATCH_IDS.SEMI_A, 1) ?? 0 }));
+      next = startMatch(next, TOURNAMENT_MATCH_IDS.SEMI_B, targetMapForTournament(category, next.matches[TOURNAMENT_MATCH_IDS.SEMI_B].playerIds, { roomSeed: getTournamentRoomSeed(next, roomId), offset: tournamentTargetOffset(TOURNAMENT_MATCH_IDS.SEMI_B, 1) ?? 0 }));
     } else {
       const lobbyAssignments = state.teams || undefined;
       if (!validateTeamAssignments(lobbyAssignments, players.map((player) => player.id))) throw new Error('Both teams must have exactly two players before the host can start.');
@@ -238,7 +239,7 @@ export function CompetitiveModeProvider({ mode, children }) {
     }
   }, [mode, playerId, roomId, state]);
 
-  const resetTournament = useCallback(async (category = state?.category) => { if (mode !== COMPETITIVE_MODES.TOURNAMENT) throw new Error('Tournament retry is only available in Four-player mode.'); if (!state || state.hostId !== playerId) throw new Error('Only the host can retry this tournament.'); const rawPlayers = Object.values(state.players || {}).sort((a, b) => (Number(a.joinOrder) || 999) - (Number(b.joinOrder) || 999)); if (rawPlayers.length !== 4) throw new Error('Exactly four players are required to retry.'); let next = createTournamentState({ tournamentId: roomId, roomId, players: rawPlayers, category, hostId: playerId }); next = startMatch(next, TOURNAMENT_MATCH_IDS.SEMI_A, targetMapForPlayers(category, next.matches[TOURNAMENT_MATCH_IDS.SEMI_A].playerIds, tournamentTargetOffset(TOURNAMENT_MATCH_IDS.SEMI_A, 1) ?? 0)); next = startMatch(next, TOURNAMENT_MATCH_IDS.SEMI_B, targetMapForPlayers(category, next.matches[TOURNAMENT_MATCH_IDS.SEMI_B].playerIds, tournamentTargetOffset(TOURNAMENT_MATCH_IDS.SEMI_B, 1) ?? 0)); await writeCompetitiveState({ mode, roomId, state: next }); await writePrivateTargets(mode, roomId, next); saveSession(mode, { roomId, playerId, playerName, resumeAfterRefresh: true }); }, [mode, playerId, playerName, roomId, state]);
+  const resetTournament = useCallback(async (category = state?.category) => { if (mode !== COMPETITIVE_MODES.TOURNAMENT) throw new Error('Tournament retry is only available in Four-player mode.'); if (!state || state.hostId !== playerId) throw new Error('Only the host can retry this tournament.'); const rawPlayers = Object.values(state.players || {}).sort((a, b) => (Number(a.joinOrder) || 999) - (Number(b.joinOrder) || 999)); if (rawPlayers.length !== 4) throw new Error('Exactly four players are required to retry.'); let next = createTournamentState({ tournamentId: roomId, roomId, players: rawPlayers, category, hostId: playerId }); next = startMatch(next, TOURNAMENT_MATCH_IDS.SEMI_A, targetMapForTournament(category, next.matches[TOURNAMENT_MATCH_IDS.SEMI_A].playerIds, { roomSeed: getTournamentRoomSeed(next, roomId), offset: tournamentTargetOffset(TOURNAMENT_MATCH_IDS.SEMI_A, 1) ?? 0 })); next = startMatch(next, TOURNAMENT_MATCH_IDS.SEMI_B, targetMapForTournament(category, next.matches[TOURNAMENT_MATCH_IDS.SEMI_B].playerIds, { roomSeed: getTournamentRoomSeed(next, roomId), offset: tournamentTargetOffset(TOURNAMENT_MATCH_IDS.SEMI_B, 1) ?? 0 })); await writeCompetitiveState({ mode, roomId, state: next }); await writePrivateTargets(mode, roomId, next); saveSession(mode, { roomId, playerId, playerName, resumeAfterRefresh: true }); }, [mode, playerId, playerName, roomId, state]);
 
   const recordGuess = useCallback(async (targetId) => {
     if (!state) return;
@@ -273,7 +274,7 @@ export function CompetitiveModeProvider({ mode, children }) {
       const currentMatch = resolved.matches?.[matchId];
       const protectedTargets = currentMatch?.targets && Object.keys(currentMatch.targets).length === 2
         ? currentMatch.targets
-        : targetMapForPlayers(resolved.category, currentMatch.playerIds, tournamentTargetOffset(matchId, currentMatch.roundNumber) ?? 0);
+        : targetMapForTournament(resolved.category, currentMatch.playerIds, { roomSeed: getTournamentRoomSeed(resolved, roomId), offset: tournamentTargetOffset(matchId, currentMatch.roundNumber) ?? 0 });
       resolved = { ...resolved, matches: { ...resolved.matches, [matchId]: { ...currentMatch, targets: protectedTargets } } };
       match.playerIds.filter((id) => !match.guesses?.[id]).forEach((id) => { resolved = recordMatchGuess(resolved, matchId, id, '__timeout__'); });
       const completedMatch = resolved.matches?.[matchId];
@@ -298,7 +299,7 @@ export function CompetitiveModeProvider({ mode, children }) {
       const match = current.matches?.[matchId];
       if (!match || match.status !== 'round_result') return current;
       if (match.roundNumber < 3) {
-        const targets = targetMapForPlayers(current.category, match.playerIds, tournamentTargetOffset(matchId, Number(match.roundNumber) + 1) ?? 0);
+        const targets = targetMapForTournament(current.category, match.playerIds, { roomSeed: getTournamentRoomSeed(current, roomId), offset: tournamentTargetOffset(matchId, Number(match.roundNumber) + 1) ?? 0 });
         return advanceTournamentRoundState(current, matchId, targets);
       }
       const [first, second] = match.playerIds;
@@ -315,7 +316,7 @@ export function CompetitiveModeProvider({ mode, children }) {
     const next = await mutateCompetitiveState({ mode, roomId, mutate: (current) => {
       if (current.phase !== MODE_PHASES.TRANSITION) return current;
       const finalIds = current.matches[TOURNAMENT_MATCH_IDS.FINAL].playerIds; const consolationIds = current.matches[TOURNAMENT_MATCH_IDS.CONSOLATION].playerIds;
-      return startNextTournamentMatches(current, { [TOURNAMENT_MATCH_IDS.FINAL]: targetMapForPlayers(current.category, finalIds, tournamentTargetOffset(TOURNAMENT_MATCH_IDS.FINAL, 1) ?? 0), [TOURNAMENT_MATCH_IDS.CONSOLATION]: targetMapForPlayers(current.category, consolationIds, tournamentTargetOffset(TOURNAMENT_MATCH_IDS.CONSOLATION, 1) ?? 0) });
+      return startNextTournamentMatches(current, { [TOURNAMENT_MATCH_IDS.FINAL]: targetMapForTournament(current.category, finalIds, { roomSeed: getTournamentRoomSeed(current, roomId), offset: tournamentTargetOffset(TOURNAMENT_MATCH_IDS.FINAL, 1) ?? 0 }), [TOURNAMENT_MATCH_IDS.CONSOLATION]: targetMapForTournament(current.category, consolationIds, { roomSeed: getTournamentRoomSeed(current, roomId), offset: tournamentTargetOffset(TOURNAMENT_MATCH_IDS.CONSOLATION, 1) ?? 0 }) });
     }});
     if (next) await writePrivateTargets(mode, roomId, next);
   }, [mode, playerId, roomId, state, canMutateCompetitive]);
@@ -403,20 +404,15 @@ export function CompetitiveModeProvider({ mode, children }) {
   useEffect(() => {
     if (mode !== COMPETITIVE_MODES.TOURNAMENT || !state || !canMutateCompetitive) return undefined;
     const playingMatches = Object.values(state.matches || {}).filter((match) => match.status === 'playing' && match.playerIds?.length === 2);
-    const dueMatches = playingMatches.filter((match) => {
+    playingMatches.filter((match) => {
       const hasConfirmation = match.playerIds.some((id) => Boolean(match.guesses?.[id]));
-      const timedOut = Number.isFinite(Number(match.roundEndTimestamp)) && Number(match.roundEndTimestamp) <= Date.now();
-      return hasConfirmation || timedOut;
-    });
-    dueMatches.forEach((match) => {
+      return hasConfirmation;
+    }).forEach((match) => {
       if (tournamentResolutionInFlightRef.current.has(match.matchId)) return;
       tournamentResolutionInFlightRef.current.add(match.matchId);
       resolveTournamentMatch(match.matchId).catch((resolutionError) => setError(resolutionError?.message || 'Tournament round resolution failed.')).finally(() => tournamentResolutionInFlightRef.current.delete(match.matchId));
     });
-    const nextDeadline = playingMatches.map((match) => Number(match.roundEndTimestamp)).filter((timestamp) => Number.isFinite(timestamp) && timestamp > Date.now()).sort((a, b) => a - b)[0];
-    if (!nextDeadline) return undefined;
-    const timerId = window.setTimeout(() => setState((current) => current ? { ...current } : current), Math.max(0, nextDeadline - Date.now()) + 10);
-    return () => window.clearTimeout(timerId);
+    return undefined;
   }, [mode, state, canMutateCompetitive, resolveTournamentMatch]);
 
   useEffect(() => {
