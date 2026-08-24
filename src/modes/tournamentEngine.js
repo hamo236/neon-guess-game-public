@@ -15,6 +15,8 @@ export function tournamentTargetOffset(matchId, roundNumber = 1) {
 export const TOURNAMENT_ROUND_COUNT = 3;
 export const TOURNAMENT_REVEAL_MS = 5000;
 
+const cloneOr = (value, fallback) => clone(value == null ? fallback : value);
+
 const createPlayerStats = (player) => ({
   playerId: player.id,
   score: 0,
@@ -64,7 +66,7 @@ export function startMatch(state, matchId, targets) {
   if (!current || current.playerIds.length !== 2) throw new Error('Match must have two players.');
   return {
     ...state,
-    matches: { ...state.matches, [matchId]: { ...current, status: 'playing', phase: MODE_PHASES.PLAYING, targets: clone(targets), guesses: {}, result: null, roundEndTimestamp: Date.now() + 60000, revealEndTimestamp: null } },
+    matches: { ...state.matches, [matchId]: { ...current, status: 'playing', phase: MODE_PHASES.PLAYING, targets: cloneOr(targets, {}), guesses: {}, result: null, roundEndTimestamp: Date.now() + 60000, revealEndTimestamp: null } },
     phase: matchId.startsWith('semi_') ? MODE_PHASES.SEMI_FINALS : MODE_PHASES.PLAYING,
     transitionEndTimestamp: null, updatedAt: Date.now(),
   };
@@ -94,9 +96,9 @@ export function completeTournamentRound(state, matchId) {
   if (current.playerIds.some((playerId) => !current.guesses?.[playerId])) return state;
   const roundResult = {
     roundNumber: current.roundNumber,
-    guesses: clone(current.guesses),
-    targets: clone(current.targets),
-    scores: clone(current.scores),
+    guesses: cloneOr(current.guesses, {}),
+    targets: cloneOr(current.targets, {}),
+    scores: cloneOr(current.scores, {}),
     revealSnapshot: current.playerIds.map((playerId) => ({ playerId, target: clone(current.targets?.[playerId] || null), guess: clone(current.guesses?.[playerId] || null) })),
     completedAt: Date.now(),
   };
@@ -118,7 +120,7 @@ export function advanceTournamentRound(state, matchId, targets) {
   if (!current || current.status !== 'round_result' || current.roundNumber >= TOURNAMENT_ROUND_COUNT) return state;
   return {
     ...state,
-    matches: { ...state.matches, [matchId]: { ...current, status: 'playing', phase: MODE_PHASES.PLAYING, roundNumber: current.roundNumber + 1, targets: clone(targets), guesses: {}, result: null, roundEndTimestamp: Date.now() + 60000, revealEndTimestamp: null } },
+    matches: { ...state.matches, [matchId]: { ...current, status: 'playing', phase: MODE_PHASES.PLAYING, roundNumber: current.roundNumber + 1, targets: cloneOr(targets, {}), guesses: {}, result: null, roundEndTimestamp: Date.now() + 60000, revealEndTimestamp: null } },
     phase: matchId.startsWith('semi_') ? MODE_PHASES.SEMI_FINALS : MODE_PHASES.PLAYING,
     roundNumber: current.roundNumber + 1,
     updatedAt: Date.now(),
@@ -147,12 +149,14 @@ export function finishMatch(state, matchId, winnerId, result = {}) {
     const alreadyRecorded = (existing.roundHistory || []).some((entry) => entry.matchId === matchId && entry.roundNumber === current.roundNumber);
     playerStats[id] = alreadyRecorded ? existing : { ...existing, roundHistory: [...(existing.roundHistory || []), { roundNumber: current.roundNumber, matchId, target: clone(current.targets?.[id] || null), guess: clone(guess) }] };
   });
-  const finished = { ...current, status: 'finished', phase: MODE_PHASES.RESULTS, result: { ...result, winnerId, loserId, matchId, scores: clone(current.scores || {}), guesses: clone(current.guesses || {}), targets: clone(current.targets || {}), playerIds: [...current.playerIds] }, roundEndTimestamp: null, revealEndTimestamp: null };
+  const finished = { ...current, status: 'finished', phase: MODE_PHASES.RESULTS, result: { ...result, winnerId, loserId, matchId, scores: cloneOr(current.scores, {}), guesses: cloneOr(current.guesses, {}), targets: cloneOr(current.targets, {}), playerIds: [...current.playerIds] }, roundEndTimestamp: null, revealEndTimestamp: null };
   const matches = { ...state.matches, [matchId]: finished };
   const semiA = matches[TOURNAMENT_MATCH_IDS.SEMI_A];
   const semiB = matches[TOURNAMENT_MATCH_IDS.SEMI_B];
   if (matchId.startsWith('semi_') && semiA.status === 'finished' && semiB.status === 'finished') {
-    const winnerA = semiA.result.winnerId; const winnerB = semiB.result.winnerId; const loserA = semiA.result.loserId; const loserB = semiB.result.loserId;
+    const winnerA = semiA.result?.winnerId; const winnerB = semiB.result?.winnerId; const loserA = semiA.result?.loserId; const loserB = semiB.result?.loserId;
+    const semifinalIds = new Set([winnerA, winnerB, loserA, loserB]);
+    if (!winnerA || !winnerB || !loserA || !loserB || semifinalIds.size !== 4) throw new Error('Tournament bracket is incomplete: both semifinal winners and losers are required before Final and 3rd Place can start.');
     matches[TOURNAMENT_MATCH_IDS.FINAL] = { ...matches[TOURNAMENT_MATCH_IDS.FINAL], playerIds: [winnerA, winnerB], playerMap: { [winnerA]: true, [winnerB]: true }, scores: { [winnerA]: 0, [winnerB]: 0 }, roundNumber: 1 };
     matches[TOURNAMENT_MATCH_IDS.CONSOLATION] = { ...matches[TOURNAMENT_MATCH_IDS.CONSOLATION], playerIds: [loserA, loserB], playerMap: { [loserA]: true, [loserB]: true }, scores: { [loserA]: 0, [loserB]: 0 }, roundNumber: 1 };
     return { ...state, playerStats, phase: MODE_PHASES.TRANSITION, transitionEndTimestamp: Date.now() + 5000, matches, updatedAt: Date.now() };

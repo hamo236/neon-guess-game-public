@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import {
   createTournamentState,
   finishMatch,
+  completeTournamentRound,
   TOURNAMENT_MATCH_IDS,
 } from '../src/modes/tournamentEngine.js';
 import { MODE_PHASES } from '../src/modes/modeTypes.js';
@@ -52,6 +53,26 @@ assert.deepEqual(
 );
 
 assert.doesNotThrow(() => finishMatch(base, TOURNAMENT_MATCH_IDS.FINAL, 'p1'), 'missing maps must not reach JSON.parse as undefined');
+
+const malformed = {
+  ...base,
+  matches: {
+    ...base.matches,
+    [TOURNAMENT_MATCH_IDS.SEMI_A]: { ...base.matches[TOURNAMENT_MATCH_IDS.SEMI_A], status: 'finished', result: undefined },
+    [TOURNAMENT_MATCH_IDS.SEMI_B]: { ...base.matches[TOURNAMENT_MATCH_IDS.SEMI_B], status: 'playing', guesses: { p3: { playerId: 'p3', targetId: 'p4', correct: true }, p4: { playerId: 'p4', targetId: 'p3', correct: true } } },
+  },
+};
+assert.throws(
+  () => finishMatch(malformed, TOURNAMENT_MATCH_IDS.SEMI_B, 'p3'),
+  /both semifinal winners and losers are required/,
+  'malformed semifinal results must block bracket creation',
+);
+
+const roundState = {
+  ...base,
+  matches: { ...base.matches, [TOURNAMENT_MATCH_IDS.FINAL]: playingMatch(TOURNAMENT_MATCH_IDS.FINAL, ['p1', 'p3']) },
+};
+assert.doesNotThrow(() => completeTournamentRound(roundState, TOURNAMENT_MATCH_IDS.FINAL), 'missing round maps must be normalized before JSON cloning');
 
 console.log('tournament-json-progression: PASS');
 console.log('Undefined-safe match finalization and final-first consolation progression are covered.');
