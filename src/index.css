@@ -5694,3 +5694,211 @@
     }
   }
 }
+
+
+/* Four-player Tournament visual evolution — Cycle 1: Neon Match Console.
+   Presentation-only selectors; gameplay, state, Firebase, and shared modes remain untouched. */
+.ng-tournament-shell {
+  --ng-tournament-line: rgba(125, 244, 255, 0.18);
+  --ng-tournament-magenta-line: rgba(233, 179, 255, 0.2);
+  --ng-tournament-panel: rgba(7, 11, 18, 0.42);
+  position: relative;
+}
+
+.ng-tournament-shell::before {
+  content: '';
+  position: absolute;
+  inset: 5.25rem 0 auto;
+  height: 22rem;
+  pointer-events: none;
+  background: radial-gradient(circle at 18% 10%, rgba(125, 244, 255, 0.1), transparent 42%), radial-gradient(circle at 84% 18%, rgba(233, 179, 255, 0.08), transparent 38%);
+  opacity: 0.72;
+  z-index: -1;
+}
+
+.ng-tournament-board,
+.ng-tournament-gameplay {
+  position: relative;
+}
+
+.ng-tournament-board {
+  padding-top: 0.35rem;
+}
+
+.ng-tournament-bracket {
+  position: relative;
+  isolation: isolate;
+}
+
+.ng-tournament-bracket > * {
+  border-color: var(--ng-tournament-line);
+  background: linear-gradient(145deg, rgba(125, 244, 255, 0.07), var(--ng-tournament-panel) 52%, rgba(255, 255, 255, 0.025));
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.ng-tournament-bracket--next > * {
+  border-color: var(--ng-tournament-magenta-line);
+  background: linear-gradient(145deg, rgba(233, 179, 255, 0.08), var(--ng-tournament-panel) 52%, rgba(255, 255, 255, 0.025));
+}
+
+.ng-tournament-gameplay__header {
+  align-items: flex-end;
+  padding-block: 0.15rem 0.25rem;
+}
+
+.ng-tournament-gameplay__header h2 {
+  max-width: 38rem;
+  text-wrap: balance;
+  letter-spacing: -0.025em;
+}
+
+.ng-tournament-gameplay__header .text-primary-fixed {
+  letter-spacing: 0.16em;
+}
+
+.ng-tournament-score-strip {
+  position: relative;
+  overflow: hidden;
+  border-color: rgba(125, 244, 255, 0.24);
+  background: linear-gradient(100deg, rgba(125, 244, 255, 0.1), rgba(255, 255, 255, 0.035) 50%, rgba(233, 179, 255, 0.07));
+}
+
+.ng-tournament-score-strip::after {
+  content: '';
+  width: 0.28rem;
+  position: absolute;
+  inset: 0 auto 0 0;
+  background: linear-gradient(180deg, var(--ng-color-primary), var(--ng-color-secondary));
+  opacity: 0.9;
+}
+
+.ng-tournament-score-strip > * {
+  min-width: 0;
+}
+
+.ng-tournament-target {
+  border-color: rgba(125, 244, 255, 0.42);
+  background: linear-gradient(145deg, rgba(125, 244, 255, 0.13), rgba(8, 13, 22, 0.62) 58%, rgba(233, 179, 255, 0.07));
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.28), 0 0 0 1px rgba(125, 244, 255, 0.05);
+}
+
+.ng-tournament-target .ng-target-context {
+  background: rgba(4, 8, 14, 0.2);
+}
+
+.ng-tournament-target > .p-4 {
+  min-height: 8.8rem;
+  align-items: center;
+}
+
+.ng-tournament-target img {
+  aspect-ratio: 1;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.3), 0 0 0 4px rgba(125, 244, 255, 0.05);
+}
+
+.ng-tournament-target .font-headline-sm {
+  text-wrap: balance;
+}
+
+.ng-tournament-action-card {
+  position: relative;
+  overflow: hidden;
+  border-color: rgba(233, 179, 255, 0.32);
+  background: linear-gradient(145deg, rgba(233, 179, 255, 0.1), rgba(10, 13, 23, 0.68) 58%, rgba(125, 244, 255, 0.05));
+}
+
+.ng-tournament-action-card::before {
+  content: '';
+  position: absolute;
+  inset: 0 0 auto;
+  height: 0.2rem;
+  background: linear-gradient(90deg, var(--ng-color-secondary), var(--ng-color-primary));
+  opacity: 0.8;
+}
+
+.ng-tournament-action-card button {
+  min-height: 3.35rem;
+  letter-spacing: 0.045em;
+  transition: transform var(--ng-motion-fast) ease-out, box-shadow var(--ng-motion-fast) ease-out, filter var(--ng-motion-fast) ease-out;
+}
+
+.ng-tournament-action-card button:not(:disabled):hover {
+  filter: saturate(1.08) brightness(1.04);
+  transform: translateY(-2px);
+}
+
+.ng-tournament-action-card button:not(:disabled):active {
+  transform: translateY(0);
+}
+
+.ng-tournament-action-card button:focus-visible {
+  outline: none;
+  box-shadow: var(--ng-focus-ring), 0 0 24px rgba(233, 179, 255, 0.28);
+}
+
+@media (max-width: 640px) {
+  .ng-tournament-shell::before {
+    inset: 4rem 0 auto;
+    height: 18rem;
+  }
+
+  .ng-tournament-gameplay__header {
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+
+  .ng-tournament-gameplay__header h2 {
+    font-size: clamp(1.65rem, 8vw, 2.3rem);
+    line-height: 1.08;
+  }
+
+  .ng-tournament-score-strip {
+    padding-inline: 1.1rem;
+  }
+
+  .ng-tournament-target > .p-4 {
+    min-height: 7.5rem;
+    gap: 0.8rem;
+  }
+
+  .ng-tournament-target img {
+    width: 5.5rem;
+    height: 5.5rem;
+  }
+
+  .ng-tournament-action-card button {
+    min-height: 3.5rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ng-tournament-action-card button,
+  .ng-tournament-action-card button:not(:disabled):hover,
+  .ng-tournament-action-card button:not(:disabled):active {
+    transition: none;
+    transform: none;
+  }
+}
+
+
+/* Four-player lobby correction: the shared action caption occupies a full flex basis.
+   Wrap only the Tournament command rail so its two buttons retain usable widths. */
+.ng-tournament-lobby .ng-room-entry-actions--tournament {
+  flex-wrap: wrap;
+}
+
+.ng-tournament-lobby .ng-room-entry-actions--tournament > button {
+  flex: 1 1 calc(50% - 0.75rem);
+  min-width: min(100%, 15rem);
+}
+
+@media (max-width: 640px) {
+  .ng-tournament-lobby .ng-room-entry-actions--tournament {
+    flex-wrap: nowrap;
+  }
+
+  .ng-tournament-lobby .ng-room-entry-actions--tournament > button {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+}
