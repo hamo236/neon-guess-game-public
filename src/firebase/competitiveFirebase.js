@@ -156,13 +156,14 @@ export async function removeCompetitivePlayer({ mode, roomId, playerId }) {
 export async function leaveCompetitiveRoom({ mode, roomId, playerId, isHost }) {
   const target = roomRef(mode, roomId);
   if (!target) return;
-  if (isHost) {
+  if (isHost || mode === 'tournament') {
     await remove(target);
     if (db) await remove(ref(db, `${PRIVATE_ROOTS[mode]}/${roomId}`));
     return;
   }
   const result = await runTransaction(target, (current) => {
     if (!current || !current.players?.[playerId]) return current;
+    if (mode === 'tournament') return { ...current, status: 'closed', phase: 'lobby', players: { ...current.players, [playerId]: null }, leftPlayers: { ...(current.leftPlayers || {}), [playerId]: true }, updatedAt: Date.now() };
     return { ...current, players: { ...current.players, [playerId]: null }, leftPlayers: { ...(current.leftPlayers || {}), [playerId]: true }, updatedAt: Date.now() };
   });
   const next = result.snapshot.val();

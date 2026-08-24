@@ -6527,3 +6527,80 @@
   }
 }
 /* End Four-player visual evolution — Cycle 7. */
+
+/* Four-player post-tournament control deck: presentation-only and mobile-first. */
+.ng-tournament-final-results__host-panel {
+  display: grid;
+  gap: 0.85rem;
+  text-align: left;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06), 0 18px 48px rgba(0, 0, 0, 0.16);
+}
+
+.ng-tournament-final-results__host-panel select {
+  min-width: 0;
+  color-scheme: dark;
+}
+
+.ng-tournament-final-results__host-panel button,
+.ng-tournament-final-results__actions button {
+  min-height: 2.875rem;
+  transition: border-color 180ms ease-out, background-color 180ms ease-out, box-shadow 180ms ease-out, transform 180ms ease-out;
+}
+
+.ng-tournament-final-results__host-panel button:hover:not(:disabled),
+.ng-tournament-final-results__actions button:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.18);
+}
+
+.ng-tournament-final-results__actions {
+  width: 100%;
+}
+
+.ng-tournament-final-results__host-panel button:focus-visible,
+.ng-tournament-final-results__host-panel select:focus-visible,
+.ng-tournament-final-results__actions button:focus-visible {
+  outline: 2px solid var(--ng-color-primary, #7df4ff);
+  outline-offset: 3px;
+}
+
+.ng-tournament-final-results__host-panel button:disabled,
+.ng-tournament-final-results__actions button:disabled {
+  cursor: wait;
+}
+
+@media (max-width: 420px) {
+  .ng-tournament-final-results__host-panel,
+  .ng-tournament-final-results__actions {
+    gap: 0.65rem;
+  }
+
+  .ng-tournament-final-results__host-panel button,
+  .ng-tournament-final-results__actions button {
+    width: 100%;
+    min-height: 3rem;
+  }
+}
+
+@media (max-height: 620px) and (orientation: landscape) {
+  .ng-tournament-final-results {
+    padding-top: 1.25rem;
+    padding-bottom: 1.25rem;
+  }
+
+  .ng-tournament-final-results__placements {
+    gap: 0.5rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ng-tournament-final-results__host-panel button,
+  .ng-tournament-final-results__actions button {
+    transition: none;
+  }
+
+  .ng-tournament-final-results__host-panel button:hover:not(:disabled),
+  .ng-tournament-final-results__actions button:hover:not(:disabled) {
+    transform: none;
+  }
+}
