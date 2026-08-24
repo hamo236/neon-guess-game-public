@@ -450,7 +450,7 @@ const LobbyPage = () => {
                 </label>
                 <label className="ng-room-category-field rounded-lg border border-primary-fixed/20 bg-primary-fixed/[0.035] px-3 py-2.5">
                   <span className="block font-label-caps text-[9px] tracking-[0.14em] text-primary-fixed">PLAY TYPE</span>
-                  <select value={category} onChange={(e) => setCategory(e.target.value)} aria-label="Game category" className="mt-1 min-h-8 w-full bg-transparent text-white focus-visible:outline-none">
+                  <select value={category} onChange={(e) => actions.setCategory(e.target.value)} aria-label="Game category" className="mt-1 min-h-8 w-full bg-transparent text-white focus-visible:outline-none">
                     {Object.values(CATEGORY_META).map((cat) => <option key={cat.id} value={cat.id} className="bg-surface-dim text-white">{cat.label}</option>)}
                   </select>
                 </label>
