@@ -4,7 +4,7 @@ import { initAuth } from '../firebase/auth.js';
 import { isFirebaseConfigured } from '../firebase/config.js';
 import { createCompetitiveRoom, joinCompetitiveRoom, leaveCompetitiveRoom, mutateCompetitiveState, submitTournamentGuess, submitTeamConfirmation, removeCompetitivePlayer, setCompetitiveTeam, subscribeCompetitiveConnection, subscribeCompetitiveRoom, subscribeCompetitiveTarget, writeCompetitiveState, writeCompetitiveTarget } from '../firebase/competitiveFirebase.js';
 import { COMPETITIVE_MODES, MODE_PHASES, createModePlayer, createStableId, clone } from '../modes/modeTypes.js';
-import { createTournamentState, finishMatch, recordMatchGuess, completeTournamentRound, advanceTournamentRound as advanceTournamentRoundState, startMatch, startNextTournamentMatches, TOURNAMENT_MATCH_IDS } from '../modes/tournamentEngine.js';
+import { createTournamentState, finishMatch, recordMatchGuess, completeTournamentRound, advanceTournamentRound as advanceTournamentRoundState, startMatch, startNextTournamentMatches, tournamentTargetOffset, TOURNAMENT_MATCH_IDS } from '../modes/tournamentEngine.js';
 import { assignTeamTargets, createTeamBattleState, finishTeamRound, advanceTeamRound, confirmTeamRound, areAllRequiredTeamConfirmationsComplete, getRequiredConfirmationTeams, validateTeamAssignments, TEAM_IDS } from '../modes/teamBattleEngine.js';
 import { targetMapForTeams } from '../modes/teamBattleTargetPlan.js';
 import { generateRoomCode, normalizeRoomCode } from '../game/roomManager.js';
@@ -30,12 +30,17 @@ function classifyRecoveryFailure(error) {
   if (/authenticated|identity/i.test(message)) return { status: 'identity-error', message: 'We could not verify your saved player identity for this room.' };
   return { status: 'retryable-error', message };
 }
-function getActiveMatch(state, playerId) { return Object.values(state.matches || {}).find((match) => match.status === 'playing' && match.playerIds.includes(playerId)); }
+function getActiveMatch(state, playerId) {
+  const matches = Object.values(state.matches || {}).filter((match) => match.status === 'playing' && match.playerIds.includes(playerId));
+  return matches.length === 1 ? matches[0] : null;
+}
 function getTargetSpec(state, mode, playerId) {
   if (!state) return null;
   if (mode === COMPETITIVE_MODES.TOURNAMENT) {
-    const match = Object.values(state.matches || {}).find((candidate) => ['playing', 'round_result'].includes(candidate.status) && candidate.playerIds?.includes(playerId));
-    return match ? { matchId: match.matchId, roundNumber: match.roundNumber } : null;
+    const matches = Object.values(state.matches || {}).filter((candidate) => ['playing', 'round_result'].includes(candidate.status) && candidate.playerIds?.includes(playerId));
+    if (matches.length !== 1) return null;
+    const [match] = matches;
+    return { matchId: match.matchId, roundNumber: match.roundNumber };
   }
   const match = state.match?.status === 'playing' ? state.match : null;
   return match ? { matchId: match.matchId, roundNumber: match.roundNumber || state.roundNumber } : null;
@@ -49,11 +54,10 @@ async function writePrivateTargets(mode, roomId, state) {
         return;
       }
       const opponentId = match.playerIds.find((id) => id !== playerId);
-      const baseOffset = match.matchId === TOURNAMENT_MATCH_IDS.SEMI_B ? 3 : match.matchId === TOURNAMENT_MATCH_IDS.FINAL ? 6 : match.matchId === TOURNAMENT_MATCH_IDS.CONSOLATION ? 9 : 0;
-      const roundOffset = baseOffset + Math.max(0, (Number(match.roundNumber) - 1) * 2);
+      const roundOffset = tournamentTargetOffset(match.matchId, match.roundNumber);
       const deterministicTargets = match.targets && Object.keys(match.targets).length === 2 ? match.targets : targetMapForPlayers(state.category, match.playerIds, roundOffset);
       const opponentTarget = opponentId ? deterministicTargets?.[opponentId] : null;
-      if (opponentTarget) writes.push(writeCompetitiveTarget({ mode, roomId, matchId: match.matchId, playerId, target: { ...opponentTarget, playerId, targetOwnerId: opponentId, roundNumber: match.roundNumber } }));
+      if (opponentTarget) writes.push(writeCompetitiveTarget({ mode, roomId, matchId: match.matchId, playerId, target: { ...opponentTarget, playerId, matchId: match.matchId, targetOwnerId: opponentId, roundNumber: match.roundNumber } }));
     }));
   } else if (state.match?.status === 'playing') {
     state.playerIds.forEach((playerId) => {
@@ -219,8 +223,8 @@ export function CompetitiveModeProvider({ mode, children }) {
     let next;
     if (mode === COMPETITIVE_MODES.TOURNAMENT) {
       next = createTournamentState({ tournamentId: roomId, roomId, players, category, hostId: playerId });
-      next = startMatch(next, TOURNAMENT_MATCH_IDS.SEMI_A, targetMapForPlayers(category, next.matches[TOURNAMENT_MATCH_IDS.SEMI_A].playerIds, 0));
-      next = startMatch(next, TOURNAMENT_MATCH_IDS.SEMI_B, targetMapForPlayers(category, next.matches[TOURNAMENT_MATCH_IDS.SEMI_B].playerIds, 3));
+      next = startMatch(next, TOURNAMENT_MATCH_IDS.SEMI_A, targetMapForPlayers(category, next.matches[TOURNAMENT_MATCH_IDS.SEMI_A].playerIds, tournamentTargetOffset(TOURNAMENT_MATCH_IDS.SEMI_A, 1) ?? 0));
+      next = startMatch(next, TOURNAMENT_MATCH_IDS.SEMI_B, targetMapForPlayers(category, next.matches[TOURNAMENT_MATCH_IDS.SEMI_B].playerIds, tournamentTargetOffset(TOURNAMENT_MATCH_IDS.SEMI_B, 1) ?? 0));
     } else {
       const lobbyAssignments = state.teams || undefined;
       if (!validateTeamAssignments(lobbyAssignments, players.map((player) => player.id))) throw new Error('Both teams must have exactly two players before the host can start.');
@@ -267,7 +271,7 @@ export function CompetitiveModeProvider({ mode, children }) {
       const currentMatch = resolved.matches?.[matchId];
       const protectedTargets = currentMatch?.targets && Object.keys(currentMatch.targets).length === 2
         ? currentMatch.targets
-        : targetMapForPlayers(resolved.category, currentMatch.playerIds, Math.max(0, (Number(currentMatch.roundNumber) - 1) * 2));
+        : targetMapForPlayers(resolved.category, currentMatch.playerIds, tournamentTargetOffset(matchId, currentMatch.roundNumber) ?? 0);
       resolved = { ...resolved, matches: { ...resolved.matches, [matchId]: { ...currentMatch, targets: protectedTargets } } };
       match.playerIds.filter((id) => !match.guesses?.[id]).forEach((id) => { resolved = recordMatchGuess(resolved, matchId, id, '__timeout__'); });
       const completedMatch = resolved.matches?.[matchId];
@@ -292,7 +296,7 @@ export function CompetitiveModeProvider({ mode, children }) {
       const match = current.matches?.[matchId];
       if (!match || match.status !== 'round_result') return current;
       if (match.roundNumber < 3) {
-        const targets = targetMapForPlayers(current.category, match.playerIds, match.roundNumber * 2);
+        const targets = targetMapForPlayers(current.category, match.playerIds, tournamentTargetOffset(matchId, Number(match.roundNumber) + 1) ?? 0);
         return advanceTournamentRoundState(current, matchId, targets);
       }
       const [first, second] = match.playerIds;
@@ -309,7 +313,7 @@ export function CompetitiveModeProvider({ mode, children }) {
     const next = await mutateCompetitiveState({ mode, roomId, mutate: (current) => {
       if (current.phase !== MODE_PHASES.TRANSITION) return current;
       const finalIds = current.matches[TOURNAMENT_MATCH_IDS.FINAL].playerIds; const consolationIds = current.matches[TOURNAMENT_MATCH_IDS.CONSOLATION].playerIds;
-      return startNextTournamentMatches(current, { [TOURNAMENT_MATCH_IDS.FINAL]: targetMapForPlayers(current.category, finalIds, current.roundNumber + 5), [TOURNAMENT_MATCH_IDS.CONSOLATION]: targetMapForPlayers(current.category, consolationIds, current.roundNumber + 8) });
+      return startNextTournamentMatches(current, { [TOURNAMENT_MATCH_IDS.FINAL]: targetMapForPlayers(current.category, finalIds, tournamentTargetOffset(TOURNAMENT_MATCH_IDS.FINAL, 1) ?? 0), [TOURNAMENT_MATCH_IDS.CONSOLATION]: targetMapForPlayers(current.category, consolationIds, tournamentTargetOffset(TOURNAMENT_MATCH_IDS.CONSOLATION, 1) ?? 0) });
     }});
     if (next) await writePrivateTargets(mode, roomId, next);
   }, [mode, playerId, roomId, state, canMutateCompetitive]);

@@ -1,6 +1,17 @@
 import { clone, COMPETITIVE_MODES, MODE_PHASES } from './modeTypes.js';
 
 export const TOURNAMENT_MATCH_IDS = { SEMI_A: 'semi_a', SEMI_B: 'semi_b', FINAL: 'final', CONSOLATION: 'consolation' };
+export const TOURNAMENT_TARGET_BASE_OFFSETS = Object.freeze({
+  [TOURNAMENT_MATCH_IDS.SEMI_A]: 0,
+  [TOURNAMENT_MATCH_IDS.SEMI_B]: 3,
+  [TOURNAMENT_MATCH_IDS.FINAL]: 6,
+  [TOURNAMENT_MATCH_IDS.CONSOLATION]: 9,
+});
+export function tournamentTargetOffset(matchId, roundNumber = 1) {
+  const baseOffset = TOURNAMENT_TARGET_BASE_OFFSETS[matchId];
+  if (baseOffset === undefined) return null;
+  return baseOffset + Math.max(0, (Number(roundNumber) - 1) * 2);
+}
 export const TOURNAMENT_ROUND_COUNT = 3;
 export const TOURNAMENT_REVEAL_MS = 5000;
 
