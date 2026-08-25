@@ -1,7 +1,7 @@
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { CATEGORY_META } from '../data/gameData.js';
 import { targetMapForTournament } from '../modes/tournamentTargetPlan.js';
-import { initAuth, getAuthFailureMessage, resetAuthInitialization } from '../firebase/auth.js';
+import { initAuth } from '../firebase/auth.js';
 import { isFirebaseConfigured } from '../firebase/config.js';
 import { createCompetitiveRoom, joinCompetitiveRoom, leaveCompetitiveRoom, mutateCompetitiveState, submitTournamentGuess, submitTeamConfirmation, removeCompetitivePlayer, setCompetitiveTeam, subscribeCompetitiveConnection, subscribeCompetitiveRoom, subscribeCompetitiveTarget, subscribeCompetitiveChat, sendCompetitiveChatMessage, writeCompetitiveState, writeCompetitiveTarget } from '../firebase/competitiveFirebase.js';
 import { COMPETITIVE_MODES, MODE_PHASES, createModePlayer, createStableId, clone } from '../modes/modeTypes.js';
@@ -105,27 +105,13 @@ export function CompetitiveModeProvider({ mode, children }) {
         else if (!isFirebaseConfigured) setPlayerId((current) => current || session?.playerId || createStableId('player'));
         else setError('Firebase authentication is not available. Please reload and try again.');
       }).catch((authError) => {
-        if (active) setError(getAuthFailureMessage(authError));
+        if (active) setError(authError?.message || 'Firebase authentication failed.');
       });
     } catch (authError) {
-      if (active) setError(getAuthFailureMessage(authError));
+      if (active) setError(authError?.message || 'Firebase authentication failed.');
     }
     return () => { active = false; };
   }, [session?.playerId]);
-
-  const retryAuth = useCallback(async () => {
-    if (!isFirebaseConfigured) return null;
-    resetAuthInitialization();
-    setError('');
-    try {
-      const user = await initAuth({ forceRetry: true });
-      if (user?.uid) setPlayerId(user.uid);
-      return user;
-    } catch (authError) {
-      setError(getAuthFailureMessage(authError));
-      throw authError;
-    }
-  }, []);
 
   useEffect(() => {
     if (!isFirebaseConfigured) return undefined;
@@ -482,7 +468,7 @@ export function CompetitiveModeProvider({ mode, children }) {
   const removePlayer = useCallback(async (targetPlayerId) => { if (!state || state.hostId !== playerId || targetPlayerId === playerId) throw new Error('Only the host can remove another player.'); await removeCompetitivePlayer({ mode, roomId, playerId: targetPlayerId }); }, [mode, playerId, roomId, state]);
   const leave = useCallback(async () => { const current = state; try { if (current && roomId) await leaveCompetitiveRoom({ mode, roomId, playerId, isHost: current.hostId === playerId }); } finally { clearSession(mode); setRoomId(''); setState(null); setPrivateTarget(null); setTargetReady(false); setRecovery({ status: 'idle', roomId: '', message: '' }); awaitingFreshSnapshotRef.current = Boolean(isFirebaseConfigured); setConnectionState(isFirebaseConfigured ? 'connecting' : 'offline-local'); recoveryAttemptedRef.current = false; } }, [mode, playerId, roomId, state]);
   const clearSessionRecovery = useCallback(() => { clearSession(mode); setRecovery({ status: 'idle', roomId: '', message: '' }); recoveryAttemptedRef.current = false; }, [mode]);
-  const value = useMemo(() => ({ mode, state, roomId, playerId, playerName, setPlayerName, status, error, recovery, connectionState, canMutateCompetitive, retrySessionRecovery, clearSessionRecovery, retryAuth, privateTarget, targetReady, chatMessages, sendChatMessage, createRoom, joinRoom, startMode, resetTournament, recordGuess, resolveTournamentMatch, advanceTournament, advanceTournamentRound, resolveTeamRound, advanceTeam, confirmTeamGuess, changeTeam, removePlayer, leave, CATEGORY_META, MODE_PHASES, TEAM_IDS, TOURNAMENT_MATCH_IDS }), [mode, state, roomId, playerId, playerName, status, error, recovery, connectionState, canMutateCompetitive, retrySessionRecovery, clearSessionRecovery, retryAuth, privateTarget, targetReady, chatMessages, sendChatMessage, createRoom, joinRoom, startMode, resetTournament, recordGuess, resolveTournamentMatch, advanceTournament, advanceTournamentRound, resolveTeamRound, advanceTeam, confirmTeamGuess, changeTeam, removePlayer, leave]);
+  const value = useMemo(() => ({ mode, state, roomId, playerId, playerName, setPlayerName, status, error, recovery, connectionState, canMutateCompetitive, retrySessionRecovery, clearSessionRecovery, privateTarget, targetReady, chatMessages, sendChatMessage, createRoom, joinRoom, startMode, resetTournament, recordGuess, resolveTournamentMatch, advanceTournament, advanceTournamentRound, resolveTeamRound, advanceTeam, confirmTeamGuess, changeTeam, removePlayer, leave, CATEGORY_META, MODE_PHASES, TEAM_IDS, TOURNAMENT_MATCH_IDS }), [mode, state, roomId, playerId, playerName, status, error, recovery, connectionState, canMutateCompetitive, retrySessionRecovery, clearSessionRecovery, privateTarget, targetReady, chatMessages, sendChatMessage, createRoom, joinRoom, startMode, resetTournament, recordGuess, resolveTournamentMatch, advanceTournament, advanceTournamentRound, resolveTeamRound, advanceTeam, confirmTeamGuess, changeTeam, removePlayer, leave]);
   return <CompetitiveModeContext.Provider value={value}>{children}</CompetitiveModeContext.Provider>;
 }
 
