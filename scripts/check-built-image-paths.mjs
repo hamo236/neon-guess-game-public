@@ -7,13 +7,14 @@ const bundle = jsFiles.map((file) => readFileSync(join('dist/assets', file), 'ut
 const baseLiteral = JSON.stringify(expectedBase);
 const hasBaseLiteral = bundle.includes(baseLiteral);
 const hasBaseResolver = bundle.includes('startsWith("/")') && bundle.includes('replace(/\\/$/,"")');
-const hasCategoryResolver = bundle.includes('Object.entries') && bundle.includes('image:c_(n.image)');
-const hasItemsResolver = bundle.includes('image:c_(e.image)');
+const hasCompiledImageResolver = /image:[A-Za-z_$][\w$]*\([A-Za-z_$][\w$]*\.image\)/.test(bundle);
+const hasCategoryData = bundle.includes('CARTOONS:') && bundle.includes('FOOTBALL:') && bundle.includes('SPORTS:') && bundle.includes('ANIMALS:');
+const hasItemData = bundle.includes('image:"/images/') && bundle.includes('category:');
 
 if (!hasBaseLiteral) {
   throw new Error(`Built bundle is missing Vite base literal: ${expectedBase}`);
 }
-if (!hasBaseResolver || !hasCategoryResolver || !hasItemsResolver) {
+if (!hasBaseResolver || !hasCompiledImageResolver || !hasCategoryData || !hasItemData) {
   throw new Error('Built bundle is missing the compiled image base resolver wiring');
 }
 
